@@ -239,6 +239,7 @@
 		78C23C2D1ED2FEA5000CD40E /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C23C2C1ED2FEA5000CD40E /* CoreMotion.framework */; };
 		78C23C2F1ED2FEF3000CD40E /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C23C2E1ED2FEF3000CD40E /* CFNetwork.framework */; };
 		78C23C311ED30002000CD40E /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C23C301ED30002000CD40E /* libsqlite3.0.tbd */; };
+		78C23C381ED3381F000CD40E /* PointGoodsInfoVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C23C371ED3381F000CD40E /* PointGoodsInfoVC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -886,6 +887,9 @@
 		78C23C2C1ED2FEA5000CD40E /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		78C23C2E1ED2FEF3000CD40E /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		78C23C301ED30002000CD40E /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		78C23C331ED337FD000CD40E /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
+		78C23C361ED3381F000CD40E /* PointGoodsInfoVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PointGoodsInfoVC.h; sourceTree = "<group>"; };
+		78C23C371ED3381F000CD40E /* PointGoodsInfoVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PointGoodsInfoVC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2649,6 +2653,7 @@
 			children = (
 				78C2395B1ED2FB9A000CD40E /* 0.Comments.h */,
 				78C2395C1ED2FB9A000CD40E /* 1.ExchangeRule */,
+				78C23C321ED337FD000CD40E /* 2.PointGoodsInfoVC */,
 			);
 			path = 3.Section;
 			sourceTree = "<group>";
@@ -3738,6 +3743,32 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		78C23C321ED337FD000CD40E /* 2.PointGoodsInfoVC */ = {
+			isa = PBXGroup;
+			children = (
+				78C23C331ED337FD000CD40E /* 0.Comments.h */,
+				78C23C341ED337FD000CD40E /* 1.Controller */,
+				78C23C351ED337FD000CD40E /* 2.MyView */,
+			);
+			path = 2.PointGoodsInfoVC;
+			sourceTree = "<group>";
+		};
+		78C23C341ED337FD000CD40E /* 1.Controller */ = {
+			isa = PBXGroup;
+			children = (
+				78C23C361ED3381F000CD40E /* PointGoodsInfoVC.h */,
+				78C23C371ED3381F000CD40E /* PointGoodsInfoVC.m */,
+			);
+			path = 1.Controller;
+			sourceTree = "<group>";
+		};
+		78C23C351ED337FD000CD40E /* 2.MyView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = 2.MyView;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -3982,6 +4013,7 @@
 				78C237B41ED2FA7F000CD40E /* main.m in Sources */,
 				78C23BE01ED2FB9A000CD40E /* UIImage+MultiFormat.m in Sources */,
 				78C23B741ED2FB9A000CD40E /* AboutLYHViewController.m in Sources */,
+				78C23C381ED3381F000CD40E /* PointGoodsInfoVC.m in Sources */,
 				78C23BB91ED2FB9A000CD40E /* MJRefreshConst.m in Sources */,
 				78C23B891ED2FB9A000CD40E /* MyReaderVC.m in Sources */,
 				78C23BA01ED2FB9A000CD40E /* AFNetworkReachabilityManager.m in Sources */,

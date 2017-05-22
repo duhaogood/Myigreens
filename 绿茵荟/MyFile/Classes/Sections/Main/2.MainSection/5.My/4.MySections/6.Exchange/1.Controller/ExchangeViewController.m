@@ -8,6 +8,7 @@
 
 #import "ExchangeViewController.h"
 #import "IntegralRuleVC.h"
+#import "PointGoodsInfoVC.h"
 @interface ExchangeViewController ()<UICollectionViewDataSource,UICollectionViewDelegate>
 @property(nonatomic,strong)UICollectionView * collectionView;
 @end
@@ -283,7 +284,11 @@
                                @"settingId":[NSString  stringWithFormat:@"%ld",[goodsDic[@"settingId"] longValue]]
                                    };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"back:%@",back_dic);
+//        NSLog(@"back:%@",back_dic);
+        PointGoodsInfoVC * point = [PointGoodsInfoVC new];
+        point.goodsInfo = back_dic[@"goods"];
+        point.title = @"积分详情";
+        [self.navigationController pushViewController:point animated:true];
     }];
     
     
