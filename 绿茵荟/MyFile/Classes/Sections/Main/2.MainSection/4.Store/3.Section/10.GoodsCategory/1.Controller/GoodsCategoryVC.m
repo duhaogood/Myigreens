@@ -102,12 +102,37 @@
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
         NSLog(@"back:%@",back_dic);
         NSArray * array = back_dic[@"goodsList"];
-        if (array == nil || array.count == 0) {
-            [SVProgressHUD showErrorWithStatus:@"数据有误" duration:2];
-            return;
+//        if (array == nil || array.count == 0) {
+//            [SVProgressHUD showErrorWithStatus:@"数据有误" duration:2];
+//            return;
+//        }
+//        self.goodsList_array = array;
+//        [self.collectionView reloadData];
+//        
+        if (pageNo > 1) {
+            
+            if (array.count > 0) {
+                [self.goodsList_array addObjectsFromArray:array];
+            }else{
+                pageNo --;
+                if (self.goodsList_array.count == 0) {
+                    [SVProgressHUD showErrorWithStatus:@"没有数据" duration:1];
+                }else{
+                    [SVProgressHUD showErrorWithStatus:@"到底了" duration:1];
+                }
+            }
+            
+        }else{
+            self.goodsList_array = [NSMutableArray arrayWithArray:array];
         }
-        self.goodsList_array = array;
         [self.collectionView reloadData];
+    } andFailure:^(NSError *error_failure) {
+        if (pageNo == 1) {
+            [self.goodsList_array removeAllObjects];
+            [self.collectionView reloadData];
+        }else{
+            pageNo --;
+        }
     }];
     
     /*
@@ -118,6 +143,16 @@
 }
 #pragma mark - UITableViewDataSource,UITableViewDelegate
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSInteger _goodsCatId = [self.goodsCatList[indexPath.row][@"goodsCatId"] longValue];
+    if (goodsCatId == _goodsCatId) {
+        return;
+    }
+    goodsCatId = _goodsCatId;
+    //重新获取商品
+    pageNo = 1;
+    self.goodsList_array = [NSMutableArray new];
+    [self getGoods];
+    
     [SVProgressHUD showSuccessWithStatus:@"稍等" duration:1];
     UITableViewCell * cell = [tableView cellForRowAtIndexPath:indexPath];
     //文本
@@ -127,11 +162,6 @@
     //左侧绿色view
     UIView * view = [cell viewWithTag:88];
     view.backgroundColor = [MYTOOL RGBWithRed:106 green:151 blue:53 alpha:1];
-    
-    
-    
-    
-    
 }
 -(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
     //文本
@@ -209,7 +239,7 @@
     //    NSLog(@"%ld:%@",indexPath.row,goodsName);
     float price = [dicForCell[@"price"] floatValue];
     NSString * url = dicForCell[@"url"];
-    float width_cell = (WIDTH - 45)/2;
+    float width_cell = (WIDTH - 45 - 80)/2;
     float top = width_cell + 5;
     //图片
     UIImageView * imgV = [cell viewWithTag:10000];
