@@ -549,7 +549,7 @@
                                @"addressId":addressId
                                };
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"back:%@",back_dic);
+//        NSLog(@"back:%@",back_dic);
         NSArray * expressArray = back_dic[@"expressList"];
         SelectExpressVC * select = [SelectExpressVC new];
         select.title = @"选择快递方式";
@@ -629,12 +629,12 @@
                                 @"orderId":back_dic[@"orderId"]
                                 };
         [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-//            NSLog(@"订单:%@",back_dic);
+            NSLog(@"订单:%@",back_dic);
             [SVProgressHUD showSuccessWithStatus:@"订单创建成功" duration:1];
             SelectPayTypeVC * payVC = [SelectPayTypeVC new];
             payVC.isSuccess = true;
-            NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:back_dic[@"orderList"][0]];
-            [dict setValue:self.goodsInfoDictionary[@"productId"] forKey:@"productId"];
+            NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:back_dic[@"order"]];
+//            [dict setValue:self.goodsInfoDictionary[@"productId"] forKey:@"productId"];
             payVC.orderDictionary = dict;
             payVC.delegate = self;
             self.selectPayVC = payVC;

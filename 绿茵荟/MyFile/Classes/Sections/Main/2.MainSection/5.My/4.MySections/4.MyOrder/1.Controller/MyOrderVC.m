@@ -14,6 +14,7 @@
 #import "ShowExpress.h"
 @interface MyOrderVC ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)NSArray * orderArray;//所有订单信息
+@property(nonatomic,strong)NSMutableArray * timerArray;//定时器
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)UIView * greenView;//按钮下方view
 @property(nonatomic,assign)SelectPayTypeVC * selectPayVC;//选择支付方式
@@ -21,6 +22,7 @@
 
 @implementation MyOrderVC
 {
+    NSTimer * timer;//定时器
     NSMutableArray * statusBtnArray;//状态按钮数组
 }
 - (void)viewDidLoad {
@@ -117,6 +119,22 @@
             OrderInfoVC * infoVC = [OrderInfoVC new];
             infoVC.title = @"订单详情";
             infoVC.orderDictionary = orderDic;
+            infoVC.timeLeft = -1;
+            //订单状态
+            int sta = [orderDic[@"orderStatus"] intValue];
+            //如果未支付
+            if (sta == 1) {
+                for (NSMutableDictionary * dic in self.timerArray) {
+                    //订单号
+                    NSInteger orderId = [dic[@"orderId"] longValue];
+                    if (orderId == [orderDic[@"orderId"] longValue]) {
+                        infoVC.timeLeft = [dic[@"timeLeft"] intValue];
+                        break;
+                    }
+                }
+            }
+            
+            
             infoVC.delegate = self;
             [self.navigationController pushViewController:infoVC animated:true];
         }else{
@@ -156,9 +174,9 @@
         label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
     }
     //订单状态
+    int sta = [orderDic[@"orderStatus"] intValue];
     {
         NSString * status = @"待付款";
-        int sta = [orderDic[@"orderStatus"] intValue];
         if (sta != 1) {
             switch (sta) {
                 case 2:
@@ -196,7 +214,27 @@
     }
     //剩余时间
     {
-        
+        if (sta == 1) {
+            //剩余时间
+            NSInteger timeLeft = [orderDic[@"timeLeft"] longValue];
+            if (timeLeft > 0) {
+                UILabel * label = [UILabel new];
+                label.text = [NSString stringWithFormat:@"剩余时间: %02ld:%02ld",timeLeft/60,timeLeft%60];
+                label.font = [UIFont systemFontOfSize:12];
+                label.textColor = MYCOLOR_181_181_181;
+                CGSize size = [MYTOOL getSizeWithLabel:label];
+                label.frame = CGRectMake(WIDTH-size.width-20, 34, size.width + 5, size.height);
+                [cell addSubview:label];
+                //获取订单号相同的数据
+                for (NSMutableDictionary * dictionary in self.timerArray) {
+                    NSInteger orderId = [dictionary[@"orderId"] longValue];
+                    if (orderId == [orderDic[@"orderId"] longValue]) {
+                        [dictionary setValue:label forKey:@"label"];
+                        break;
+                    }
+                }
+            }
+        }
     }
     //商品分割线
     {
@@ -494,23 +532,6 @@
         }
         
     }
-    /*
-     orderPrice		订单金额	double
-     expressPrice		快递金额	double
-     totalPrice		订单总金额	double
-     discountPrice		优惠金额	数字
-     quantity		商品数量	数字
-     createDate		创建时间	日期
-     payStatus		是否需要支付	boolean
-     timeLeft		时间剩余多少	数字
-     goodsList	goodsId	商品id	数字
-     goodsName	商品名称	字符串
-     image	商品图片	字符串
-     price	商品价格	double
-     marketPrice	市场价格	double
-     productName	产品名称	字符串
-     quantity	产品数量	数字
-     */
     
     return cell;
 }
@@ -534,16 +555,6 @@
 }
 //联系客服事件
 -(void)contactCustomerServiceCallback:(UIButton *)btn{
-//    NSLog(@"联系客服-orderId:%ld",btn.tag);
-//    NSString * interface = @"/shop/order/getOrderAsk.intf";
-//    NSDictionary * sendDic = @{
-//                               @"memberId":MEMBERID,
-//                               @"orderId":[NSString stringWithFormat:@"%ld",btn.tag]
-//                               };
-//    [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
-//    }];
-//    return;
     ContactCustomerVC * contactVC = [ContactCustomerVC new];
     contactVC.title = @"在线客服";
     contactVC.orderId = btn.tag;
@@ -604,6 +615,7 @@
 #pragma mark - 重写返回按钮事件
 //返回上一个页面
 -(void)popUpViewController{
+    [timer invalidate];
     [self.navigationController popViewControllerAnimated:YES];
 }
 //获取订单数据
@@ -616,14 +628,65 @@
                                };
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
         NSArray * orderArray = back_dic[@"orderList"];
-//        NSLog(@"订单个数:%@",orderArray[0]);
+//        NSLog(@"订单列表:%@",orderArray);
         self.orderArray = orderArray;
-//        for (NSDictionary * dic in orderArray) {
-//            NSObject * obj = dic[@"createDate"];
-//            NSLog(@"obj:%@",obj);
-//        }
+        self.timerArray = [NSMutableArray new];
+        for (NSDictionary * orderDic in orderArray) {
+            int payStatus = [orderDic[@"payStatus"] intValue];
+            if (payStatus) {
+                continue;
+            }
+            //订单id
+            NSObject * orderId = orderDic[@"orderId"];
+            //剩余时间
+            NSInteger timeLeft = [orderDic[@"timeLeft"] longValue];
+            if (timeLeft <= 0) {
+//                NSLog(@"订单号:%@ - 需要取消",orderId);
+                //取消订单--不可能取到负的时间
+                
+            }else{
+                NSMutableDictionary * dict = [NSMutableDictionary new];
+                [dict setValue:orderId forKey:@"orderId"];
+                [dict setValue:@(timeLeft) forKey:@"timeLeft"];
+                [self.timerArray addObject:dict];
+            }
+        }
+        [timer invalidate];
+        timer = nil;
+        timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(refreshTimeLeft) userInfo:nil repeats:true];
+        
         [self.tableView reloadData];
     }];
+}
+//定时器刷新剩余时间
+-(void)refreshTimeLeft{
+    NSLog(@"123");
+    bool flag = false;
+    for (NSMutableDictionary * dic in self.timerArray) {
+        //订单号
+        NSInteger orderId = [dic[@"orderId"] longValue];
+        //剩余时间
+        int timeLeft = [dic[@"timeLeft"] intValue];
+        timeLeft -- ;
+        if (timeLeft == 0) {
+            UIView * view = [UIView new];
+            view.tag = orderId;
+            [self cancelOrderCallback:(UIButton *)view];
+            continue;
+        }
+        [dic setValue:@(timeLeft) forKey:@"timeLeft"];
+        //显示时间文本
+        UILabel * label = dic[@"label"];
+        if (label) {
+            label.text = [NSString stringWithFormat:@"剩余时间: %2d:%02d",timeLeft/60,timeLeft%60];
+        }
+        if (timeLeft > 0) {
+            flag = true;
+        }
+    }
+    if (!flag) {
+        [timer invalidate];
+    }
 }
 #pragma mark - tabbar显示与隐藏
 //此view出现时隐藏tabBar

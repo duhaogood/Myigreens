@@ -12,4 +12,5 @@
 
 @property(nonatomic,strong)NSDictionary * orderDictionary;//订单详情信息
 @property(nonatomic,assign)id delegate;
+@property(nonatomic,assign)int timeLeft;//剩余时间
 @end

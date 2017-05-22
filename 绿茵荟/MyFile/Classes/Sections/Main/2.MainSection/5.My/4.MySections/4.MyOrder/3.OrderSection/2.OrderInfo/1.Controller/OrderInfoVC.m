@@ -14,12 +14,14 @@
 @interface OrderInfoVC ()<UIScrollViewDelegate>
 @property(nonatomic,strong)SelectPayTypeVC * selectPayVC;
 @property(nonatomic,strong)UIScrollView * scrollView;//总背景
+@property(nonatomic,strong)UILabel * timeLabel;//剩余时间
 
 @end
 
 @implementation OrderInfoVC
 {
     bool isUpdateOrder;//已经刷新订单
+    NSTimer * timer;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -28,6 +30,7 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
     //加载主界面
     [self loadMainView];
+    NSLog(@"订单详情-时间剩余:%d",self.timeLeft);
 }
 //加载主界面
 -(void)loadMainView{
@@ -45,19 +48,50 @@
     float top_all = 0;
     //顶部提示框
     {
-        //背景view
-        UIView * view = [UIView new];
-        float view_height = [MYTOOL getHeightWithIphone_six:33];
-        top_all += view_height + 10;
-        {
-            view.frame = CGRectMake(0, 0, WIDTH, view_height);
-            view.backgroundColor = [UIColor whiteColor];
-            [self.scrollView addSubview:view];
+        if (self.timeLeft > 0) {
+            //背景view
+            float left = 0;
+            UIView * view = [UIView new];
+            float view_height = [MYTOOL getHeightWithIphone_six:33];
+            top_all += view_height + 10;
+            {
+                view.frame = CGRectMake(0, 0, WIDTH, view_height);
+                view.backgroundColor = [UIColor whiteColor];
+                [self.scrollView addSubview:view];
+            }
+            //图标
+            {
+                UIImageView * icon = [UIImageView new];
+                icon.image = [UIImage imageNamed:@"icon_clock"];
+                icon.frame = CGRectMake(14, view_height/2-7, 14, 14);
+                [view addSubview:icon];
+            }
+            //时间
+            {
+                UILabel * label = [UILabel new];
+                self.timeLabel = label;
+                label.text = [NSString stringWithFormat:@"%d:%02d",self.timeLeft/60,self.timeLeft%60];
+                label.textColor = [MYTOOL RGBWithRed:229 green:64 blue:73 alpha:1];
+                [view addSubview:label];
+                label.font = [UIFont systemFontOfSize:14];
+                CGSize size = [MYTOOL getSizeWithLabel:label];
+                label.frame = CGRectMake(35, view_height/2-size.height/2, size.width + 14, size.height);
+                left = 35 + label.frame.size.width + 20;
+            }
+            //开启定时器
+            timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(timerWork) userInfo:nil repeats:true];
+            //提示文字
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"订单超时将自动取消，请尽快结算";
+                label.font = [UIFont systemFontOfSize:12];
+                label.textColor = [MYTOOL RGBWithRed:92 green:92 blue:92 alpha:1];
+                CGSize size = [MYTOOL getSizeWithLabel:label];
+                label.frame = CGRectMake(left, view_height/2-size.height/2, size.width, size.height);
+                [view addSubview:label];
+            }
         }
-        //提示文字
-        {
-            
-        }
+        
     }
     //接收地址
     {
@@ -669,6 +703,17 @@
     }
     self.scrollView.contentSize = CGSizeMake(0, top_all);
 }
+//定时器
+-(void)timerWork{
+    NSLog(@"订单详情定时器");
+    self.timeLeft --;
+    if (self.timeLeft <= 0) {
+        [self popUpViewController];
+        NSLog(@"订单需要取消");
+    }else{
+        self.timeLabel.text =[NSString stringWithFormat:@"%d:%02d",self.timeLeft/60,self.timeLeft%60];
+    }
+}
 #pragma mark - 按钮事件
 //查看物流事件
 -(void)showExpressCallback:(UIButton *)btn{
@@ -769,13 +814,26 @@
 #pragma mark - 重写返回按钮事件
 //返回上一个页面
 -(void)popUpViewController{
+    
+    [timer invalidate];
+    timer = nil;
     [self.navigationController popViewControllerAnimated:YES];
+}
+#pragma mark - 支付成功
+-(void)paySuccess{
+    [self.selectPayVC removeFromSuperViewController:nil];
+    [timer invalidate];
+    timer = nil;
+    [self.navigationController popViewControllerAnimated:YES];
+    [self.delegate updateViewAllState];
 }
 #pragma mark - 界面隐藏或显示
 -(void)viewWillAppear:(BOOL)animated{
     [MYTOOL hiddenTabBar];
+    [MYCENTER_NOTIFICATION addObserver:self selector:@selector(paySuccess) name:NOTIFICATION_PAY_SUCCESS object:nil];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [MYTOOL showTabBar];
+    [MYCENTER_NOTIFICATION removeObserver:self name:NOTIFICATION_PAY_SUCCESS object:nil];
 }
 @end

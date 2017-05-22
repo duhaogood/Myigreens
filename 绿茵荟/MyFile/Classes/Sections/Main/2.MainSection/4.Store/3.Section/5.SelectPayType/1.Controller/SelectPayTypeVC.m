@@ -165,13 +165,14 @@
             [btn setTitle:@"支付" forState:UIControlStateNormal];
             [btn setTitleColor:[MYTOOL RGBWithRed:117 green:160 blue:52 alpha:1] forState:UIControlStateNormal];
             btn.titleLabel.font = [UIFont systemFontOfSize:18];
-            [btn addTarget:self action:@selector(payCallback) forControlEvents:UIControlEventTouchUpInside];
+            [btn addTarget:self action:@selector(payCallback1) forControlEvents:UIControlEventTouchUpInside];
             [view addSubview:btn];
         }
     }
 }
 //支付按钮回调
--(void)payCallback{
+-(void)payCallback1{
+    
     if (self.zhiBtn.tag == 1) {
         [[AliPayTool new] aliPayWithGoodsDictionary:self.orderDictionary];
         
