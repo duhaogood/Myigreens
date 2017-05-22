@@ -1,0 +1,1158 @@
+//
+//  CommunityVC.m
+//  野马
+//
+//  Created by Mac on 17/3/9.
+//  Copyright © 2017年 杜浩. All rights reserved.
+//
+
+#import "CommunityVC.h"
+#import "SelectView.h"
+#import "CircleView.h"
+#import "AddSubscribeViewController.h"
+#import "TopTenViewController.h"
+#import "SubmitPostViewController.h"
+
+@interface CommunityVC ()<UITableViewDataSource,UITableViewDelegate>
+@property(nonatomic,strong)NSMutableDictionary * btn_location_dic;
+@property(nonatomic,strong)UIImageView * imgV_downOfBtn;
+@property(nonatomic,strong)NSMutableDictionary * data_select_dictionary;//显示数据
+@property(nonatomic,strong)UIView * view_downOfImageView_circleView;
+@property(nonatomic,strong)UIView * navigation_titleView;//navigationbar中间view
+@property(nonatomic,strong)NSMutableArray * data_array;//显示的数组
+@property(nonatomic,strong)UITableView * tableView;
+@property(nonatomic,strong)UITextField * assist_tf;//辅助文本框，不显示
+@end
+
+@implementation CommunityVC
+{
+    UIButton * current_btn;//目前显示的按钮
+    UIView * current_view;//目前显示的view
+    NSDictionary * circle_image_title_dictionary;//文字对应UIImageView及图标名字
+    NSString * current_title_circle_img_title;//圈子中目前标题 0 - 6
+    UIView * down_img_circle_view;//圈子中下册视图
+    NSArray * circle_imgTitle_array;//圈子下图标标题
+    int pageNo;//数据分页数
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.assist_tf = [UITextField new];
+    self.assist_tf.frame = CGRectMake(0, -1000, 10, 10);
+    [self.view addSubview:self.assist_tf];
+    self.view.backgroundColor = [UIColor whiteColor];
+    //加载主页面
+    [self loadMainView];
+    //加载默认数据
+    pageNo = 1;
+    
+    SelectView * select_view = [[SelectView alloc]initWithFrame:CGRectMake(0, 0, WIDTH, HEIGHT-64) andDataDictionary:nil andDelegate:self];
+    //[self.view addSubview:select_view];
+    [self.view insertSubview:select_view atIndex:0];
+    current_view = select_view;
+    select_view.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self headerRefresh];
+        // 结束刷新
+        [select_view.mj_header endRefreshing];
+    }];
+    
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    select_view.mj_header.automaticallyChangeAlpha = YES;
+    
+    // 上拉刷新
+    select_view.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [self footerRefresh];
+        [select_view.mj_footer endRefreshing];
+    }];
+    self.tableView = select_view;
+    [self loadDefaultData];
+}
+//加载主页面
+-(void)loadMainView{
+    //发帖按钮
+    UIButton * submitPostBtn = [UIButton new];
+    [submitPostBtn setImage:[UIImage imageNamed:@"btn_write"] forState:UIControlStateNormal];
+    submitPostBtn.frame = CGRectMake(WIDTH-80, HEIGHT-49-150, 60, 60);
+    [self.view insertSubview:submitPostBtn atIndex:9999];
+    [submitPostBtn addTarget:self action:@selector(submitPostBtnBack) forControlEvents:UIControlEventTouchUpInside];
+    //中间view
+    
+    UIView * center_view = [UIView new];
+    self.navigation_titleView = center_view;
+    center_view.frame = CGRectMake(WIDTH/4, 0, WIDTH/2, 44);
+    //    center_view.backgroundColor = [UIColor greenColor];
+    [self.navigationController.navigationBar addSubview:center_view];
+    self.btn_location_dic = [NSMutableDictionary new];
+    //3个按钮  ,44 ,高度30,宽度50
+    //精选
+    UIButton * select_btn = [UIButton new];
+    select_btn.frame = CGRectMake(center_view.frame.size.width/6-25, 6, 50, 30);
+    [select_btn setTitle:@"精选" forState:UIControlStateNormal];
+    [center_view addSubview:select_btn];
+    current_btn = select_btn;
+    [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",select_btn.frame.size.width/2-18+center_view.frame.size.width/6-25] forKey:@"精选"];
+    [select_btn addTarget:self action:@selector(submitCenterBtn:) forControlEvents:UIControlEventTouchUpInside];
+    //按钮下方白条
+    UIImageView * whiteImgV = [UIImageView new];
+    whiteImgV.frame = CGRectMake(select_btn.frame.size.width/2-18+center_view.frame.size.width/6-25, 41, 36, 3);
+    whiteImgV.image = [UIImage imageNamed:@"banner_dot_nor"];
+    [center_view addSubview:whiteImgV];
+    self.imgV_downOfBtn = whiteImgV;
+    //圈子
+    UIButton * circle_btn = [UIButton new];
+    circle_btn.frame = CGRectMake(center_view.frame.size.width/2-25, 6, 50, 30);
+    [circle_btn setTitle:@"圈子" forState:UIControlStateNormal];
+    [center_view addSubview:circle_btn];
+    [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",center_view.frame.size.width/2-18] forKey:@"圈子"];
+    [circle_btn addTarget:self action:@selector(submitCenterBtn:) forControlEvents:UIControlEventTouchUpInside];
+    //订阅
+    UIButton * subscribe_btn = [UIButton new];
+    subscribe_btn.frame = CGRectMake(center_view.frame.size.width/6*5-25, 6, 50, 30);
+    [subscribe_btn setTitle:@"订阅" forState:UIControlStateNormal];
+    [center_view addSubview:subscribe_btn];
+    [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",subscribe_btn.frame.origin.x+subscribe_btn.frame.size.width/2-18] forKey:@"订阅"];
+    [subscribe_btn addTarget:self action:@selector(submitCenterBtn:) forControlEvents:UIControlEventTouchUpInside];
+    
+}
+//加载圈子下选择view
+-(void)loadViewOfCircle:(UIView *)mainView{
+    //上部按钮及文字
+    {
+        UIScrollView * view = [UIScrollView new];
+        view.frame = CGRectMake(0, 0, WIDTH, 70);
+        [mainView addSubview:view];
+        view.contentSize =  CGSizeMake(WIDTH*7/5.7, 0);
+        for (int i = 0; i < 7; i ++) {
+            UIView * v = [UIView new];
+            v.frame = CGRectMake(i*view.contentSize.width/7, 10, view.contentSize.width/7-5, view.frame.size.height-20);
+            v.backgroundColor = [UIColor greenColor];
+            // [view addSubview:v];
+        }
+        //图片及文字数据
+        NSArray * title_array = @[@"最新",@"花艺",@"植物",@"家居",@"杂物",@"情感",@"婚嫁"];
+        circle_imgTitle_array = title_array;
+        NSArray * image_name_array = @[@"menu_icon_brush",@"menu_icon_cut",@"menu_icon_Flowers",@"menu_icon_door",@"menu_icon_box",@"menu_icon_tv",@"menu_icon_wine"];
+        circle_image_title_dictionary = [NSMutableDictionary new];
+        float width_image = 30;//图片高度及宽度
+        float width_label = 50;//label宽度
+        float height_label = 20;//label高度
+        float space = (view.contentSize.width - 40 -30)/6;
+        for (int i = 0; i < 7; i ++) {
+            //图片
+            UIImageView * imgV = [UIImageView new];
+            imgV.frame = CGRectMake(20+i*space, 4, width_image, width_image);
+            imgV.image = [UIImage imageNamed:image_name_array[i]];
+            [view addSubview:imgV];
+            //绑定监听
+            [imgV setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(submitCircleImageView:)];
+            tapGesture.numberOfTapsRequired=1;
+            [imgV addGestureRecognizer:tapGesture];
+            
+            //文字
+            UILabel * label = [UILabel new];
+            label.text = title_array[i];
+            label.frame = CGRectMake(20+i*space, 40, width_label, height_label);
+            [view addSubview:label];
+            NSDictionary * dic = @{
+                                   @"imgV":imgV,
+                                   @"icon":image_name_array[i]
+                                   };
+            [circle_image_title_dictionary setValue:dic forKey:label.text];
+        }
+        // 83 131 40
+        UIView * down_view = [UIView new];
+        down_view.backgroundColor = [DHTOOL RGBWithRed:83 green:131 blue:40 alpha:1];
+        down_view.frame = CGRectMake(10, 65, 60, 4);
+        [view addSubview:down_view];
+        self.view_downOfImageView_circleView = down_view;
+        current_title_circle_img_title = @"最新";
+    }
+    //中间分割线
+    UIView * space_view_mid = [UIView new];
+    space_view_mid.backgroundColor = [DHTOOL RGBWithRed:227 green:227 blue:227 alpha:1];
+    space_view_mid.frame = CGRectMake(0, 70, WIDTH, 5);
+    [mainView addSubview:space_view_mid];
+    
+    //加载下部视图
+    [self loadCircleViewWithCurrent_title_circle_img:current_title_circle_img_title  withDirection:2];
+    
+}
+//根据current_title_circle_img 加载下部视图 1右   0左 2下
+-(void)loadCircleViewWithCurrent_title_circle_img:(NSString *)current_title_circle_img  withDirection:(int)direction{
+    [down_img_circle_view removeFromSuperview];
+    UITableView * down_view = [UITableView new];
+    down_view.dataSource = self;
+    down_view.delegate = self;
+    down_view.rowHeight = HEIGHT/2.5;
+    down_img_circle_view = down_view;
+    down_view.frame = CGRectMake(direction ? -WIDTH : WIDTH, 74, WIDTH, HEIGHT - 70-64-49-10);
+    [current_view addSubview:down_view];
+    down_view.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self headerRefresh];
+        // 结束刷新
+        [down_view.mj_header endRefreshing];
+    }];
+    
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    down_view.mj_header.automaticallyChangeAlpha = YES;
+    
+    // 上拉刷新
+    down_view.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [self footerRefresh];
+        [down_view.mj_footer endRefreshing];
+    }];
+    self.tableView = down_view;
+    //加载数据
+    [self loadDefaultData];
+    
+    if (direction == 2) {
+        down_view.frame = CGRectMake(0 , -HEIGHT, WIDTH, HEIGHT - 70-64-49-10);
+    }
+    down_view.alpha = 0;
+    [UIView animateWithDuration:0.3 animations:^{
+        down_view.alpha = 1;
+        down_view.frame = CGRectMake(0, 74, WIDTH, HEIGHT - 70-64-49-10);
+    }];
+    
+}
+#pragma mark - 圈子图片按钮回调
+-(void)submitCircleImageView:(UITapGestureRecognizer *)tap{
+    UIImageView * imgV = (UIImageView *)tap.view;
+    if (!imgV) {
+        return;
+    }
+    NSString * title = @"";
+    for (NSString * key in circle_image_title_dictionary.allKeys) {
+        UIImageView * iv = circle_image_title_dictionary[key][@"imgV"];
+        if ([iv isEqual:imgV]) {
+            title = key;
+            break;
+        }
+    }
+    if ([current_title_circle_img_title isEqualToString:title]) {
+        return;
+    }
+    NSInteger index1 = [circle_imgTitle_array indexOfObject:current_title_circle_img_title];
+    NSInteger index2 = [circle_imgTitle_array indexOfObject:title];
+    current_title_circle_img_title = title;
+    pageNo = 1;
+//    NSLog(@"点击了--%@,图片名字:%@",title,circle_image_title_dictionary[current_title_circle_img_title][@"icon"]);
+    float center_x = imgV.frame.origin.x + imgV.frame.size.width/2;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.view_downOfImageView_circleView.frame = CGRectMake(center_x - 30, 65, 60, 4);
+    }];
+    [self loadCircleViewWithCurrent_title_circle_img:current_title_circle_img_title withDirection:index1>index2?0:1];
+    
+}
+#pragma mark - BarButtonItem 回调
+//左按钮
+-(void)addOfNavigationBar{
+#warning 接口可能不对
+    NSString * interfaceName = @"/community/getTop10.intf";
+    [SVProgressHUD showWithStatus:@"获取订阅" maskType:SVProgressHUDMaskTypeClear];
+    NSMutableDictionary * send_dic = [NSMutableDictionary new];
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    if (memberId) {
+        [send_dic setValue:memberId forKey:@"memberId"];
+    }
+    [send_dic setValue:@"1" forKey:@"pageNo"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
+//        NSLog(@"back:%@",back_dic);
+        bool flag = [back_dic[@"code"] boolValue];
+        NSArray * array = back_dic[@"memberList"];
+        if (flag) {
+            AddSubscribeViewController * addVC = [AddSubscribeViewController new];
+            addVC.title = @"添加订阅";
+            addVC.member_array = [NSMutableArray new];
+            [addVC.member_array addObjectsFromArray:array];
+            [self.navigationController pushViewController:addVC animated:true];
+        }else{
+            [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
+        }
+    }];
+    
+}
+//右按钮
+-(void)topOfNavigationBar{
+    NSString * interfaceName = @"/community/getTop10.intf";
+    [SVProgressHUD showWithStatus:@"获取top10…" maskType:SVProgressHUDMaskTypeClear];
+    NSMutableDictionary * send_dic = [NSMutableDictionary new];
+   
+    [send_dic setValue:@"1" forKey:@"pageNo"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
+//        NSLog(@"back:%@",back_dic);
+        bool flag = [back_dic[@"code"] boolValue];
+        NSArray * array = back_dic[@"memberList"];
+        if (flag) {
+            [SVProgressHUD dismiss];
+            TopTenViewController * topVC = [TopTenViewController new];
+            topVC.title = @"Top10";
+            topVC.top_10_array = array;
+            [self.navigationController pushViewController:topVC animated:true];
+        }else{
+            [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
+        }
+    }];
+    /*
+     7.10本周TOP10和订阅推荐用户
+     Ø接口地址：/community/getTop10.intf
+     Ø接口描述：获取top10和订阅推荐用户
+     37.38.38.1Ø输入参数：
+     参数名称	参数含义	参数类型	是否必录
+     pageNo	页数	数字	是
+     content	搜索内容	字符串	否
+     */
+    
+}
+#pragma mark - 中间3个按钮回调 精选、圈子、订阅
+-(void)submitCenterBtn:(UIButton *)btn{
+    if ([btn isEqual:current_btn]) {
+        return;
+    }
+    pageNo = 1;
+    current_btn = btn;
+    //按钮标签文字
+    NSString * title = btn.currentTitle;
+    float left = [self.btn_location_dic[title] floatValue];
+    //跳转动画
+    [UIView animateWithDuration:0.3 animations:^{
+        self.imgV_downOfBtn.frame = CGRectMake(left, 41, 36, 3);
+    }];
+    [current_view removeFromSuperview];
+    if ([title isEqualToString:@"精选"]) {
+        SelectView * select_view = [[SelectView alloc]initWithFrame:CGRectMake(0, 10, WIDTH, HEIGHT-64-49-10) andDataDictionary:nil andDelegate:self];
+        //[self.view addSubview:select_view];
+        [self.view insertSubview:select_view atIndex:0];
+        current_view = select_view;
+        select_view.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [self headerRefresh];
+            // 结束刷新
+            [select_view.mj_header endRefreshing];
+        }];
+        
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        select_view.mj_header.automaticallyChangeAlpha = YES;
+        
+        // 上拉刷新
+        select_view.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [self footerRefresh];
+            [select_view.mj_footer endRefreshing];
+        }];
+        self.tableView = select_view;
+        [self loadDefaultData];
+    }else if ([title isEqualToString:@"圈子"]) {
+        UIView * circle_view = [UIView new];
+        circle_view.frame = self.view.bounds;
+        //[self.view addSubview:circle_view];
+        [self.view insertSubview:circle_view atIndex:0];
+        current_view = circle_view;
+        
+        
+        [self loadViewOfCircle:circle_view];
+        
+        
+    }else{//订阅
+        UITableView * tableView = [UITableView new];
+        tableView.frame = CGRectMake(0, 10-HEIGHT, WIDTH, HEIGHT - 74 - 49);
+        [UIView animateWithDuration:0.3 animations:^{
+            tableView.frame = CGRectMake(0, 10, WIDTH, HEIGHT - 74 - 49);
+        }];
+        tableView.dataSource = self;
+        tableView.delegate = self;
+        current_view = tableView;
+        [self.view insertSubview:tableView atIndex:0];
+        tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [self headerRefresh];
+            // 结束刷新
+            [tableView.mj_header endRefreshing];
+        }];
+        
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        tableView.mj_header.automaticallyChangeAlpha = YES;
+        
+        // 上拉刷新
+        tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [self footerRefresh];
+            [tableView.mj_footer endRefreshing];
+        }];
+        self.tableView = tableView;
+        [self loadDefaultData];
+    }
+    
+    
+}
+#pragma mark - 上拉、下拉刷新
+-(void)headerRefresh{
+    pageNo = 1;
+    [self loadDefaultData];
+}
+-(void)footerRefresh{
+    pageNo ++;
+    [self loadDefaultData];
+}
+#pragma mark - UITableViewDataSource,UITableViewDelegate
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:true];
+    NSDictionary * post_dic = self.data_array[indexPath.row];
+    //NSLog(@"%@",post_dic);
+    //获取帖子信息
+    /*参数
+     memberId	会员id
+     postId	帖子id
+     */
+    NSMutableDictionary * send_dic = [NSMutableDictionary new];
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    if (memberId) {
+        [send_dic setValue:memberId forKey:@"memberId"];
+    }
+    [send_dic setValue:post_dic[@"postId"] forKey:@"postId"];
+    
+    
+    //开始请求
+    [SVProgressHUD showWithStatus:@"获取帖子" maskType:SVProgressHUDMaskTypeClear];
+    [MYNETWORKING getWithInterfaceName:@"/community/getPostInfo.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+        bool flag = [back_dic[@"code"] boolValue];
+        if (flag) {
+            [SVProgressHUD dismiss];
+            PostInfoViewController * postVC = [PostInfoViewController new];
+            postVC.title = @"帖子详情";
+            NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:back_dic[@"post"]];
+            [dict setValue:post_dic[@"postId"] forKey:@"postId"];
+            postVC.post_dic = dict;
+            [self.navigationController pushViewController:postVC animated:true];
+        }else{
+            [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
+        }
+    }];
+    
+    
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return self.data_array.count;
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSDictionary * data_dic = self.data_array[indexPath.row];
+//    NSLog(@"%ld-----%@",indexPath.row,data_dic);
+
+    NSString * releaseTime = data_dic[@"releaseTime"];//距离当前的发布时间
+    NSString * content = data_dic[@"content"];//内容
+    if (content == nil || content.length == 0) {
+        content = @"这家伙什么也没留下…";
+    }
+    NSString * commentCount = [NSString stringWithFormat:@"%ld",[data_dic[@"commentCount"] longValue]];//评论数量
+    NSString * praiseCount = [NSString stringWithFormat:@"%ld",[data_dic[@"praiseCount"] longValue]];//赞的数量
+    NSString * headUrl = data_dic[@"member"][@"headUrl"];//用户头像连接
+    NSString * post_memberId = [NSString stringWithFormat:@"%ld",[data_dic[@"member"][@"memberId"]longValue]];//用户id
+    NSString * nickName = data_dic[@"member"][@"nickName"];//用户昵称
+    NSString * signature = data_dic[@"member"][@"signature"];//个性签名
+    
+    if (signature == nil || signature.length == 0) {
+        signature = @"这家伙什么也没留下…阿萨德";
+    }
+    NSArray * image_array = data_dic[@"url"];//帖子图片数组
+    NSInteger postId = [data_dic[@"postId"] longValue];
+//    NSString * normalUrl_1 = data_dic[@"url"][0][@"normalUrl"];//帖子图片
+    
+    
+    NSString * praiseStatus = data_dic[@"praiseStatus"];//状态
+    //圈子
+    UITableViewCell * cell = [UITableViewCell new];
+    if ([current_btn.currentTitle isEqualToString:@"精选"]) {
+        //头像
+        {
+            float user_width = 40/414.0*WIDTH;
+            UIImageView * userImgView = [UIImageView new];
+            userImgView.frame = CGRectMake(10, tableView.rowHeight * 0.05, user_width, user_width);
+            //        userImgView.backgroundColor = [UIColor greenColor];
+            [cell addSubview:userImgView];
+            userImgView.layer.masksToBounds = true;
+            userImgView.layer.cornerRadius = user_width/2;
+            
+            [userImgView sd_setImageWithURL:[NSURL URLWithString:@"http://b.hiphotos.baidu.com/zhidao/wh%3D450%2C600/sign=f0c5c08030d3d539c16807c70fb7c566/8ad4b31c8701a18bbef9f231982f07082838feba.jpg"]];
+            [userImgView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
+            tapGesture2.numberOfTapsRequired=1;
+//            [userImgView addGestureRecognizer:tapGesture2];
+        }
+        //名字
+        {
+            UILabel * label = [UILabel new];
+            label.text = nickName;
+            label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
+            label.frame = CGRectMake(65, tableView.rowHeight * 0.05+10, WIDTH/2, 20);
+            [cell addSubview:label];
+        }
+        //简介
+        {
+            UITextView * tv = [UITextView new];
+            tv.text = content;
+            tv.userInteractionEnabled = NO;
+            tv.font = [UIFont systemFontOfSize:16];
+            tv.textColor = [MYTOOL RGBWithRed:79 green:79 blue:79 alpha:1];
+            tv.frame = CGRectMake(65, tableView.rowHeight * 0.05+40, WIDTH -65-10, 80);
+            [cell addSubview:tv];
+        }
+        //图片
+        {
+            if (image_array.count == 1) {
+                UIImageView * iv1 = [UIImageView new];
+                iv1.frame = CGRectMake(65,tableView.rowHeight * 0.05+130 , (WIDTH - 65 - 30)/2,
+                                       tableView.rowHeight - tableView.rowHeight * 0.05-130-
+                                       tableView.rowHeight * 0.1-20);
+                iv1.layer.masksToBounds = true;
+                iv1.layer.cornerRadius = 10;
+                [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
+                [cell addSubview:iv1];
+                [iv1 setUserInteractionEnabled:YES];
+                UITapGestureRecognizer * tapGesture4 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
+                tapGesture4.numberOfTapsRequired=1;
+//                [iv1 addGestureRecognizer:tapGesture4];
+            }else{
+                UIImageView * iv1 = [UIImageView new];
+                iv1.frame = CGRectMake(65,tableView.rowHeight * 0.05+130 , (WIDTH - 65 - 30)/2,
+                                       tableView.rowHeight - tableView.rowHeight * 0.05-130-
+                                       tableView.rowHeight * 0.1-20);
+                iv1.layer.masksToBounds = true;
+                iv1.layer.cornerRadius = 10;
+                [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
+                [cell addSubview:iv1];
+                [iv1 setUserInteractionEnabled:YES];
+                UITapGestureRecognizer * tapGesture4 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
+                tapGesture4.numberOfTapsRequired=1;
+//                [iv1 addGestureRecognizer:tapGesture4];
+                
+                UIImageView * iv2 = [UIImageView new];
+                iv2.frame = CGRectMake(65 + iv1.frame.size.width+10,tableView.rowHeight * 0.05+130 , (WIDTH - 65 - 30)/2,
+                                       tableView.rowHeight - tableView.rowHeight * 0.05-130-
+                                       tableView.rowHeight * 0.1-20);
+                iv2.layer.masksToBounds = true;
+                iv2.layer.cornerRadius = 10;
+                [iv2 sd_setImageWithURL:[NSURL URLWithString:image_array[1][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"Icon60"]];
+                [cell addSubview:iv2];
+                [iv2 setUserInteractionEnabled:YES];
+                UITapGestureRecognizer * tapGesture3 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
+                tapGesture3.numberOfTapsRequired=1;
+//                [iv2 addGestureRecognizer:tapGesture3];
+            }
+            
+        }
+        
+        //下边小图标及数字
+        {
+            float top = tableView.rowHeight * 0.9;
+            
+            //下边小图标  icon_praise
+            UIImageView * icon1 = [UIImageView new];
+            icon1.image = [UIImage imageNamed:@"icon_praise"];
+            icon1.frame = CGRectMake(WIDTH/2-30, top, 30, 30);
+            [cell addSubview:icon1];
+            //绑定监听
+            [icon1 setUserInteractionEnabled:YES];
+            icon1.tag = postId * 10 +1;
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+            tapGesture.numberOfTapsRequired=1;
+            [icon1 addGestureRecognizer:tapGesture];
+            
+            //数字
+            UILabel * num_label1 = [UILabel new];
+            num_label1.text = praiseCount;
+            num_label1.frame = CGRectMake(WIDTH/2, top+5, WIDTH/6, 20);
+            num_label1.font = [UIFont systemFontOfSize:12];
+            [cell addSubview:num_label1];
+            
+            //下边小图标  icon_message
+            UIImageView * icon2 = [UIImageView new];
+            icon2.image = [UIImage imageNamed:@"icon_message"];
+            icon2.frame = CGRectMake(WIDTH*2/3, top, 30, 30);
+            [cell addSubview:icon2];
+            //绑定监听
+            [icon2 setUserInteractionEnabled:YES];
+            icon2.tag = postId * 10 + 2;
+            UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+            tapGesture2.numberOfTapsRequired=1;
+            [icon2 addGestureRecognizer:tapGesture2];
+            
+            //数字
+            UILabel * num_label2 = [UILabel new];
+            num_label2.text = commentCount;
+            num_label2.frame = CGRectMake(WIDTH*2/3+25, top+5, WIDTH/6-20, 20);
+            num_label2.font = [UIFont systemFontOfSize:12];
+            [cell addSubview:num_label2];
+            
+            //下边小图标  icon_message
+            UIImageView * icon3 = [UIImageView new];
+            icon3.image = [UIImage imageNamed:@"icon_share"];
+            icon3.frame = CGRectMake(WIDTH*5/6, top, 30, 30);
+            [cell addSubview:icon3];
+            //绑定监听
+            [icon3 setUserInteractionEnabled:YES];
+            icon3.tag = postId * 10 + 3;
+            UITapGestureRecognizer * tapGesture3 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+            tapGesture3.numberOfTapsRequired=1;
+            [icon3 addGestureRecognizer:tapGesture3];
+            
+            //数字
+            UILabel * num_label3 = [UILabel new];
+            num_label3.text = @"分享";
+            num_label3.frame = CGRectMake(WIDTH*5/6+25, top+5, 40, 20);
+            num_label3.font = [UIFont systemFontOfSize:12];
+            [cell addSubview:num_label3];
+        }
+        
+    }else if ([current_btn.currentTitle isEqualToString:@"圈子"]) {
+        tableView.rowHeight = 225;
+        //图片
+        {
+            UIImageView * iv1 = [UIImageView new];
+            iv1.frame = CGRectMake(10,10 , WIDTH - 20, 169);
+            iv1.layer.masksToBounds = true;
+            iv1.layer.cornerRadius = 10;
+            [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
+            [cell addSubview:iv1];
+//            [iv1 setUserInteractionEnabled:YES];
+//            UITapGestureRecognizer * tapGesture4 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
+//            tapGesture4.numberOfTapsRequired=1;
+//            [iv1 addGestureRecognizer:tapGesture4];
+            
+        }
+
+        //头像
+        {
+            float user_width = 40;
+            UIImageView * userImgView = [UIImageView new];
+            userImgView.frame = CGRectMake(WIDTH/2-20, 35, user_width, user_width);
+            [cell addSubview:userImgView];
+            userImgView.layer.masksToBounds = true;
+            userImgView.layer.cornerRadius = user_width/2;
+            
+            [userImgView sd_setImageWithURL:[NSURL URLWithString:@"http://b.hiphotos.baidu.com/zhidao/wh%3D450%2C600/sign=f0c5c08030d3d539c16807c70fb7c566/8ad4b31c8701a18bbef9f231982f07082838feba.jpg"]];
+            [userImgView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
+            tapGesture2.numberOfTapsRequired=1;
+            [userImgView addGestureRecognizer:tapGesture2];
+        }
+        //名字
+        {
+            UILabel * label = [UILabel new];
+            label.text = nickName;
+            label.font = [UIFont systemFontOfSize:24];
+            label.textColor = [UIColor whiteColor];
+            label.frame = CGRectMake(WIDTH/4, 79, WIDTH/2, 24);
+            label.textAlignment = NSTextAlignmentCenter;
+            label.textColor = [UIColor whiteColor];
+            [cell addSubview:label];
+        }
+        //简介
+        {
+            UITextView * tv = [UITextView new];
+            tv.text = content;
+            tv.userInteractionEnabled = NO;
+            tv.font = [UIFont systemFontOfSize:15];
+            tv.textColor = [UIColor whiteColor];
+            tv.frame = CGRectMake(10, 106, WIDTH - 20, 40);
+            [cell addSubview:tv];
+            tv.backgroundColor = [UIColor clearColor];
+            tv.textAlignment = NSTextAlignmentCenter;
+        }
+        //时间
+        {
+            UILabel * label = [UILabel new];
+            label.text = releaseTime;
+            label.textColor = [UIColor whiteColor];
+            label.frame = CGRectMake(WIDTH/4, 150, WIDTH/2, 20);
+            label.textAlignment = NSTextAlignmentCenter;
+            label.font = [UIFont systemFontOfSize:12];
+            [cell addSubview:label];
+        }
+        //下边小图标及数字
+        {
+            float top = 194-7;
+            //两条分割线
+            {
+                UIView * space_view_1 = [UIView new];
+                space_view_1.frame = CGRectMake(10+(WIDTH-20)/3, 198, 1, 10);
+                space_view_1.backgroundColor = [MYTOOL RGBWithRed:112 green:112 blue:112 alpha:1];
+                [cell addSubview:space_view_1];
+                UIView * space_view_2 = [UIView new];
+                space_view_2.frame = CGRectMake(10+(WIDTH-20)/3*2, 198, 1, 10);
+                space_view_2.backgroundColor = [MYTOOL RGBWithRed:112 green:112 blue:112 alpha:1];
+                [cell addSubview:space_view_2];
+            }
+            //下边小图标  icon_praise
+            UIImageView * icon1 = [UIImageView new];
+            icon1.image = [UIImage imageNamed:@"icon_praise"];
+            icon1.frame = CGRectMake(WIDTH/6-30, top, 30, 30);
+            [cell addSubview:icon1];
+            //绑定监听
+            [icon1 setUserInteractionEnabled:YES];
+            icon1.tag = postId * 10 +1;
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+            tapGesture.numberOfTapsRequired=1;
+            [icon1 addGestureRecognizer:tapGesture];
+            
+            //数字
+            UILabel * num_label1 = [UILabel new];
+            num_label1.text = praiseCount;
+            num_label1.frame = CGRectMake(WIDTH/6, top+5, WIDTH/6, 20);
+            num_label1.font = [UIFont systemFontOfSize:12];
+            [cell addSubview:num_label1];
+//            num_label1.backgroundColor = [UIColor greenColor];
+            //下边小图标  icon_message
+            UIImageView * icon2 = [UIImageView new];
+            icon2.image = [UIImage imageNamed:@"icon_message"];
+            icon2.frame = CGRectMake(WIDTH/2-30, top, 30, 30);
+            [cell addSubview:icon2];
+            //绑定监听
+            [icon2 setUserInteractionEnabled:YES];
+            icon2.tag = postId * 10 + 2;
+            UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+            tapGesture2.numberOfTapsRequired=1;
+            [icon2 addGestureRecognizer:tapGesture2];
+            
+            //数字
+            UILabel * num_label2 = [UILabel new];
+            num_label2.text = commentCount;
+            num_label2.frame = CGRectMake(WIDTH/2, top+5, WIDTH/6, 20);
+            num_label2.font = [UIFont systemFontOfSize:12];
+            [cell addSubview:num_label2];
+//            num_label2.backgroundColor = [UIColor greenColor];
+            
+            //下边小图标  icon_message
+            UIImageView * icon3 = [UIImageView new];
+            icon3.image = [UIImage imageNamed:@"icon_share"];
+            icon3.frame = CGRectMake(WIDTH*5/6-30, top, 30, 30);
+            [cell addSubview:icon3];
+            //绑定监听
+            [icon3 setUserInteractionEnabled:YES];
+            icon3.tag = postId * 10 + 3;
+            UITapGestureRecognizer * tapGesture3 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+            tapGesture3.numberOfTapsRequired=1;
+            [icon3 addGestureRecognizer:tapGesture3];
+            
+            //数字
+            UILabel * num_label3 = [UILabel new];
+            num_label3.text = @"分享";
+            num_label3.frame = CGRectMake(WIDTH*5/6, top+5, 40, 20);
+            num_label3.font = [UIFont systemFontOfSize:12];
+            [cell addSubview:num_label3];
+        }
+        
+    }else{//订阅
+        tableView.rowHeight = 383;
+        float left = 0;
+        //用户头像
+        {
+            UIImageView * userImgView = [UIImageView new];
+            userImgView.frame = CGRectMake(14, 19, 41, 41);
+            userImgView.image = [UIImage imageNamed:@"test_user"];
+            [cell addSubview:userImgView];
+            userImgView.layer.masksToBounds = true;
+            userImgView.layer.cornerRadius = 20;
+        }
+        //用户名字
+        {
+            UILabel * label = [UILabel new];
+            label.text = nickName;
+            label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
+            label.font = [UIFont systemFontOfSize:18];
+            CGSize size = [MYTOOL getSizeWithString:label.text andFont:label.font];
+            label.frame = CGRectMake(61, 21, size.width, 18);
+            [cell addSubview:label];
+            left = 61+size.width+10;
+        }
+        //时间
+        {
+            UILabel * label = [UILabel new];
+            label.text = releaseTime;
+            label.font = [UIFont systemFontOfSize:12];
+            CGSize size = [MYTOOL getSizeWithString:label.text andFont:label.font];
+            label.frame = CGRectMake(left, 25, size.width, 12);
+            label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
+            [cell addSubview:label];
+        }
+        //右侧图标-icon_reportReporticon_report
+        {
+            UIImageView * right_icon = [UIImageView new];
+            right_icon.frame = CGRectMake(WIDTH-38, 12, 33, 33);
+            right_icon.image = [UIImage imageNamed:@"icon_reportReporticon_report"];
+            [cell addSubview:right_icon];
+        }
+        //个性签名
+        float top = 0;
+        {
+            UILabel * label = [UILabel new];
+            label.text = signature;
+            label.font = [UIFont systemFontOfSize:12];
+            label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
+            CGSize size = [MYTOOL getSizeWithString:signature andFont:label.font];
+            int c = size.width/(WIDTH-71) < 1 ? 1 : (size.width/(WIDTH-71) == 1 ? 1 : (int)size.width/(WIDTH-71) + 1);
+            if (c > 1) {
+                label.numberOfLines = 0;
+            }
+            label.frame = CGRectMake(61, 45, WIDTH-71, size.height*c);
+            [cell addSubview:label];
+            top = 45 + size.height*c + 10;
+        }
+        //内容
+        {
+            UILabel * label = [UILabel new];
+            label.text = content;
+            label.font = [UIFont systemFontOfSize:16];
+            label.textColor = [MYTOOL RGBWithRed:79 green:79 blue:79 alpha:1];
+            CGSize size = [MYTOOL getSizeWithString:content andFont:label.font];
+            float width = WIDTH-71;
+            int c = size.width/width < 1 ? 1 : (size.width/width == 1 ? 1 : (int)size.width/width + 1);
+            if (c > 1) {
+                label.numberOfLines = 0;
+            }
+            label.frame = CGRectMake(61, top, WIDTH-71, size.height*c);
+            [cell addSubview:label];
+            top += label.frame.size.height + 10;
+        }
+        //图片
+        {
+            NSArray * url_array = data_dic[@"url"];
+            float height = tableView.rowHeight - top - 46;
+//            NSLog(@"图片数组个数:%ld",url_array.count);
+            if (url_array.count == 1) {
+                UIImageView * img = [UIImageView new];
+                img.image = [UIImage imageNamed:@"test_bg"];
+                img.frame = CGRectMake(61, top, WIDTH-61-20, height);
+                [img sd_setImageWithURL:[NSURL URLWithString:url_array[0][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"test_bg"]];
+                img.layer.masksToBounds = true;
+                img.layer.cornerRadius = 12;
+                [cell addSubview:img];
+            }else if (url_array.count >= 2) {
+                float width = (WIDTH-61-20)/2;
+                //第一张图片
+                UIImageView * img = [UIImageView new];
+                img.frame = CGRectMake(61, top, width, height);
+                [img sd_setImageWithURL:[NSURL URLWithString:url_array[0][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"test_bg"]];
+                img.layer.masksToBounds = true;
+                img.layer.cornerRadius = 12;
+                [cell addSubview:img];
+                //第二张图片
+                UIImageView * img2 = [UIImageView new];
+                img2.frame = CGRectMake(61+width+5, top, width, height);
+                [img2 sd_setImageWithURL:[NSURL URLWithString:url_array[1][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"9252150_170958052001_2.jpg"]];
+                img2.layer.masksToBounds = true;
+                img2.layer.cornerRadius = 12;
+                [cell addSubview:img2];
+            }
+            top += height;
+        }
+        //下册小图标
+        {
+            float y_center = (tableView.rowHeight - top) / 2 + top;
+            //点赞
+            {
+                //下边小图标  icon_praise
+                UIImageView * icon1 = [UIImageView new];
+                icon1.image = [UIImage imageNamed:@"icon_praise"];
+                icon1.frame = CGRectMake(WIDTH/2-30, y_center-15, 30, 30);
+                [cell addSubview:icon1];
+                //绑定监听
+                [icon1 setUserInteractionEnabled:YES];
+                icon1.tag = postId * 10 +1;
+                UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+                tapGesture.numberOfTapsRequired=1;
+                [icon1 addGestureRecognizer:tapGesture];
+                
+                //数字
+                UILabel * num_label1 = [UILabel new];
+                num_label1.text = praiseCount;
+                num_label1.frame = CGRectMake(WIDTH/2, y_center-8, WIDTH/6, 16);
+                num_label1.font = [UIFont systemFontOfSize:15];
+                [cell addSubview:num_label1];
+            }
+            //消息
+            {
+                //下边小图标  icon_message
+                UIImageView * icon2 = [UIImageView new];
+                icon2.image = [UIImage imageNamed:@"icon_message"];
+                icon2.frame = CGRectMake(WIDTH*2/3, y_center-15, 30, 30);
+                [cell addSubview:icon2];
+                //绑定监听
+                [icon2 setUserInteractionEnabled:YES];
+                icon2.tag = postId * 10 + 2;
+                UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+                tapGesture2.numberOfTapsRequired=1;
+                [icon2 addGestureRecognizer:tapGesture2];
+                
+                //数字
+                UILabel * num_label2 = [UILabel new];
+                num_label2.text = commentCount;
+                num_label2.frame = CGRectMake(WIDTH*2/3+25, y_center- 8, WIDTH/6-20, 16);
+                num_label2.font = [UIFont systemFontOfSize:15];
+                [cell addSubview:num_label2];
+            }
+            //分享
+            {
+                //下边小图标  icon_message
+                UIImageView * icon3 = [UIImageView new];
+                icon3.image = [UIImage imageNamed:@"icon_share"];
+                icon3.frame = CGRectMake(WIDTH*5/6, y_center-15, 30, 30);
+                [cell addSubview:icon3];
+                //绑定监听
+                [icon3 setUserInteractionEnabled:YES];
+                icon3.tag = postId * 10 + 3;
+                UITapGestureRecognizer * tapGesture3 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+                tapGesture3.numberOfTapsRequired=1;
+                [icon3 addGestureRecognizer:tapGesture3];
+                
+                //数字
+                UILabel * num_label3 = [UILabel new];
+                num_label3.text = @"分享";
+                num_label3.frame = CGRectMake(WIDTH*5/6+25, y_center- 6, 40, 12);
+                num_label3.font = [UIFont systemFontOfSize:12];
+                [cell addSubview:num_label3];
+            }
+        }
+        
+        
+    }
+    
+    
+    
+    //分割线
+    UIView * spaceView = [UIView new];
+    spaceView.backgroundColor = [DHTOOL RGBWithRed:227 green:227 blue:227 alpha:1];
+    spaceView.frame = CGRectMake(20, tableView.rowHeight-1, WIDTH-40, 1);
+    [cell addSubview:spaceView];
+    return cell;
+}
+#pragma mark - UIScrollViewDelegate
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView{
+    [MYTOOL hideKeyboard];
+}
+#pragma mark - cell 中小图标回调 点赞、回复、分享
+-(void)callback_cellForSelectView:(UITapGestureRecognizer *)tap{
+    UIImageView * imgV = (UIImageView *)tap.view;
+    if (!imgV) {
+        return;
+    }
+    NSInteger tag = imgV.tag;
+    //帖子id
+    NSInteger postId = tag / 10;
+    if (tag % 10 == 1) {//点赞
+        [self praise_callBack:postId];
+    }else if(tag % 10 == 2) {//回复
+        [self reply_callBack:postId];
+    }else if(tag % 10 == 3) {//分享
+        //找出帖子和点击分享相同的数据
+        NSDictionary * dictionary = nil;
+        for (NSDictionary * post_dic in self.data_array) {
+            NSInteger array_postId = [post_dic[@"postId"] longValue];
+            if (array_postId == postId) {
+                dictionary = post_dic;
+                break;
+            }
+        }
+        [self share_callBack:dictionary];
+    }
+}
+#pragma mark - cell中点击时间
+//点赞事件
+-(void)praise_callBack:(NSInteger)postId{
+    if (![MYTOOL isLogin]) {
+        [SVProgressHUD showErrorWithStatus:@"你没登陆呢" duration:2];
+        return;
+    }
+    [SVProgressHUD showWithStatus:@"点赞中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+    //拼接上传参数
+    NSMutableDictionary * send_dic = [NSMutableDictionary new];
+    [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
+    [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
+    //开始上传
+    [MYNETWORKING getWithInterfaceName:@"/community/postPraise.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+        [SVProgressHUD dismiss];
+//        NSLog(@"back:%@",back_dic);
+        pageNo = 1;
+        [self loadDefaultData];
+    }];
+    
+    
+    
+    
+}
+//回复事件
+-(void)reply_callBack:(NSInteger)postId{
+    if (![MYTOOL isLogin]) {
+        [SVProgressHUD showErrorWithStatus:@"你没登陆呢" duration:2];
+        return;
+    }
+//    NSLog(@"准备回复");
+    //弹出的回复界面
+    UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"请回复" preferredStyle:(UIAlertControllerStyleAlert)];
+    
+    UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+        
+        [SVProgressHUD showWithStatus:@"回复中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+        NSString * msg = alert.textFields.firstObject.text;
+        //拼接上传参数
+        NSMutableDictionary * send_dic = [NSMutableDictionary new];
+        [send_dic setValue:msg forKey:@"comment"];
+        [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
+        [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
+        //开始上传
+        [MYNETWORKING getWithInterfaceName:@"/community/postRevert.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+            [SVProgressHUD dismiss];
+//            NSLog(@"back:%@",back_dic);
+        }];
+        
+        
+//        NSLog(@"信息:%@",msg);
+    }];
+    
+    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
+    [alert addAction:action];
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *tf){
+        tf.placeholder = @"请输入回复消息";
+    }];
+    [alert addAction:cancel];
+    [self showDetailViewController:alert sender:nil];
+    
+    
+    
+}
+//分享事件
+-(void)share_callBack:(NSDictionary *)post_dic{
+    [SVProgressHUD showErrorWithStatus:@"还没做呢" duration:1];
+//    NSLog(@"分享数据:%@",post_dic);
+}
+
+
+//缩放图片
+-(void)showZoomImageView:(UITapGestureRecognizer *)tap
+{
+    if (![(UIImageView *)tap.view image]) {
+        return;
+    }
+    
+    UIView *bgView = [[UIView alloc] init];
+    
+    bgView.frame = [UIScreen mainScreen].bounds;
+    
+    bgView.backgroundColor = [UIColor blackColor];
+    
+    [[[UIApplication sharedApplication] keyWindow] addSubview:bgView];
+    
+    UITapGestureRecognizer *tapBgView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapBgView:)];
+    
+    [bgView addGestureRecognizer:tapBgView];
+    //必不可少的一步，如果直接把点击获取的imageView拿来玩的话，返回的时候，原图片就完蛋了
+    
+    UIImageView *tempImageView = (UIImageView*)tap.view;
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:tempImageView.frame];
+    imageView.image = tempImageView.image;
+    [bgView addSubview:imageView];
+    [UIView animateWithDuration:0.5 animations:^{
+        CGRect frame = imageView.frame;
+        frame.size.width = bgView.frame.size.width;
+        frame.size.height = frame.size.width * (imageView.image.size.height / imageView.image.size.width);
+        frame.origin.x = 0;
+        frame.origin.y = (bgView.frame.size.height - frame.size.height) * 0.5;
+        imageView.frame = frame;
+    }];
+    
+}
+//再次点击取消全屏预览
+-(void)tapBgView:(UITapGestureRecognizer *)tapBgRecognizer{
+    [tapBgRecognizer.view removeFromSuperview];
+}
+#pragma mark - 发帖按钮回调
+-(void)submitPostBtnBack{
+//    NSLog(@"准备发帖");
+    SubmitPostViewController * postVC = [SubmitPostViewController new];
+    postVC.title = @"发帖";
+    [self.navigationController pushViewController:postVC animated:true];
+}
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
+    [MYTOOL hideKeyboard];
+}
+//加载默认数据
+-(void)loadDefaultData{
+    NSString * source = @"";
+    if ([current_btn.currentTitle isEqualToString:@"精选"]) {
+        source = @"choiceness";
+    }else if ([current_btn.currentTitle isEqualToString:@"圈子"]) {
+        source = @"circle";
+    }else{
+        source = @"subscribe";
+    }
+    
+    NSString * interfaceName = @"/community/getPost.intf";
+    //source：choiceness 精选 subscribe订阅 circle 圈子
+    
+    NSMutableDictionary * send_dic = [NSMutableDictionary new];
+    [send_dic setValue:source forKey:@"source"];
+    [send_dic setValue:[NSString stringWithFormat:@"%d",pageNo] forKey:@"pageNo"];
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    if (memberId) {
+        [send_dic setValue:memberId forKey:@"memberId"];
+    }
+    if ([source isEqualToString:@"circle"]) {
+        NSInteger index = [circle_imgTitle_array indexOfObject:current_title_circle_img_title];
+        [send_dic setValue:[NSString stringWithFormat:@"%ld",index] forKey:@"type"];
+    }
+//    NSLog(@"send:%@",send_dic);
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:send_dic andSuccess:^(NSDictionary * back_dic){
+//        NSLog(@"back:%@",back_dic);
+        bool flag = [back_dic[@"code"] boolValue];
+        NSString * msg = back_dic[@"msg"];
+//        NSLog(@"%d--%@",flag,msg);
+        if (!flag) {
+            pageNo --;
+            [SVProgressHUD showErrorWithStatus:msg duration:2];
+            return;
+        }
+        NSArray * arr = back_dic[@"postList"];
+        //NSLog(@"count:%ld",arr.count);
+        //成功--如果页数=1，重置数组，如果页数>1，数据加上去
+        if (pageNo > 1) {
+            
+            if (arr.count > 0) {
+                [self.data_array addObjectsFromArray:arr];
+            }else{
+                pageNo --;
+                [SVProgressHUD showErrorWithStatus:@"到底了" duration:1];
+            }
+            
+        }else{
+            self.data_array = [NSMutableArray arrayWithArray:back_dic[@"postList"]];
+        }
+        NSString * title = current_btn.currentTitle;
+        [self.tableView reloadData];
+        if ([title isEqualToString:@"精选"]) {
+            [(UITableView *)current_view reloadData];
+        }else if([title isEqualToString:@"圈子"]){
+            [(UITableView *)down_img_circle_view reloadData];
+        }else{
+            
+        }
+        
+        //NSLog(@"back:%@",back_dic);
+//        NSLog(@"msg:%@",back_dic[@"msg"]);
+    }andFailure:^(NSError *error_failure) {
+        if (pageNo == 1) {
+            [self.data_array removeAllObjects];
+            [self.tableView reloadData];
+        }else{
+            pageNo --;
+        }
+    }];
+    
+}
+-(void)viewWillAppear:(BOOL)animated{
+    //左按钮-nav_-add
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_-add"] style:UIBarButtonItemStyleDone target:self action:@selector(addOfNavigationBar)];
+    //右按钮-nav_top
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_top"] style:UIBarButtonItemStyleDone target:self action:@selector(topOfNavigationBar)];
+    [self.navigation_titleView setHidden:NO];
+    [self loadDefaultData];
+}
+-(void)viewWillDisappear:(BOOL)animated{
+    [self.navigation_titleView setHidden:true];
+    
+}
+@end

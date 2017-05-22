@@ -1,0 +1,25 @@
+//
+//  PrefixHeader_url.pch
+//  绿茵荟
+//
+//  Created by Mac on 17/3/13.
+//  Copyright © 2017年 江苏野马软件. All rights reserved.
+//
+//  所有url的宏定义
+
+#ifndef PrefixHeader_url_pch
+#define PrefixHeader_url_pch
+
+/**
+ *  服务器地址
+ */
+//#define SERVER_URL @"http://115.28.40.117:8180/api"
+//#define SERVER_URL @"http://yema.wicp.net/api"
+
+#define SERVER_URL [MYTOOL getProjectPropertyWithKey:@"server_url"]
+
+//#define SERVER_URL @"http://wangwx.wicp.net/api"
+
+
+
+#endif /* PrefixHeader_url_pch */

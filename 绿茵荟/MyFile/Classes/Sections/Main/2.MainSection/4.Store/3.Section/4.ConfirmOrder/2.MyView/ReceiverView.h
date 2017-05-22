@@ -1,0 +1,19 @@
+//
+//  ReceiverView.h
+//  绿茵荟
+//
+//  Created by Mac on 17/4/20.
+//  Copyright © 2017年 徐州野马软件. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface ReceiverView : UIView
+
+-(instancetype)initWithReceiverInfo:(NSDictionary *)info andFrame:(CGRect)frame;
+
+
+
+-(void)updateReceiverInfo:(NSDictionary *)info;
+
+@end

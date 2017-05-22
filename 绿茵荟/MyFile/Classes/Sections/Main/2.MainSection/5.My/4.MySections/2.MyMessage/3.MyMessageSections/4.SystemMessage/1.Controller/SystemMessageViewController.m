@@ -1,0 +1,152 @@
+//
+//  SystemMessageViewController.m
+//  绿茵荟
+//
+//  Created by Mac on 17/4/1.
+//  Copyright © 2017年 徐州野马软件. All rights reserved.
+//
+
+#import "SystemMessageViewController.h"
+
+@interface SystemMessageViewController ()<UITableViewDataSource,UITableViewDelegate>
+@property(nonatomic,strong)UITableView * tableView;
+@property(nonatomic,strong)NSArray * systemMessageArray;//收到的赞数组
+@end
+
+@implementation SystemMessageViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    //加载主界面
+    [self loadMainView];
+    //左侧按钮
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(back_pop)];
+}
+//加载主界面
+-(void)loadMainView{
+    self.view.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
+    UITableView * tableView = [UITableView new];
+    tableView.dataSource = self;
+    tableView.delegate = self;
+    tableView.frame = CGRectMake(0, 10, WIDTH, HEIGHT-74);
+    [self.view addSubview:tableView];
+    tableView.rowHeight = 75/667.0*HEIGHT;
+    //不显示分割线
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    self.tableView = tableView;
+    self.automaticallyAdjustsScrollViewInsets = false;
+}
+
+#pragma mark - UITableViewDataSource,UITableViewDelegate
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:true];
+    NSDictionary * commentDic = self.systemMessageArray[indexPath.row];
+    //msgXtType
+    
+    //消息是否已读
+    bool flag = [commentDic[@"readType"] boolValue];
+    if (!flag) {
+        //将未读信息设成已读
+        NSInteger flowId = [commentDic[@"flowId"] longValue];
+        NSString * interfaceName = @"/member/readMessage.intf";
+        NSDictionary * sendDic = @{
+                                   @"flowId":[NSString stringWithFormat:@"%ld",flowId]
+                                   };
+        [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+            NSLog(@"back:%@",back_dic);
+        }];
+    }
+    
+    
+}
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return self.systemMessageArray.count;
+}
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSDictionary * dict = self.systemMessageArray[indexPath.row];
+    UITableViewCell * cell = [UITableViewCell new];
+    //头像
+    {
+        UIImageView * user_icon = [UIImageView new];
+        user_icon.frame = [MYTOOL getRectWithIphone_six_X:14 andY:12 andWidth:34 andHeight:34];
+        user_icon.layer.masksToBounds = true;
+        user_icon.layer.cornerRadius = user_icon.frame.size.width/2;
+        [cell addSubview:user_icon];
+        NSString * headUrl = dict[@"headUrl"];
+        if (headUrl && headUrl.length) {
+            [user_icon sd_setImageWithURL:[NSURL URLWithString:headUrl]];
+        }else{
+            user_icon.image = [UIImage imageNamed:@"logo"];
+        }
+    }
+    
+    //名字
+    NSString * name = dict[@"title"];
+    if (name == nil || name.length == 0) {
+        name = @"匿名用户";
+    }
+    UILabel * name_label = [UILabel new];
+    {
+        name_label.font = [UIFont systemFontOfSize:15];
+        name_label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
+        CGSize size = [MYTOOL getSizeWithString:name andFont:[UIFont systemFontOfSize:15]];
+        name_label.frame = CGRectMake(56/375.0*WIDTH, 34/667.0*HEIGHT-8, size.width, 16);
+        name_label.text = name;
+        [cell addSubview:name_label];
+    }
+    //时间
+    NSString * time = dict[@"releaseTime"];
+    {
+        UILabel * time_label = [UILabel new];
+        time_label.font = [UIFont systemFontOfSize:12];
+        time_label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
+        CGSize size = [MYTOOL getSizeWithString:time andFont:time_label.font];
+        time_label.frame = CGRectMake(WIDTH - size.width - 10, name_label.frame.origin.y+name_label.frame.size.height-12, size.width, 12);
+        time_label.text = time;
+        [cell addSubview:time_label];
+    }
+    //消息内容
+    {
+        UILabel * content_label = [UILabel new];
+        content_label.font = [UIFont systemFontOfSize:15/667.0*HEIGHT];
+        content_label.text = dict[@"comment"];;
+        content_label.textColor = [MYTOOL RGBWithRed:112 green:112 blue:112 alpha:1];
+        content_label.frame = [MYTOOL getRectWithIphone_six_X:56 andY:48 andWidth:270 andHeight:15];
+        [cell addSubview:content_label];
+    }
+    //分割线
+    {
+        UIView * space_view = [UIView new];
+        space_view.backgroundColor = [MYTOOL RGBWithRed:201 green:201 blue:201 alpha:1];
+        space_view.frame = CGRectMake(10, tableView.rowHeight - 2, WIDTH-20, 2);
+        [cell addSubview:space_view];
+        return cell;
+    }
+    
+}
+//返回上个界面
+-(void)back_pop{
+    [self.navigationController popViewControllerAnimated:true];
+}
+//重新加载界面数据
+-(void)reloadViewData{
+    NSString * interfaceName = @"/member/systemMessage.intf";
+    [SVProgressHUD showWithStatus:@"加载中…" maskType:SVProgressHUDMaskTypeClear];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID} andSuccess:^(NSDictionary *back_dic) {
+        NSLog(@"back:%@",back_dic);
+        self.systemMessageArray = back_dic[@"systemMessageList"];
+        [self.tableView reloadData];
+    }];
+}
+#pragma mark - tabbar显示与隐藏
+//此view出现时隐藏tabBar
+- (void)viewWillAppear: (BOOL)animated{
+    [MYTOOL hiddenTabBar];
+    [self reloadViewData];
+}
+//此view消失时还原tabBar
+- (void)viewWillDisappear: (BOOL)animated{
+    [MYTOOL showTabBar];
+}
+
+@end
