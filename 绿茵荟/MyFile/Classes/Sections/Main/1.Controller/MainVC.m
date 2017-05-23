@@ -114,10 +114,8 @@
     if ([title isEqualToString:@"我的"]) {//跳转 我的 界面
         //[SVProgressHUD showSuccessWithStatus:@"欢迎来到我的界面"duration:1];
         if (![MYTOOL isLogin]) {
-            [SVProgressHUD showErrorWithStatus:@"你还没登录呢" duration:2];
             //跳转至登录页
             LoginViewController * loginVC = [LoginViewController new];
-            
             UINavigationController * nc = self.childViewControllers[self.selectedIndex];
             [nc pushViewController:loginVC animated:true];
             return false;

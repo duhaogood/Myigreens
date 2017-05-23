@@ -524,7 +524,8 @@
     [SVProgressHUD showWithStatus:@"更新中…" maskType:SVProgressHUDMaskTypeClear];
     NSString * interfaceName = @"/shop/order/confirmOrder.intf";
     NSMutableDictionary * sendDic = [self getSendDictionaryToConfirmOrder];
-//    NSLog(@"send:%@",sendDic);
+    [sendDic setValue:expressDict[@"expressId"] forKey:@"expressId"];
+    NSLog(@"send:%@",sendDic);
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
                 NSLog(@"back:%@",back_dic);
         self.goodsList = back_dic[@"goodsList"];
@@ -783,7 +784,7 @@
     }
     //判断是从购物车进来，还是从商品直接过来
     NSString * cartIds = self.order[@"cartIds"];
-    if (cartIds) {//购物车
+    if (cartIds && cartIds.length) {//购物车
         [sendDic setValue:cartIds forKey:@"cartIds"];//cartIds	购物车Ids	字符串	否
     }else{//商品
         NSObject * quantity = self.order[@"quantity"];

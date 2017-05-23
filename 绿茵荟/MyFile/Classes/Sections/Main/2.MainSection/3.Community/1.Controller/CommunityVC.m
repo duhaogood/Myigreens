@@ -247,6 +247,12 @@
 #pragma mark - BarButtonItem 回调
 //左按钮
 -(void)addOfNavigationBar{
+    if (![MYTOOL isLogin]) {
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
+        return;
+    }
 #warning 接口可能不对
     NSString * interfaceName = @"/community/getTop10.intf";
     [SVProgressHUD showWithStatus:@"获取订阅" maskType:SVProgressHUDMaskTypeClear];
@@ -274,6 +280,12 @@
 }
 //右按钮
 -(void)topOfNavigationBar{
+    if (![MYTOOL isLogin]) {
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
+        return;
+    }
     NSString * interfaceName = @"/community/getTop10.intf";
     [SVProgressHUD showWithStatus:@"获取top10…" maskType:SVProgressHUDMaskTypeClear];
     NSMutableDictionary * send_dic = [NSMutableDictionary new];
@@ -352,6 +364,10 @@
         
         
     }else{//订阅
+        if (!MEMBERID) {
+            [SVProgressHUD showErrorWithStatus:@"未登录!" duration:2];
+            return;
+        }
         UITableView * tableView = [UITableView new];
         tableView.frame = CGRectMake(0, 10-HEIGHT, WIDTH, HEIGHT - 74 - 49);
         [UIView animateWithDuration:0.3 animations:^{
@@ -430,6 +446,44 @@
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return self.data_array.count;
 }
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    NSString * title = current_btn.currentTitle;
+    NSDictionary * data_dic = self.data_array[indexPath.row];
+    //精选
+    if ([title isEqualToString:@"精选"]) {
+        //间距
+        float space_y = [MYTOOL getHeightWithIphone_six:15];
+        float height = space_y * 2 + 40;
+        //简介
+        {
+            NSString * content = data_dic[@"content"];//内容
+            if (content == nil || content.length == 0) {
+                content = @"这家伙什么也没留下…";
+            }
+            UILabel * label = [UILabel new];
+            label.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
+            label.text = content;
+            CGSize size = [MYTOOL getSizeWithLabel:label];
+            int row = size.width / (WIDTH -60-10);
+            if (size.width > (WIDTH -60-10)*row) {
+                row ++;
+            }
+            height += space_y + size.height * row;
+        }
+        //图片 150-180
+        {
+            float width_img = (WIDTH - 65 - 30)/2;
+            float height_img = width_img / 150 *180;
+            height += height_img + space_y;
+        }
+        height += 30;
+        return height;
+    }else if([title isEqualToString:@"圈子"]){
+        return 225;
+    }else{
+        return 383;
+    }
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSDictionary * data_dic = self.data_array[indexPath.row];
 //    NSLog(@"%ld-----%@",indexPath.row,data_dic);
@@ -451,18 +505,19 @@
     }
     NSArray * image_array = data_dic[@"url"];//帖子图片数组
     NSInteger postId = [data_dic[@"postId"] longValue];
-//    NSString * normalUrl_1 = data_dic[@"url"][0][@"normalUrl"];//帖子图片
-    
     
     NSString * praiseStatus = data_dic[@"praiseStatus"];//状态
+    //间距
+    float space_y = [MYTOOL getHeightWithIphone_six:15];
     //圈子
     UITableViewCell * cell = [UITableViewCell new];
     if ([current_btn.currentTitle isEqualToString:@"精选"]) {
+        float top = 0;
         //头像
         {
-            float user_width = 40/414.0*WIDTH;
+            float user_width = 40;
             UIImageView * userImgView = [UIImageView new];
-            userImgView.frame = CGRectMake(10, tableView.rowHeight * 0.05, user_width, user_width);
+            userImgView.frame = CGRectMake(10, space_y, user_width, user_width);
             //        userImgView.backgroundColor = [UIColor greenColor];
             [cell addSubview:userImgView];
             userImgView.layer.masksToBounds = true;
@@ -478,69 +533,63 @@
         {
             UILabel * label = [UILabel new];
             label.text = nickName;
+            label.font = [UIFont systemFontOfSize:18];
             label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
-            label.frame = CGRectMake(65, tableView.rowHeight * 0.05+10, WIDTH/2, 20);
+            label.frame = CGRectMake(60,space_y+10 , WIDTH - 75, 20);
             [cell addSubview:label];
+            top = space_y * 2 + 40;
         }
         //简介
         {
-            UITextView * tv = [UITextView new];
+            UILabel * tv = [UILabel new];
             tv.text = content;
+            tv.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
             tv.userInteractionEnabled = NO;
-            tv.font = [UIFont systemFontOfSize:16];
             tv.textColor = [MYTOOL RGBWithRed:79 green:79 blue:79 alpha:1];
-            tv.frame = CGRectMake(65, tableView.rowHeight * 0.05+40, WIDTH -65-10, 80);
+            CGSize size = [MYTOOL getSizeWithLabel:(UILabel *)tv];
+            int row = size.width / (WIDTH -60-10);
+            if (size.width > (WIDTH -60-10)*row) {
+                row ++;
+            }
+            if (row > 1) {
+                tv.numberOfLines = 0;
+            }
+            tv.frame = CGRectMake(60, top, WIDTH -60-10, size.height*row);
             [cell addSubview:tv];
+            top += size.height*row + space_y;
         }
         //图片
         {
+            float width_img = (WIDTH - 65 - 30)/2;
+            float height_img = width_img / 150 *180;
             if (image_array.count == 1) {
                 UIImageView * iv1 = [UIImageView new];
-                iv1.frame = CGRectMake(65,tableView.rowHeight * 0.05+130 , (WIDTH - 65 - 30)/2,
-                                       tableView.rowHeight - tableView.rowHeight * 0.05-130-
-                                       tableView.rowHeight * 0.1-20);
+                iv1.frame = CGRectMake(65,top, width_img, height_img);
                 iv1.layer.masksToBounds = true;
                 iv1.layer.cornerRadius = 10;
                 [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
                 [cell addSubview:iv1];
-                [iv1 setUserInteractionEnabled:YES];
-                UITapGestureRecognizer * tapGesture4 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
-                tapGesture4.numberOfTapsRequired=1;
-//                [iv1 addGestureRecognizer:tapGesture4];
             }else{
+                //1
                 UIImageView * iv1 = [UIImageView new];
-                iv1.frame = CGRectMake(65,tableView.rowHeight * 0.05+130 , (WIDTH - 65 - 30)/2,
-                                       tableView.rowHeight - tableView.rowHeight * 0.05-130-
-                                       tableView.rowHeight * 0.1-20);
+                iv1.frame = CGRectMake(65,top , width_img, height_img);
                 iv1.layer.masksToBounds = true;
                 iv1.layer.cornerRadius = 10;
                 [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
                 [cell addSubview:iv1];
-                [iv1 setUserInteractionEnabled:YES];
-                UITapGestureRecognizer * tapGesture4 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
-                tapGesture4.numberOfTapsRequired=1;
-//                [iv1 addGestureRecognizer:tapGesture4];
-                
+                //2
                 UIImageView * iv2 = [UIImageView new];
-                iv2.frame = CGRectMake(65 + iv1.frame.size.width+10,tableView.rowHeight * 0.05+130 , (WIDTH - 65 - 30)/2,
-                                       tableView.rowHeight - tableView.rowHeight * 0.05-130-
-                                       tableView.rowHeight * 0.1-20);
+                iv2.frame = CGRectMake(65 + iv1.frame.size.width+10,top , width_img, height_img);
                 iv2.layer.masksToBounds = true;
                 iv2.layer.cornerRadius = 10;
                 [iv2 sd_setImageWithURL:[NSURL URLWithString:image_array[1][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"Icon60"]];
                 [cell addSubview:iv2];
-                [iv2 setUserInteractionEnabled:YES];
-                UITapGestureRecognizer * tapGesture3 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
-                tapGesture3.numberOfTapsRequired=1;
-//                [iv2 addGestureRecognizer:tapGesture3];
             }
-            
+            top += height_img + space_y;
         }
         
         //下边小图标及数字
         {
-            float top = tableView.rowHeight * 0.9;
-            
             //下边小图标  icon_praise
             UIImageView * icon1 = [UIImageView new];
             icon1.image = [UIImage imageNamed:@"icon_praise"];
@@ -597,8 +646,13 @@
             num_label3.frame = CGRectMake(WIDTH*5/6+25, top+5, 40, 20);
             num_label3.font = [UIFont systemFontOfSize:12];
             [cell addSubview:num_label3];
+            top += 30;
         }
-        
+        //分割线
+        UIView * spaceView = [UIView new];
+        spaceView.backgroundColor = [DHTOOL RGBWithRed:227 green:227 blue:227 alpha:1];
+        spaceView.frame = CGRectMake(20, top-1, WIDTH-40, 1);
+        [cell addSubview:spaceView];
     }else if ([current_btn.currentTitle isEqualToString:@"圈子"]) {
         tableView.rowHeight = 225;
         //图片
@@ -609,10 +663,6 @@
             iv1.layer.cornerRadius = 10;
             [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
             [cell addSubview:iv1];
-//            [iv1 setUserInteractionEnabled:YES];
-//            UITapGestureRecognizer * tapGesture4 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
-//            tapGesture4.numberOfTapsRequired=1;
-//            [iv1 addGestureRecognizer:tapGesture4];
             
         }
 
@@ -736,7 +786,11 @@
             num_label3.font = [UIFont systemFontOfSize:12];
             [cell addSubview:num_label3];
         }
-        
+        //分割线
+        UIView * spaceView = [UIView new];
+        spaceView.backgroundColor = [DHTOOL RGBWithRed:227 green:227 blue:227 alpha:1];
+        spaceView.frame = CGRectMake(20, tableView.rowHeight-1, WIDTH-40, 1);
+        [cell addSubview:spaceView];
     }else{//订阅
         tableView.rowHeight = 383;
         float left = 0;
@@ -914,11 +968,7 @@
     
     
     
-    //分割线
-    UIView * spaceView = [UIView new];
-    spaceView.backgroundColor = [DHTOOL RGBWithRed:227 green:227 blue:227 alpha:1];
-    spaceView.frame = CGRectMake(20, tableView.rowHeight-1, WIDTH-40, 1);
-    [cell addSubview:spaceView];
+    
     return cell;
 }
 #pragma mark - UIScrollViewDelegate
@@ -955,7 +1005,9 @@
 //点赞事件
 -(void)praise_callBack:(NSInteger)postId{
     if (![MYTOOL isLogin]) {
-        [SVProgressHUD showErrorWithStatus:@"你没登陆呢" duration:2];
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
         return;
     }
     [SVProgressHUD showWithStatus:@"点赞中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
@@ -978,7 +1030,9 @@
 //回复事件
 -(void)reply_callBack:(NSInteger)postId{
     if (![MYTOOL isLogin]) {
-        [SVProgressHUD showErrorWithStatus:@"你没登陆呢" duration:2];
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
         return;
     }
 //    NSLog(@"准备回复");
@@ -1018,7 +1072,7 @@
 //分享事件
 -(void)share_callBack:(NSDictionary *)post_dic{
     [SVProgressHUD showErrorWithStatus:@"还没做呢" duration:1];
-//    NSLog(@"分享数据:%@",post_dic);
+    NSLog(@"分享数据:%@",post_dic);
 }
 
 

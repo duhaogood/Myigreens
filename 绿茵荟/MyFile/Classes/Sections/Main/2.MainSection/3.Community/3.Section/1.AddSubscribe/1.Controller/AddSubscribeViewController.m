@@ -101,7 +101,10 @@
     }else{
         bool isLogin = [MYTOOL isLogin];
         if (!isLogin) {
-            [SVProgressHUD showErrorWithStatus:@"未登录无法查看" duration:2];
+            //跳转至登录页
+            LoginViewController * loginVC = [LoginViewController new];
+            AppDelegate * app = (AppDelegate *)[UIApplication sharedApplication].delegate;
+            app.window.rootViewController = loginVC;
             return;
         }
         NSString * byMemberId = self.member_array[indexPath.row][@"memberId"];

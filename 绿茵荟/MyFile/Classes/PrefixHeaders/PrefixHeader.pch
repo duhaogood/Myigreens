@@ -24,6 +24,9 @@
 
 #include "MJRefresh.h"
 #include "DHNetWorking.h"
+#include "LoginViewController.h"
+
+
 #endif /* PrefixHeader_pch */
 
 

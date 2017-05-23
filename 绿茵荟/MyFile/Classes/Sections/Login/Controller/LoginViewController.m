@@ -87,9 +87,16 @@
         //获取验证码按钮
         UIButton * getCodeBtn = [UIButton new];
         [getCodeBtn setTitle:@"获取验证码" forState:UIControlStateNormal];
-        [getCodeBtn setTitleColor:[MYTOOL RGBWithRed:180 green:180 blue:180 alpha:1] forState:UIControlStateNormal];
-        getCodeBtn.frame = CGRectMake((WIDTH - 80)*3/5.0+70, (WIDTH - 80)/293.0*69/2-10+top, (WIDTH - 80)/4.0, 20);
         getCodeBtn.titleLabel.font = [UIFont systemFontOfSize:12];
+        CGSize size;
+        {
+            UILabel * label = [UILabel new];
+            label.text = @"获取验证码";
+            label.font = [UIFont systemFontOfSize:12];
+            size = [MYTOOL getSizeWithLabel:label];
+        }
+        [getCodeBtn setTitleColor:[MYTOOL RGBWithRed:180 green:180 blue:180 alpha:1] forState:UIControlStateNormal];
+        getCodeBtn.frame = CGRectMake(WIDTH - 40 - size.width-15, (WIDTH - 80)/293.0*69/2-10+top, size.width, 20);
         [getCodeBtn addTarget:self action:@selector(getCode_back) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:getCodeBtn];
         self.getCodeBtn = getCodeBtn;
