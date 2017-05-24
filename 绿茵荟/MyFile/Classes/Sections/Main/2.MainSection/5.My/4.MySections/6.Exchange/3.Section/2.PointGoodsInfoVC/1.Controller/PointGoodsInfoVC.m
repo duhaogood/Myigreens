@@ -7,7 +7,7 @@
 //
 
 #import "PointGoodsInfoVC.h"
-
+#import "ConfirmOrderVC.h"
 @interface PointGoodsInfoVC ()
 @property(nonatomic,strong)UIWebView * webView;//商品h5页面
 @property(nonatomic,strong)UIView * goodsView;//商品详情view
@@ -392,14 +392,7 @@
 //兑换事件
 -(void)convertCallback{
     NSLog(@"%@",self.goodsInfo);
-    NSString * interfaceName = @"/shop/order/confirmOrder.intf";
-    NSMutableDictionary * sendDic = [NSMutableDictionary new];
-    [sendDic setValue:MEMBERID forKey:@"memberId"];
-    NSString * productId_1 = [NSString stringWithFormat:@"%ld",[self.goodsInfo[@"productList"][0][@"productId"] longValue]];
-    NSString * quantity_1 = self.goodsCountLabel.text;
-    [sendDic setValue:productId_1 forKey:@"productId"];
-    [sendDic setValue:quantity_1 forKey:@"quantity"];
-    [sendDic setValue:@"0" forKey:@"integral"];
+    
     
     
     
@@ -412,7 +405,30 @@
             self.webView.userInteractionEnabled = false;
         }];
     }else{
-        
+        NSString * interfaceName = @"/shop/order/confirmOrder.intf";
+        NSMutableDictionary * sendDic = [NSMutableDictionary new];
+        [sendDic setValue:MEMBERID forKey:@"memberId"];
+        NSString * productId_1 = [NSString stringWithFormat:@"%ld",[self.goodsInfo[@"productList"][0][@"productId"] longValue]];
+        NSString * quantity_1 = self.goodsCountLabel.text;
+        [sendDic setValue:productId_1 forKey:@"productId"];
+        [sendDic setValue:quantity_1 forKey:@"quantity"];
+        [sendDic setValue:@"1" forKey:@"integral"];
+        NSLog(@"send:%@",sendDic);
+        [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+            NSLog(@"back:%@",back_dic);
+            return;
+#warning 明天调试
+            ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
+            orderVC.order = back_dic[@"order"];
+            orderVC.goodsList = back_dic[@"goodsList"];
+            orderVC.receiptAddress = back_dic[@"receiptAddress"];
+            orderVC.title = @"确认订单";
+            //            orderVC.goodsArray = back_dic[@"goodsList"];
+            NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:self.goodsInfo];
+            [dict setValue:self.selectProductDic[@"productId"] forKey:@"productId"];
+            orderVC.goodsInfoDictionary = dict;
+            [self.navigationController pushViewController:orderVC animated:true];
+        }];
     }
 }
 

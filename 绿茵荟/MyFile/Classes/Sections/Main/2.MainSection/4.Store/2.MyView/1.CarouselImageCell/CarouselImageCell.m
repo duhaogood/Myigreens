@@ -15,6 +15,8 @@
 //    NSLog(@"carouselImage_array:%@",carouselImage_array);
     //总高度257
     UITableViewCell * cell = [UITableViewCell new];
+    //无法选中
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     //轮播图
     //图片url数组
     NSMutableArray * url_arr = [NSMutableArray new];
@@ -22,15 +24,7 @@
         NSString * bannerUrl = dic[@"bannerUrl"];
         [url_arr addObject:bannerUrl];
     }
-    //模拟数据
-    NSArray * arr = @[
-                      @"http://img05.tooopen.com/images/20150531/tooopen_sy_127457023651.jpg",
-                      @"http://www.51wendang.com/pic/d2791169614460bb195dab7b/1-810-jpg_6-1080-0-0-1080.jpg",
-                      @"http://pic35.nipic.com/20131121/2531170_145358633000_2.jpg",
-                      @"http://pic44.nipic.com/20140717/12432466_121957328000_2.jpg",
-                      @"http://img13.poco.cn/mypoco/myphoto/20120828/15/55689209201208281549023849547194135_001.jpg"
-                      ];
-    url_arr = [NSMutableArray arrayWithArray:arr];
+    
     //模拟结束
     SDCycleScrollView * cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(10, 10, WIDTH-20, 151) imageURLStringsGroup:url_arr];
     cycleScrollView.layer.masksToBounds = true;

@@ -260,8 +260,14 @@
         [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://yema.wicp.net/api"];
         
     }];
+    NSString * server3 = @"http://106.14.148.72:8081/api";
+    UIAlertAction *action3 = [UIAlertAction actionWithTitle:server3 style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://106.14.148.72:8081/api"];
+        
+    }];
     [alert addAction:action1];
     [alert addAction:action2];
+    [alert addAction:action3];
     //    [self showDetailViewController:alert sender:nil];
     [self presentViewController:alert animated:YES completion:nil];
 #warning 以上

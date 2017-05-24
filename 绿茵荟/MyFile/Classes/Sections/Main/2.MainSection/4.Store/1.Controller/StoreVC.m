@@ -310,7 +310,12 @@
     //轮播图数据有问题
     [self.storeNetWorking getCarouselImageData:^(NSDictionary * backDict) {//获取轮播图数据
         self.carouselImage_array = backDict[@"list"];
-//                NSLog(@"轮播图:%@",self.carouselImage_array);
+        
+        NSArray * array = backDict[@"list"];
+        self.carouselImage_array = [array subarrayWithRange:NSMakeRange(2, array.count-2)];
+        
+        
+                NSLog(@"轮播图:%@",self.carouselImage_array);
         [self.storeNetWorking getGoodsCategory:^(NSDictionary * backDict2) {//获取商品分类数据
             self.goodsCategory_array = backDict2[@"goodsCatList"];
 //                        NSLog(@"分类数据:%@",self.goodsCategory_array);
