@@ -515,7 +515,7 @@
         }
     }
     [sendDic setValue:ms forKey:@"cartIds"];
-    
+    [sendDic setValue:@"0" forKey:@"integral"];
 //    NSLog(@"send:%@",sendDic);
     [SVProgressHUD showWithStatus:@"结算中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {

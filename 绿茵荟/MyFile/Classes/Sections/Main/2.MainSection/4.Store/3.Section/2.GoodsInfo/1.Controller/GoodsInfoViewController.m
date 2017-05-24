@@ -551,6 +551,7 @@
         NSString * quantity_1 = self.goodsCountLabel.text;
         [sendDic setValue:productId_1 forKey:@"productId"];
         [sendDic setValue:quantity_1 forKey:@"quantity"];
+        [sendDic setValue:@"0" forKey:@"integral"];
 //        NSLog(@"product:%@",self.selectProductDic);
         NSInteger enableStore = [self.selectProductDic[@"enableStore"] longValue];
         if ([quantity_1 intValue] > enableStore) {
