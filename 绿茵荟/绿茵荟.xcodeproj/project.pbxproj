@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0410B05B1EE415C200E8CBA1 /* AddSubscribeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0410B0541EE415C200E8CBA1 /* AddSubscribeViewController.m */; };
+		0410B05E1EE415F100E8CBA1 /* SubscribeSearchVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0410B05D1EE415F100E8CBA1 /* SubscribeSearchVC.m */; };
 		04874F041ED6805E00049758 /* NSMutableURLRequest+NSMutableURLRequestWithIgnoreSSL.m in Sources */ = {isa = PBXBuildFile; fileRef = 04874F031ED6805E00049758 /* NSMutableURLRequest+NSMutableURLRequestWithIgnoreSSL.m */; };
 		04EE014C1EDE701E007B114E /* GoodsTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04EE01021EDE701E007B114E /* GoodsTagViewController.m */; };
 		04EE014D1EDE701E007B114E /* GoodsCategoryVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04EE01071EDE701E007B114E /* GoodsCategoryVC.m */; };
@@ -46,7 +48,6 @@
 		78C23B511ED2FB9A000CD40E /* CircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C2382F1ED2FB99000CD40E /* CircleView.m */; };
 		78C23B521ED2FB9A000CD40E /* SelectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C238321ED2FB99000CD40E /* SelectView.m */; };
 		78C23B531ED2FB9A000CD40E /* SubmitPostTV.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C238351ED2FB99000CD40E /* SubmitPostTV.m */; };
-		78C23B541ED2FB9A000CD40E /* AddSubscribeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C2383C1ED2FB99000CD40E /* AddSubscribeViewController.m */; };
 		78C23B551ED2FB9A000CD40E /* PostInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C238421ED2FB99000CD40E /* PostInfoViewController.m */; };
 		78C23B561ED2FB9A000CD40E /* SubmitPostViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C238481ED2FB99000CD40E /* SubmitPostViewController.m */; };
 		78C23B571ED2FB9A000CD40E /* SubscribeInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 78C2384E1ED2FB99000CD40E /* SubscribeInfoViewController.m */; };
@@ -264,6 +265,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0410B0511EE415C200E8CBA1 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
+		0410B0531EE415C200E8CBA1 /* AddSubscribeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddSubscribeViewController.h; sourceTree = "<group>"; };
+		0410B0541EE415C200E8CBA1 /* AddSubscribeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddSubscribeViewController.m; sourceTree = "<group>"; };
+		0410B0571EE415C200E8CBA1 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
+		0410B0591EE415C200E8CBA1 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
+		0410B05C1EE415F100E8CBA1 /* SubscribeSearchVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubscribeSearchVC.h; sourceTree = "<group>"; };
+		0410B05D1EE415F100E8CBA1 /* SubscribeSearchVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubscribeSearchVC.m; sourceTree = "<group>"; };
 		04874F021ED6805E00049758 /* NSMutableURLRequest+NSMutableURLRequestWithIgnoreSSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableURLRequest+NSMutableURLRequestWithIgnoreSSL.h"; sourceTree = "<group>"; };
 		04874F031ED6805E00049758 /* NSMutableURLRequest+NSMutableURLRequestWithIgnoreSSL.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableURLRequest+NSMutableURLRequestWithIgnoreSSL.m"; sourceTree = "<group>"; };
 		04EE00FD1EDE701E007B114E /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
@@ -375,9 +383,6 @@
 		78C238341ED2FB99000CD40E /* SubmitPostTV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubmitPostTV.h; sourceTree = "<group>"; };
 		78C238351ED2FB99000CD40E /* SubmitPostTV.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubmitPostTV.m; sourceTree = "<group>"; };
 		78C238371ED2FB99000CD40E /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
-		78C238391ED2FB99000CD40E /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
-		78C2383B1ED2FB99000CD40E /* AddSubscribeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddSubscribeViewController.h; sourceTree = "<group>"; };
-		78C2383C1ED2FB99000CD40E /* AddSubscribeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddSubscribeViewController.m; sourceTree = "<group>"; };
 		78C2383F1ED2FB99000CD40E /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		78C238411ED2FB99000CD40E /* PostInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PostInfoViewController.h; sourceTree = "<group>"; };
 		78C238421ED2FB99000CD40E /* PostInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PostInfoViewController.m; sourceTree = "<group>"; };
@@ -996,6 +1001,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0410B0521EE415C200E8CBA1 /* 1.Controller */ = {
+			isa = PBXGroup;
+			children = (
+				0410B0531EE415C200E8CBA1 /* AddSubscribeViewController.h */,
+				0410B0541EE415C200E8CBA1 /* AddSubscribeViewController.m */,
+			);
+			path = 1.Controller;
+			sourceTree = "<group>";
+		};
+		0410B0551EE415C200E8CBA1 /* 2.MyView */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = 2.MyView;
+			sourceTree = "<group>";
+		};
+		0410B0561EE415C200E8CBA1 /* 3.Sections */ = {
+			isa = PBXGroup;
+			children = (
+				0410B0571EE415C200E8CBA1 /* 0.Comments.h */,
+				0410B0581EE415C200E8CBA1 /* 1.SubscribeSearch */,
+			);
+			path = 3.Sections;
+			sourceTree = "<group>";
+		};
+		0410B0581EE415C200E8CBA1 /* 1.SubscribeSearch */ = {
+			isa = PBXGroup;
+			children = (
+				0410B0591EE415C200E8CBA1 /* 0.Comments.h */,
+				0410B05A1EE415C200E8CBA1 /* 1.Controller */,
+			);
+			path = 1.SubscribeSearch;
+			sourceTree = "<group>";
+		};
+		0410B05A1EE415C200E8CBA1 /* 1.Controller */ = {
+			isa = PBXGroup;
+			children = (
+				0410B05C1EE415F100E8CBA1 /* SubscribeSearchVC.h */,
+				0410B05D1EE415F100E8CBA1 /* SubscribeSearchVC.m */,
+			);
+			path = 1.Controller;
+			sourceTree = "<group>";
+		};
 		04874F011ED67ECB00049758 /* SSL */ = {
 			isa = PBXGroup;
 			children = (
@@ -1728,27 +1776,12 @@
 		78C238381ED2FB99000CD40E /* 1.AddSubscribe */ = {
 			isa = PBXGroup;
 			children = (
-				78C238391ED2FB99000CD40E /* 0.Comments.h */,
-				78C2383A1ED2FB99000CD40E /* 1.Controller */,
-				78C2383D1ED2FB99000CD40E /* 2.MyView */,
+				0410B0511EE415C200E8CBA1 /* 0.Comments.h */,
+				0410B0521EE415C200E8CBA1 /* 1.Controller */,
+				0410B0551EE415C200E8CBA1 /* 2.MyView */,
+				0410B0561EE415C200E8CBA1 /* 3.Sections */,
 			);
 			path = 1.AddSubscribe;
-			sourceTree = "<group>";
-		};
-		78C2383A1ED2FB99000CD40E /* 1.Controller */ = {
-			isa = PBXGroup;
-			children = (
-				78C2383B1ED2FB99000CD40E /* AddSubscribeViewController.h */,
-				78C2383C1ED2FB99000CD40E /* AddSubscribeViewController.m */,
-			);
-			path = 1.Controller;
-			sourceTree = "<group>";
-		};
-		78C2383D1ED2FB99000CD40E /* 2.MyView */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = 2.MyView;
 			sourceTree = "<group>";
 		};
 		78C2383E1ED2FB99000CD40E /* 2.PostInfo */ = {
@@ -3968,6 +4001,7 @@
 				78C23B881ED2FB9A000CD40E /* MySubscribeVC.m in Sources */,
 				78C23BA91ED2FB9A000CD40E /* FMResultSet.m in Sources */,
 				78C23BBC1ED2FB9A000CD40E /* UIScrollView+MJRefresh.m in Sources */,
+				0410B05B1EE415C200E8CBA1 /* AddSubscribeViewController.m in Sources */,
 				78C23B8A1ED2FB9A000CD40E /* StartViewController.m in Sources */,
 				78C23BD51ED2FB9A000CD40E /* MKAnnotationView+WebCache.m in Sources */,
 				78C23B5B1ED2FB9A000CD40E /* CarouselImageCell.m in Sources */,
@@ -4021,7 +4055,6 @@
 				78C23B461ED2FB9A000CD40E /* SpecialVC.m in Sources */,
 				78C23B8B1ED2FB9A000CD40E /* AliPayTool.m in Sources */,
 				78C23BAB1ED2FB9A000CD40E /* MJRefreshBackFooter.m in Sources */,
-				78C23B541ED2FB9A000CD40E /* AddSubscribeViewController.m in Sources */,
 				78C23B901ED2FB9A000CD40E /* DHTool.m in Sources */,
 				78C23BD61ED2FB9A000CD40E /* NSData+ImageContentType.m in Sources */,
 				04EE01591EDE701E007B114E /* SelectExpressVC.m in Sources */,
@@ -4054,6 +4087,7 @@
 				78C23BDA1ED2FB9A000CD40E /* SDWebImageDownloader.m in Sources */,
 				78C23B8E1ED2FB9A000CD40E /* SharedManagerVC.m in Sources */,
 				78C23B861ED2FB9A000CD40E /* ExchangeViewController.m in Sources */,
+				0410B05E1EE415F100E8CBA1 /* SubscribeSearchVC.m in Sources */,
 				78C23BA31ED2FB9A000CD40E /* AFURLResponseSerialization.m in Sources */,
 				78C23BAC1ED2FB9A000CD40E /* MJRefreshComponent.m in Sources */,
 				78C23BAD1ED2FB9A000CD40E /* MJRefreshFooter.m in Sources */,

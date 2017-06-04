@@ -66,6 +66,7 @@
             [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
         }
     }];
+    [self reloadViewData];
 }
 
 #pragma mark - UITableViewDataSource,UITableViewDelegate
@@ -108,6 +109,18 @@
             [user_icon sd_setImageWithURL:[NSURL URLWithString:headUrl]];
         }else{
             user_icon.image = [UIImage imageNamed:@"logo"];
+        }
+        //是否已读
+        {
+            bool readType = [dict[@"readType"] boolValue];
+            if (!readType) {
+                UIView * view = [UIView new];
+                view.backgroundColor = [UIColor redColor];
+                view.frame = CGRectMake(5, user_icon.frame.origin.y+user_icon.frame.size.height/2-2, 4, 4);
+                view.layer.masksToBounds = true;
+                view.layer.cornerRadius = 2;
+                [cell addSubview:view];
+            }
         }
     }
     
@@ -211,7 +224,6 @@
     NSString * interfaceName = @"/member/receivedComments.intf";
     [SVProgressHUD showWithStatus:@"加载中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID} andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
         self.receiveCommentArray = back_dic[@"commentList"];
         [self.tableView reloadData];
     }];

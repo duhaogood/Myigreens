@@ -53,7 +53,7 @@
                                    @"flowId":[NSString stringWithFormat:@"%ld",flowId]
                                    };
         [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-            NSLog(@"back:%@",back_dic);
+            [self reloadViewData];
         }];
     }
     
@@ -79,8 +79,19 @@
         }else{
             user_icon.image = [UIImage imageNamed:@"logo"];
         }
+        //是否已读
+        {
+            bool readType = [dict[@"readType"] boolValue];
+            if (!readType) {
+                UIView * view = [UIView new];
+                view.backgroundColor = [UIColor redColor];
+                view.frame = CGRectMake(5, user_icon.frame.origin.y+user_icon.frame.size.height/2-2, 4, 4);
+                view.layer.masksToBounds = true;
+                view.layer.cornerRadius = 2;
+                [cell addSubview:view];
+            }
+        }
     }
-    
     //名字
     NSString * name = dict[@"title"];
     if (name == nil || name.length == 0) {
@@ -121,9 +132,8 @@
         space_view.backgroundColor = [MYTOOL RGBWithRed:201 green:201 blue:201 alpha:1];
         space_view.frame = CGRectMake(10, tableView.rowHeight - 2, WIDTH-20, 2);
         [cell addSubview:space_view];
-        return cell;
     }
-    
+    return cell;
 }
 //返回上个界面
 -(void)back_pop{
@@ -134,7 +144,6 @@
     NSString * interfaceName = @"/member/systemMessage.intf";
     [SVProgressHUD showWithStatus:@"加载中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID} andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
         self.systemMessageArray = back_dic[@"systemMessageList"];
         [self.tableView reloadData];
     }];

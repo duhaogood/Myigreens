@@ -260,7 +260,7 @@
     
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
         NSArray * array = back_dic[@"postList"];
-//        NSLog(@"array:%@",array);
+        NSLog(@"array:%@",array);
         if (array.count == 0) {
             pageNo --;
             return;
@@ -335,7 +335,7 @@
             NSDictionary * post = self.post_array[i+indexPath.row*3];
             NSInteger postId = [post[@"postId"] longValue];
 //            NSLog(@"post:%@",post);
-            NSString * url_string = post[@"url"][0][@"smallUrl"];
+            NSString * url_string = post[@"image"];
             if (url_string) {
                 [imgV sd_setImageWithURL:[NSURL URLWithString:url_string]];
             }

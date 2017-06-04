@@ -68,7 +68,6 @@ static id instance;
         
     } failure:^(NSURLSessionTask *operation, NSError *error) {
         [SVProgressHUD showErrorWithStatus:@"网络出错" duration:2];
-//        NSLog(@"Error: %@", error);
     }];
 }
 -(void)getWithInterfaceName:(NSString *)interfaceName andDictionary:(NSDictionary *)send_dic andSuccess:(void (^)(NSDictionary * back_dic))back_block andFailure:(void(^)(NSError * error_failure)) failure{

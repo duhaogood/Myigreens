@@ -29,9 +29,21 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    //加载主界面
-    [self loadMainView];
-    
+    NSString * interface = @"/sys/getDictInfo.intf";
+    NSDictionary * send = @{@"type":@"community"};
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        NSArray * communityList = back_dic[@"dictEntities"][@"community"];
+        NSMutableArray * nameArray = [NSMutableArray new];//名字数组
+        NSMutableArray * urlArray = [NSMutableArray new];//图片url数组
+        for (int i = 0; i < communityList.count; i ++) {
+            NSDictionary * dict = communityList[i];
+            NSString * name = dict[@"label"];//名字
+            [nameArray addObject:name];
+        }
+        type_array = nameArray;
+        //加载主界面
+        [self loadMainView];
+    }];
 }
 //加载主界面
 -(void)loadMainView{
@@ -95,9 +107,7 @@
     float top = 40;
     float width_btn = (WIDTH - 100)/4;
     postsType_button_arr = [NSMutableArray new];
-    NSArray * title_arr = @[@"花艺",@"植物",@"家居",@"婚嫁",@"情感",@"杂物"];
-    type_array = title_arr;
-    for (int i = 0; i < title_arr.count; i ++) {
+    for (int i = 0; i < type_array.count; i ++) {
         if (i == 4) {
             top += width_btn/68.0*28 + 20;
         }
@@ -107,7 +117,7 @@
         //btn.titleLabel.textColor = [MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1];
         [btn setTitleColor:[MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1] forState:UIControlStateNormal];
         [btn setBackgroundImage:[UIImage imageNamed:@"btn_label_nor"] forState:UIControlStateNormal];
-        [btn setTitle:title_arr[i] forState:UIControlStateNormal];
+        [btn setTitle:type_array[i] forState:UIControlStateNormal];
         [view addSubview:btn];
         [btn addTarget:self action:@selector(selectPostsTypeBack:) forControlEvents:UIControlEventTouchUpInside];
         btn.tag = 100;

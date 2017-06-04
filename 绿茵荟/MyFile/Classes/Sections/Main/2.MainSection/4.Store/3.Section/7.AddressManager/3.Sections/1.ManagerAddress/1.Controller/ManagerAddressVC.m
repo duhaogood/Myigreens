@@ -298,7 +298,7 @@
         //        NSLog(@"back:%@",back_dic);
         NSMutableArray * array = back_dic[@"addressList"];
         if (!array || array.count == 0) {
-            [SVProgressHUD showErrorWithStatus:@"暂无地址" duration:2];
+            [SVProgressHUD showErrorWithStatus:@"暂无地址\n请添加地址" duration:2];
         }else{
             self.addressArray = array;
             [self.tableView reloadData];

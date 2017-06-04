@@ -27,7 +27,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSLog(@"point:%@",self.goodsInfo);
+//    NSLog(@"point:%@",self.goodsInfo);
     self.view.backgroundColor = [MYTOOL RGBWithRed:247 green:247 blue:247 alpha:1];
     //左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(backToUpView)];
@@ -418,11 +418,11 @@
 //        NSLog(@"send:%@",sendDic);
         [SVProgressHUD showWithStatus:@"购买中…" maskType:SVProgressHUDMaskTypeClear];
         //        NSLog(@"send:%@",sendDic);
-        [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+//        [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
 //                        NSLog(@"back:%@",back_dic);
 //            NSLog(@"send:%@",sendDic);
             [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//                NSLog(@"back:%@",back_dic);
+                NSLog(@"back:%@",back_dic);
                 ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
                 orderVC.order = back_dic[@"order"];
                 orderVC.goodsList = back_dic[@"goodsList"];
@@ -436,7 +436,7 @@
                 [self.navigationController pushViewController:orderVC animated:true];
                 
             }];
-        }];
+//        }];
     
     
     

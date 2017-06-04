@@ -8,6 +8,7 @@
 
 #import "AddSubscribeViewController.h"
 #import "SharedManagerVC.h"
+#import "SubscribeSearchVC.h"
 @interface AddSubscribeViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @end
@@ -26,7 +27,8 @@
     self.view.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
     //返回按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
-    
+    //搜索
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"nav_search"] style:UIBarButtonItemStyleDone target:self action:@selector(submitSearch)];
     pageNo = 1;
     
     UITableView * tableView = [UITableView new];
@@ -71,6 +73,11 @@
     
     
     
+}
+//搜索事件
+-(void)submitSearch{
+    SubscribeSearchVC * search = [SubscribeSearchVC new];
+    [self.navigationController pushViewController:search animated:true];
 }
 #pragma mark - 上拉、下拉刷新
 -(void)headerRefresh{
@@ -196,7 +203,8 @@
             if (!signature || signature.length == 0) {
                 signature = @"他什么也没留下";
             }
-//            signature = @"反对撒放大镜看拉萨附近看到拉萨肌肤抵抗力撒娇疯狂的拉萨肌肤都可撒";
+            //过滤换行
+            signature = [signature stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]; //去除掉首尾的空白字符和换行字符
             label.text = signature;
             label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
             [cell addSubview:label];
@@ -204,6 +212,9 @@
             int c = size.width/(WIDTH-76-85) < 1 ? 1 : (size.width/(WIDTH-76-85) == 1 ? 1 : (int)size.width/(WIDTH-76-85) + 1);
             if (c > 1) {
                 label.numberOfLines = 0;
+                if (c > 2) {
+                    c = 2;
+                }
             }
             label.frame = CGRectMake(75, 45, WIDTH-76-85, size.height*c);
         }

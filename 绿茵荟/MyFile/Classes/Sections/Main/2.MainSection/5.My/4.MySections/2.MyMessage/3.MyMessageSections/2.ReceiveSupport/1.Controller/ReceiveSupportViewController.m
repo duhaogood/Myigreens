@@ -108,6 +108,18 @@
         }else{
             user_icon.image = [UIImage imageNamed:@"logo"];
         }
+        //是否已读
+        {
+            bool readType = [dict[@"readType"] boolValue];
+            if (!readType) {
+                UIView * view = [UIView new];
+                view.backgroundColor = [UIColor redColor];
+                view.frame = CGRectMake(5, user_icon.frame.origin.y+user_icon.frame.size.height/2-2, 4, 4);
+                view.layer.masksToBounds = true;
+                view.layer.cornerRadius = 2;
+                [cell addSubview:view];
+            }
+        }
      }
     
     //名字

@@ -27,6 +27,7 @@
 @property(nonatomic,strong)UITextField * assist_tf;//辅助文本框，不显示
 @property(nonatomic,strong)NSArray * bannerArray;//banner数组
 @property(nonatomic,strong)UIButton * firstBtn;//精选按钮
+@property(nonatomic,strong)UIView * noDateView;//订阅没有数据时显示
 @end
 
 @implementation CommunityVC
@@ -37,6 +38,7 @@
     NSString * current_title_circle_img_title;//圈子中目前标题 0 - 6
     UIView * down_img_circle_view;//圈子中下册视图
     NSArray * circle_imgTitle_array;//圈子下图标标题
+    NSArray * circle_imgUrl_array;//圈子下图标url
     int pageNo;//数据分页数
 }
 - (void)viewDidLoad {
@@ -128,27 +130,25 @@
         UIScrollView * view = [UIScrollView new];
         view.frame = CGRectMake(0, 0, WIDTH, 70);
         [mainView addSubview:view];
-        view.contentSize =  CGSizeMake(WIDTH*7/5.7, 0);
-        for (int i = 0; i < 7; i ++) {
+        view.contentSize =  CGSizeMake(WIDTH*circle_imgUrl_array.count/5.7, 0);
+        for (int i = 0; i < circle_imgUrl_array.count; i ++) {
             UIView * v = [UIView new];
-            v.frame = CGRectMake(i*view.contentSize.width/7, 10, view.contentSize.width/7-5, view.frame.size.height-20);
+            v.frame = CGRectMake(i*view.contentSize.width/circle_imgUrl_array.count, 10, view.contentSize.width/circle_imgUrl_array.count-5, view.frame.size.height-20);
             v.backgroundColor = [UIColor greenColor];
             // [view addSubview:v];
         }
         //图片及文字数据
-        NSArray * title_array = @[@"最新",@"花艺",@"植物",@"家居",@"杂物",@"情感",@"婚嫁"];
-        circle_imgTitle_array = title_array;
-        NSArray * image_name_array = @[@"menu_icon_brush",@"menu_icon_cut",@"menu_icon_Flowers",@"menu_icon_door",@"menu_icon_box",@"menu_icon_tv",@"menu_icon_wine"];
+        NSArray * image_name_array = circle_imgUrl_array;
         circle_image_title_dictionary = [NSMutableDictionary new];
         float width_image = 30;//图片高度及宽度
         float width_label = 50;//label宽度
         float height_label = 20;//label高度
         float space = (view.contentSize.width - 40 -30)/6;
-        for (int i = 0; i < 7; i ++) {
+        for (int i = 0; i < circle_imgUrl_array.count; i ++) {
             //图片
             UIImageView * imgV = [UIImageView new];
             imgV.frame = CGRectMake(20+i*space, 4, width_image, width_image);
-            imgV.image = [UIImage imageNamed:image_name_array[i]];
+            [imgV sd_setImageWithURL:[NSURL URLWithString:image_name_array[i]] placeholderImage:[UIImage imageNamed:@"logo"]];
             [view addSubview:imgV];
             //绑定监听
             [imgV setUserInteractionEnabled:YES];
@@ -158,7 +158,7 @@
             
             //文字
             UILabel * label = [UILabel new];
-            label.text = title_array[i];
+            label.text = circle_imgTitle_array[i];
             label.frame = CGRectMake(20+i*space, 40, width_label, height_label);
             [view addSubview:label];
             NSDictionary * dic = @{
@@ -173,7 +173,7 @@
         down_view.frame = CGRectMake(10, 65, 60, 4);
         [view addSubview:down_view];
         self.view_downOfImageView_circleView = down_view;
-        current_title_circle_img_title = @"最新";
+        current_title_circle_img_title = circle_imgTitle_array[0];
     }
     //中间分割线
     UIView * space_view_mid = [UIView new];
@@ -410,6 +410,25 @@
         }];
         self.tableView = tableView;
         [self loadDefaultData];
+        //覆盖一个没有数据时显示的view
+        {
+            UIView * view = [UIView new];
+            view.frame = tableView.bounds;
+            self.noDateView = view;
+            view.hidden = true;
+            [tableView addSubview:view];
+            view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+            //没有数据提示
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"还没有订阅的好友哦";
+                label.textAlignment = NSTextAlignmentCenter;
+                label.textColor = MYCOLOR_46_42_42;
+                label.font = [UIFont systemFontOfSize:15];
+                label.frame = CGRectMake(0, 10, WIDTH, 20);
+                [view addSubview:label];
+            }
+        }
     }
     
     
@@ -1285,12 +1304,13 @@
             [(UITableView *)current_view reloadData];
         }else if([title isEqualToString:@"圈子"]){
             [(UITableView *)down_img_circle_view reloadData];
-        }else{
-            
+        }else{//订阅
+            if (self.data_array.count == 0) {
+                self.noDateView.hidden = false;
+            }else{
+                self.noDateView.hidden = true;
+            }
         }
-        
-        //NSLog(@"back:%@",back_dic);
-//        NSLog(@"msg:%@",back_dic[@"msg"]);
     }andFailure:^(NSError *error_failure) {
         if (pageNo == 1) {
             [self.data_array removeAllObjects];
@@ -1390,7 +1410,27 @@
     }];
     
 }
+//获取分类数据
+-(void)getCircleTypeArray{
+    NSString * interface = @"/sys/getDictInfo.intf";
+    NSDictionary * send = @{@"type":@"community"};
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        NSArray * communityList = back_dic[@"dictEntities"][@"community"];
+        NSMutableArray * nameArray = [NSMutableArray new];//名字数组
+        NSMutableArray * urlArray = [NSMutableArray new];//图片url数组
+        for (int i = 0; i < communityList.count; i ++) {
+            NSDictionary * dict = communityList[i];
+            NSString * name = dict[@"label"];//名字
+            NSString * url = dict[@"url"];//图片url
+            [nameArray addObject:name];
+            [urlArray addObject:url];
+        }
+        circle_imgTitle_array = nameArray;
+        circle_imgUrl_array = urlArray;
+    }];
+}
 -(void)viewWillAppear:(BOOL)animated{
+    [self getCircleTypeArray];
     //左按钮-nav_-add
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_-add"] style:UIBarButtonItemStyleDone target:self action:@selector(addOfNavigationBar)];
     //右按钮-nav_top

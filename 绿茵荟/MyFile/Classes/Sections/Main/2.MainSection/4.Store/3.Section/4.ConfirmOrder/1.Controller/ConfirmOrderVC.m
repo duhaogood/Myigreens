@@ -50,6 +50,7 @@
     offset_y = -1;
 //    NSLog(@"商品数组:%@",self.goodsArray);
     isSuccess = false;
+//    NSLog(@"order:%@",self.order);
 }
 //加载主界面
 -(void)loadMainView{
@@ -155,9 +156,13 @@
                 {
                     UILabel * label = [UILabel new];
                     label.text = [NSString stringWithFormat:@"￥%@",goodsDic[@"price"]];
+                    if (self.integral) {
+                        label.text = [NSString stringWithFormat:@"%@积分 + ￥%@",goodsDic[@"point"],goodsDic[@"price"]];
+                    }
                     label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
-                    label.frame = CGRectMake(101, 88, WIDTH/4, 16);
                     label.font = [UIFont systemFontOfSize:16];
+                    CGSize size = [MYTOOL getSizeWithLabel:label];
+                    label.frame = CGRectMake(101, 88, size.width, size.height);
                     [goods_view addSubview:label];
                 }
                 //数量

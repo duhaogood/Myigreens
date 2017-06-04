@@ -12,6 +12,7 @@
 @property(nonatomic,strong)UILabel * telLabel;
 @property(nonatomic,strong)UILabel * addressLabel;
 @property(nonatomic,strong)UILabel * stateLabel;//提示
+@property(nonatomic,strong)UIView * noAddressView;//没有地址时显示
 @end
 @implementation ReceiverView
 
@@ -74,10 +75,51 @@
             imgV.image = [UIImage imageNamed:@"arrow_right_store"];
             [self addSubview:imgV];
         }
+        //没有地址时显示
+        {
+            UIView * view = [UIView new];
+            view.frame = self.bounds;
+            [self addSubview:view];
+            self.noAddressView = view;
+            view.hidden = true;
+            if (info == nil || [info[@"addressId"] longValue] == 0) {
+                view.hidden = false;
+            }
+            view.backgroundColor = [UIColor whiteColor];
+            //图标-icon_map
+            {
+                UIImageView * icon = [UIImageView new];
+                icon.image = [UIImage imageNamed:@"icon_map"];
+                icon.frame = CGRectMake(10, frame.size.height/2-8, 16, 16);
+                [view addSubview:icon];
+            }
+            //提示信息
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"请填写收货地址";
+                label.font = [UIFont systemFontOfSize:15];
+                label.textColor = MYCOLOR_46_42_42;
+                CGSize size = [MYTOOL getSizeWithLabel:label];
+                label.frame = CGRectMake(36, frame.size.height/2-size.height/2, size.width, size.height);
+                [view addSubview:label];
+            }
+            //右侧图标
+            {
+                UIImageView * imgV = [UIImageView new];
+                imgV.frame = CGRectMake(WIDTH-30, frame.size.height/2-15, 30, 30);
+                imgV.image = [UIImage imageNamed:@"arrow_right_store"];
+                [view addSubview:imgV];
+            }
+        }
     }
     return self;
 }
 -(void)updateReceiverInfo:(NSDictionary *)info{
+    if (info == nil || [info[@"addressId"] longValue] == 0) {
+        self.noAddressView.hidden = false;
+    }else{
+        self.noAddressView.hidden = true;
+    }
     if (info) {
         self.stateLabel.text = @"";
     }
