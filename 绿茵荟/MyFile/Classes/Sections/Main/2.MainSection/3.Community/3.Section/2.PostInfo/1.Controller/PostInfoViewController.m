@@ -8,6 +8,7 @@
 
 #import "PostInfoViewController.h"
 #import "SharedManagerVC.h"
+#import "CommunityVC.h"
 @interface PostInfoViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,assign)UILabel * num_label;//预览图片显示第几张
@@ -24,6 +25,7 @@
     UIImageView * show_img_view;//查看图片的view
     int review_pageNo;//评论数据分页数
     NSMutableArray * imgViewArray;//图片数组
+    bool praiseStatus;//是否赞过
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -38,7 +40,7 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
     //举报按钮
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"icon_reportReporticon_report"] style:UIBarButtonItemStyleDone target:self action:@selector(reportBtnCallBack)];
-    NSLog(@"postInfo:%@",self.post_dic);
+//    NSLog(@"postInfo:%@",self.post_dic);
     float left = 0;
     UIView * backView = [UIView new];
     backView.frame = CGRectMake(0, 10, WIDTH, 500);
@@ -47,7 +49,8 @@
     {
         UIImageView * userImgView = [UIImageView new];
         userImgView.frame = CGRectMake(14, 15, 41, 41);
-        userImgView.image = [UIImage imageNamed:@"test_user"];
+        NSString * headUrl = self.post_dic[@"member"][@"headUrl"];
+        [userImgView sd_setImageWithURL:[NSURL URLWithString:headUrl] placeholderImage:[UIImage imageNamed:@"logo"]];
         [backView addSubview:userImgView];
         userImgView.layer.masksToBounds = true;
         userImgView.layer.cornerRadius = 20.5;
@@ -109,7 +112,7 @@
         UILabel * label = [UILabel new];
         NSString * content = self.post_dic[@"content"];
         if (content == nil || content.length == 0) {
-            content = @"这家伙很懒，什么都没留下…阿斯顿发去玩儿热舞清热我去太热我要投入液体 u 一天asdffdsafdsa";
+            content = @"这家伙很懒，什么都没留下…";
         }
         label.text = content;
         label.font = [UIFont systemFontOfSize:16];
@@ -133,13 +136,16 @@
             int row = i / 3;//行
             int col = i % 3;//列
             UIImageView * imgV = [UIImageView new];
+            imgV.contentMode = UIViewContentModeScaleAspectFill;
+            imgV.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+            [imgV setContentScaleFactor:[[UIScreen mainScreen] scale]];
             imgV.frame = CGRectMake(10+col*(width+5), top+row*(width+5)+10, width, width);
             imgV.layer.masksToBounds = true;
             imgV.layer.cornerRadius = 12;
             imgV.tag = i;
             [imgViewArray addObject:imgV];
             [backView addSubview:imgV];
-            NSString * img_url = self.post_dic[@"url"][i][@"normalUrl"];
+            NSString * img_url = self.post_dic[@"url"][i][@"smallUrl"];
             [imgV sd_setImageWithURL:[NSURL URLWithString:img_url] placeholderImage:[UIImage imageNamed:@"test_bg"]];
             height_all = (row+1) * (width + 5);
             [imgV setUserInteractionEnabled:YES];
@@ -156,17 +162,16 @@
         NSInteger postId = [self.post_dic[@"postId"] longValue];//帖子的用户id
         //点赞
         {
-            //下边小图标  icon_praise
-            UIImageView * icon1 = [UIImageView new];
-            icon1.image = [UIImage imageNamed:@"icon_praise"];
-            icon1.frame = CGRectMake(WIDTH/4-15, top, 30, 30);
-            [backView addSubview:icon1];
-            //绑定监听
-            [icon1 setUserInteractionEnabled:YES];
-            icon1.tag = postId * 10 +1;
-            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
-            tapGesture.numberOfTapsRequired=1;
-            [icon1 addGestureRecognizer:tapGesture];
+            praiseStatus = [self.post_dic[@"praiseStatus"] boolValue];
+            UIButton * btn = [UIButton new];
+            [btn setImage:[UIImage imageNamed:@"icon_details_praise"] forState:UIControlStateNormal];
+            if (praiseStatus) {
+                [btn setImage:[UIImage imageNamed:@"icon_details_praise_press"] forState:UIControlStateNormal];
+            }
+            btn.frame = CGRectMake(WIDTH/4-15, top, 30, 30);
+            [btn addTarget:self action:@selector(praise_callBack:) forControlEvents:UIControlEventTouchUpInside];
+            btn.tag = postId * 10 + [self.post_dic[@"praiseStatus"] intValue];
+            [backView addSubview:btn];
             
             //数字
             UILabel * num_label1 = [UILabel new];
@@ -241,6 +246,8 @@
         [backView2 addSubview:backView];
         tableView.tableHeaderView = backView2;
         tableView.rowHeight = 98;
+        //不显示分割线
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         //解决tableView露白
         self.automaticallyAdjustsScrollViewInsets = false;
         tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
@@ -381,8 +388,8 @@
         right_icon.frame = CGRectMake(WIDTH-38, 12, 33, 33);
         right_icon.image = [UIImage imageNamed:@"icon_reportReporticon_report"];
         [cell addSubview:right_icon];
-        NSInteger postCommentId = [self.review_array[indexPath.row][@"postCommentId"] longValue];
-        right_icon.tag = postCommentId;
+//        NSInteger postCommentId = [self.review_array[indexPath.row][@"postCommentId"] longValue];
+        right_icon.tag = indexPath.row;
         right_icon.userInteractionEnabled = true;
         UITapGestureRecognizer * tapGesture4 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(reportReviewBtnCallBack:)];
         tapGesture4.numberOfTapsRequired=1;
@@ -444,6 +451,13 @@
         [btn setTitleColor:[MYTOOL RGBWithRed:114 green:158 blue:52 alpha:1] forState:UIControlStateNormal];
         [cell addSubview:btn];
     }
+    //分割线
+    {
+        UIView * space = [UIView new];
+        space.frame = CGRectMake(14, tableView.rowHeight-1, WIDTH-28, 1);
+        space.backgroundColor = MYCOLOR_181_181_181;
+        [cell addSubview:space];
+    }
     /**
      byNickName = "";
      comment = "\U54c8\U54c8";
@@ -457,7 +471,7 @@
 //先要设Cell可编辑
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return YES;
+    return false;
 }
 //定义编辑样式
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -477,6 +491,7 @@
             [SVProgressHUD showSuccessWithStatus:@"删除成功" duration:1];
             review_pageNo = 1;
             [self loadAllReviewData];
+            [self loadUpViewOfPost];
         }];
         
     }
@@ -527,38 +542,70 @@
 }
 //举报评论入口
 -(void)reportReviewBtnCallBack:(UITapGestureRecognizer *)tap{
-    UIImageView * imgV = (UIImageView *)tap.view;
-    if (!imgV) {
-        return;
+    if (![MYTOOL isLogin]) {
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
+        return ;
     }
-    UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要举报此评论？" preferredStyle:(UIAlertControllerStyleActionSheet)];
-    
-    UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定举报" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+    NSDictionary * comment = self.review_array[tap.view.tag];
+//    NSLog(@"comment:%@",comment);
+    NSInteger postCommentId = [self.review_array[tap.view.tag][@"postCommentId"] longValue];
+    NSInteger byMemberId = [comment[@"memberId"] longValue];
+    if (byMemberId == [MEMBERID intValue]) {//自己的评论，删除
+        UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要删除此评论？" preferredStyle:(UIAlertControllerStyleActionSheet)];
         
-        
-//        [SVProgressHUD showWithStatus:@"举报中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
-        //拼接上传参数
-        NSMutableDictionary * send_dic = [NSMutableDictionary new];
-        [send_dic setValue:[NSString stringWithFormat:@"%ld",imgV.tag] forKey:@"postCommentId"];
-        [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
-        //开始上传
-        [MYNETWORKING getWithInterfaceName:@"/community/postCommentInform.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
-            //            NSLog(@"back:%@",back_dic);
-            [SVProgressHUD showSuccessWithStatus:@"举报成功" duration:1];
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定删除" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            NSString * interfaceName = @"/community/delPostComment.intf";
+            [SVProgressHUD showWithStatus:@"正在删除" maskType:SVProgressHUDMaskTypeClear];
+            [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"postCommentId":[NSString stringWithFormat:@"%ld",postCommentId]} andSuccess:^(NSDictionary *back_dic) {
+                //            NSLog(@"back:%@",back_dic);
+                [SVProgressHUD showSuccessWithStatus:@"删除成功" duration:1];
+                review_pageNo = 1;
+                [self loadAllReviewData];
+                [self loadUpViewOfPost];
+            }];
+            
         }];
         
-    }];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
+        [alert addAction:action];
+        [alert addAction:cancel];
+        [self showDetailViewController:alert sender:nil];
+    }else{//别人的评论，举报
+        UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要举报此评论？" preferredStyle:(UIAlertControllerStyleActionSheet)];
+        
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定举报" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            
+            
+            //        [SVProgressHUD showWithStatus:@"举报中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+            //拼接上传参数
+            NSMutableDictionary * send_dic = [NSMutableDictionary new];
+            [send_dic setValue:[NSString stringWithFormat:@"%ld",postCommentId] forKey:@"postCommentId"];
+            [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
+            //开始上传
+            [MYNETWORKING getWithInterfaceName:@"/community/postCommentInform.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+                //            NSLog(@"back:%@",back_dic);
+                [SVProgressHUD showSuccessWithStatus:@"举报成功" duration:1];
+            }];
+            
+        }];
+        
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
+        [alert addAction:action];
+        [alert addAction:cancel];
+        [self showDetailViewController:alert sender:nil];
+    }
     
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
-    [alert addAction:action];
-    [alert addAction:cancel];
-    [self showDetailViewController:alert sender:nil];
+    
 }
 //回复消息回调
 -(void)answerBtnCallBack:(UIButton *)btn{
     if (![MYTOOL isLogin]) {
-        [SVProgressHUD showErrorWithStatus:@"你没登陆呢" duration:2];
-        return;
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
+        return ;
     }
 //    NSLog(@"准备回复");
     //弹出的回复界面
@@ -581,6 +628,7 @@
 //            NSLog(@"back:%@",back_dic);
             [self loadUpViewOfPost];
             [self loadAllReviewData];
+            [self.delegate updateData];
         }];
     }];
     
@@ -624,9 +672,11 @@
     
     UIImageView *tempImageView = (UIImageView*)tap.view;
     UIImageView *imageView = [[UIImageView alloc] initWithFrame:tempImageView.frame];
-    imageView.image = tempImageView.image;
+    NSString * url_string = self.post_dic[@"url"][tempImageView.tag][@"normalUrl"];
+    [imageView sd_setImageWithURL:[NSURL URLWithString:url_string] placeholderImage:[UIImage imageNamed:@"logo"]];
     show_img_view = imageView;
     imageView.tag = tap.view.tag;
+    
     [bgView addSubview:imageView];
     [UIView animateWithDuration:0.5 animations:^{
         CGRect frame = imageView.frame;
@@ -666,7 +716,7 @@
         UIImageView * imgV = [UIImageView new];
         [show_view insertSubview:imgV atIndex:0];
         UIImageView * img_view = imgViewArray[tag-1];
-        imgV.image = img_view.image;
+        [imgV sd_setImageWithURL:[NSURL URLWithString:self.post_dic[@"url"][tag-1][@"normalUrl"]]];
         show_view.tag = tag - 1;
         CGRect frame1 = img_view.frame;
         frame1.size.width = WIDTH;
@@ -692,7 +742,7 @@
         UIImageView * imgV = [UIImageView new];
         [show_view insertSubview:imgV atIndex:0];
         UIImageView * img_view = imgViewArray[tag+1];
-        imgV.image = img_view.image;
+        [imgV sd_setImageWithURL:[NSURL URLWithString:self.post_dic[@"url"][tag+1][@"normalUrl"]]];
         show_view.tag = tag + 1;
         CGRect frame1 = img_view.frame;
         frame1.size.width = WIDTH;
@@ -711,6 +761,12 @@
 //发送评论
 -(void)sendReview_callBack{
     [MYTOOL hideKeyboard];
+    if (![MYTOOL isLogin]) {
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
+        return ;
+    }
     [SVProgressHUD showWithStatus:@"回复中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
     NSString * msg = self.wantToSayField.text;
     if (msg.length == 0) {
@@ -731,6 +787,7 @@
         self.wantToSayField.text = @"";
         [self loadAllReviewData];
         [self loadUpViewOfPost];
+        [self.delegate updateData];
     }];
 }
 #pragma mark - 重写返回按钮事件
@@ -745,7 +802,7 @@
     NSInteger postId = tag / 10;
 //    NSLog(@"postId:%ld",postId);
     if (tag % 10 == 1) {//点赞
-        [self praise_callBack:postId];
+        
     }else if(tag % 10 == 2) {//回复
         [self reply_callBack:postId];
     }else if(tag % 10 == 3) {//分享
@@ -753,37 +810,61 @@
     }
 }
 //点赞事件
--(void)praise_callBack:(NSInteger)postId{
+-(void)praise_callBack:(UIButton *)btn{
+    NSInteger postId = btn.tag / 10;
     if (![MYTOOL isLogin]) {
-        [SVProgressHUD showErrorWithStatus:@"你没登陆呢" duration:2];
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
         return;
     }
-    [SVProgressHUD showWithStatus:@"点赞中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
-    //拼接上传参数
-    NSMutableDictionary * send_dic = [NSMutableDictionary new];
-    [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
-    [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
-    //开始上传
-    [MYNETWORKING getWithInterfaceName:@"/community/postPraise.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
-        [SVProgressHUD dismiss];
-        [self loadUpViewOfPost];
-    }];
-    
-    
-    
-    
+    if (praiseStatus) {//取消
+        [SVProgressHUD showWithStatus:@"取消中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+        //拼接上传参数
+        NSMutableDictionary * send_dic = [NSMutableDictionary new];
+        [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
+        [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
+        //开始上传
+        [MYNETWORKING getWithInterfaceName:@"/community/delPostPraise.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+            praiseStatus = false;
+            [btn setImage:[UIImage imageNamed:@"icon_details_praise"] forState:UIControlStateNormal];
+            if (praiseStatus) {
+                [btn setImage:[UIImage imageNamed:@"icon_details_praise_press"] forState:UIControlStateNormal];
+            }
+            [self loadUpViewOfPost];
+            [self.delegate updateData];
+        }];
+    }else{//赞帖
+        [SVProgressHUD showWithStatus:@"点赞中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+        //拼接上传参数
+        NSMutableDictionary * send_dic = [NSMutableDictionary new];
+        [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
+        [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
+        //开始上传
+        [MYNETWORKING getWithInterfaceName:@"/community/postPraise.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+            praiseStatus = true;
+            [btn setImage:[UIImage imageNamed:@"icon_details_praise"] forState:UIControlStateNormal];
+            if (praiseStatus) {
+                [btn setImage:[UIImage imageNamed:@"icon_details_praise_press"] forState:UIControlStateNormal];
+            }
+            [self loadUpViewOfPost];
+            [self.delegate updateData];
+        }];
+    }
 }
 //消息图标点击事件
 -(void)reply_callBack:(NSInteger)postId{
-    [SVProgressHUD showErrorWithStatus:@"貌似不用" duration:1];
-    
+    //暂时不用
     
 }
 //分享事件
 -(void)share_callBack{
+    
     SharedManagerVC * share = [SharedManagerVC new];
+    
     share.sharedDictionary = @{
-                               @"title":@"",
+                               @"title":self.post_dic[@"shareTitle"],
+                               @"shareDescribe":self.post_dic[@"shareDescribe"],
                                @"img_url":self.post_dic[@"url"][0][@"smallUrl"],
                                @"shared_url":self.post_dic[@"postDetailUrl"]
                                };

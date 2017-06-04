@@ -10,6 +10,8 @@
 #import "GoodsInfoViewController.h"
 #import "SearchGoodsVC.h"
 #import "GoodsCategoryVC.h"
+#import "PostInfoViewController.h"
+#import "GoodsBannerVC.h"
 @interface StoreVC ()<UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,SDCycleScrollViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)NSArray * tagsList_array;//商品首页数据
@@ -18,6 +20,7 @@
 @property(nonatomic,strong)UILabel * numberOfGoodsLabel;//购物车商品数字label
 @property(nonatomic,strong)UISearchBar * searchBar;//搜索框
 @property(nonatomic,strong)UIView * shopView;//购物车view
+@property(nonatomic,strong)StorePageTableViewCell * storeCell;//下侧cell
 @end
 
 @implementation StoreVC
@@ -109,18 +112,153 @@
     NSInteger tag = cycleScrollView.tag;
     if (tag == 100) {//顶部轮播图
         NSDictionary * carouselDic = _carouselImage_array[index];
-        NSInteger bannerId = [carouselDic[@"bannerId"] longValue];
         NSInteger category = [carouselDic[@"category"] longValue];
-        NSLog(@"---点击了上第%ld张图片", (long)index);
-//        NSLog(@"barouselDic:%@",carouselDic);
+        //Category：导航类别(1：富文本 2：商品 3：帖子 4:商品组)
+        if (category == 1) {//富文本
+            NSString * content = carouselDic[@"content"];
+            TextBannerVC * text = [TextBannerVC new];
+            text.content = content;
+            [self.navigationController pushViewController:text animated:true];
+        }else if (category == 2) {//商品
+            //网络获取商品详情
+            NSString * interfaceName = @"/shop/goods/getGoodsInfo.intf";
+            NSString * cityId = [MYTOOL getProjectPropertyWithKey:@"cityId"];
+            if (cityId == nil || cityId.length == 0) {
+                cityId = @"320300";
+            }
+            NSDictionary * sendDict = @{
+                                        @"goodsId":carouselDic[@"categoryId"],
+                                        @"cityId":cityId
+                                        };
+            [MYTOOL netWorkingWithTitle:@"获取商品"];
+            [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDict andSuccess:^(NSDictionary *back_dic) {
+//                NSLog(@"商品:%@",back_dic);
+                GoodsInfoViewController * info = [GoodsInfoViewController new];
+                info.goodsInfoDictionary = back_dic[@"goods"];
+                [self.navigationController pushViewController:info animated:true];
+            }];
+        }else if (category == 3) {//帖子
+            NSMutableDictionary * send_dic = [NSMutableDictionary new];
+            NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+            if (memberId) {
+                [send_dic setValue:memberId forKey:@"memberId"];
+            }
+            [send_dic setValue:carouselDic[@"categoryId"] forKey:@"postId"];
+            
+            //开始请求
+            [SVProgressHUD showWithStatus:@"获取帖子" maskType:SVProgressHUDMaskTypeClear];
+            [MYNETWORKING getWithInterfaceName:@"/community/getPostInfo.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+                bool flag = [back_dic[@"code"] boolValue];
+                if (flag) {
+                    [SVProgressHUD dismiss];
+                    PostInfoViewController * postVC = [PostInfoViewController new];
+                    postVC.title = @"帖子详情";
+                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:back_dic[@"post"]];
+                    [dict setValue:@([carouselDic[@"categoryId"] intValue]) forKey:@"postId"];
+                    postVC.post_dic = dict;
+                    [self.navigationController pushViewController:postVC animated:true];
+                }else{
+                    [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
+                }
+            }];
+        }else if (category == 4) {//商品组
+            NSString * interface = @"/shop/goods/getGoodList.intf";
+            [MYTOOL netWorkingWithTitle:@"获取商品组"];
+            NSInteger bannerId = [carouselDic[@"bannerId"] longValue];
+            NSDictionary * send = @{
+                                    @"bannerId":[NSString stringWithFormat:@"%ld",bannerId]
+                                    };
+            [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+//                NSLog(@"back:%@",back_dic);
+                NSArray * goodsList = back_dic[@"goodsList"];
+                GoodsBannerVC * goodsB = [GoodsBannerVC new];
+                goodsB.title = back_dic[@"title"];
+                goodsB.goodsList = goodsList;
+                [self.navigationController pushViewController:goodsB animated:true];
+            }];
+            
+        }
     }else{//导航设置
-        indexOfImage = index;
-        [self.tableView reloadData];
-        NSDictionary * carouselDic = _carouselImage_array[index];
-        NSInteger bannerId = [carouselDic[@"bannerId"] longValue];
+//
+        NSDictionary * carouselDic = nil;
+        for (NSDictionary * dictt in _tagsList_array) {
+            int showType = [dictt[@"showType"] intValue];
+            if (showType == 3) {
+                carouselDic = dictt[@"bannerList"][index];
+                break;
+            }
+        }
         NSInteger category = [carouselDic[@"category"] longValue];
-        NSLog(@"---点击了下第%ld张图片", (long)index);
-//        NSLog(@"bannerListDic:%@",carouselDic);
+//        NSLog(@"---点击了上第%ld张图片", (long)index);
+//        NSLog(@"barouselDic:%@",carouselDic);
+        //Category：导航类别(1：富文本 2：商品 3：帖子 4:商品组)
+        if (category == 1) {//富文本
+            NSString * content = carouselDic[@"content"];
+            TextBannerVC * text = [TextBannerVC new];
+            text.content = content;
+            [self.navigationController pushViewController:text animated:true];
+        }else if (category == 2) {//商品
+            //网络获取商品详情
+            NSString * interfaceName = @"/shop/goods/getGoodsInfo.intf";
+            NSString * cityId = [MYTOOL getProjectPropertyWithKey:@"cityId"];
+            if (cityId == nil || cityId.length == 0) {
+                cityId = @"320300";
+            }
+            NSDictionary * sendDict = @{
+                                        @"goodsId":carouselDic[@"categoryId"],
+                                        @"cityId":cityId
+                                        };
+            [MYTOOL netWorkingWithTitle:@"获取商品"];
+            [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDict andSuccess:^(NSDictionary *back_dic) {
+                NSLog(@"商品:%@",back_dic);
+                GoodsInfoViewController * info = [GoodsInfoViewController new];
+                info.goodsInfoDictionary = back_dic[@"goods"];
+                [self.navigationController pushViewController:info animated:true];
+            }];
+        }else if (category == 3) {//帖子
+            NSMutableDictionary * send_dic = [NSMutableDictionary new];
+            NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+            if (memberId) {
+                [send_dic setValue:memberId forKey:@"memberId"];
+            }
+            [send_dic setValue:carouselDic[@"categoryId"] forKey:@"postId"];
+            
+            //开始请求
+            [SVProgressHUD showWithStatus:@"获取帖子" maskType:SVProgressHUDMaskTypeClear];
+            [MYNETWORKING getWithInterfaceName:@"/community/getPostInfo.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+                bool flag = [back_dic[@"code"] boolValue];
+                if (flag) {
+                    [SVProgressHUD dismiss];
+                    PostInfoViewController * postVC = [PostInfoViewController new];
+                    postVC.title = @"帖子详情";
+                    NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:back_dic[@"post"]];
+                    [dict setValue:@([carouselDic[@"categoryId"] intValue]) forKey:@"postId"];
+                    postVC.post_dic = dict;
+                    [self.navigationController pushViewController:postVC animated:true];
+                }else{
+                    [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
+                }
+            }];
+        }else if (category == 4) {//商品组
+            NSString * interface = @"/shop/goods/getGoodList.intf";
+            [MYTOOL netWorkingWithTitle:@"获取商品组"];
+            NSInteger bannerId = [carouselDic[@"bannerId"] longValue];
+            NSDictionary * send = @{
+                                    @"bannerId":[NSString stringWithFormat:@"%ld",bannerId]
+                                    };
+            [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+                //                NSLog(@"back:%@",back_dic);
+                NSArray * goodsList = back_dic[@"goodsList"];
+                GoodsBannerVC * goodsB = [GoodsBannerVC new];
+                goodsB.title = back_dic[@"title"];
+                goodsB.goodsList = goodsList;
+                [self.navigationController pushViewController:goodsB animated:true];
+            }];
+            
+        }
+        
+        
+        
     }
     
 }
@@ -167,7 +305,7 @@
 //商品分类图片点击事件
 -(void)clickImgOfGoodsCategory:(UITapGestureRecognizer *)tap{
     NSInteger goodsCategory = tap.view.tag;
-    NSLog(@"点击goodsCategory:%ld",goodsCategory);
+//    NSLog(@"点击goodsCategory:%ld",goodsCategory);
     NSString * interface = @"/shop/goods/getGoodsCat.intf";
     NSDictionary * send = @{
                             @"goodsCatId":[NSString stringWithFormat:@"%ld",goodsCategory]
@@ -184,33 +322,6 @@
             [self.navigationController pushViewController:vc animated:true];
         }
     }];
-    /*
-     8.3获取商品分类
-     Ø接口地址：/shop/goods/getGoodsCat.intf
-     Ø接口描述：获取商品分类
-     Ø特殊说明：如传入goodsCatId则是查出这个分类下的子集，不传则查出所有父类
-     46.47.48.48.1Ø输入参数：
-     参数名称	参数含义	参数类型	是否必录
-     goodsCatId	商品分类id	数字	否
-     */
-    
-    
-//    NSLog(@"商品分类id:%ld",goodsId);
-    //    self.goodsCategory_array;
-//    GoodsTagViewController * goodsTag = [GoodsTagViewController new];
-//    for (NSDictionary * dic in self.goodsCategory_array) {
-//        NSInteger goodsCatId = [dic[@"goodsCatId"] longValue];
-//        if (goodsCatId == goodsId) {
-//            NSString * name = dic[@"name"];
-//            goodsTag.title = name;
-//            break;
-//        }
-//    }
-//    goodsTag.type = 1;
-//    [self.navigationController pushViewController:goodsTag animated:true];
-//    
-    
-    
     
 }
 
@@ -312,10 +423,8 @@
         self.carouselImage_array = backDict[@"list"];
         
         NSArray * array = backDict[@"list"];
-        self.carouselImage_array = [array subarrayWithRange:NSMakeRange(2, array.count-2)];
-        
-        
-                NSLog(@"轮播图:%@",self.carouselImage_array);
+        self.carouselImage_array = array;
+//                NSLog(@"轮播图:%@",self.carouselImage_array);
         [self.storeNetWorking getGoodsCategory:^(NSDictionary * backDict2) {//获取商品分类数据
             self.goodsCategory_array = backDict2[@"goodsCatList"];
 //                        NSLog(@"分类数据:%@",self.goodsCategory_array);
@@ -325,14 +434,16 @@
                 NSMutableArray * arr = [NSMutableArray new];
                 for (NSDictionary * arr_dic in back_arr) {
                     NSInteger showType = [arr_dic[@"showType"] longValue];
-                    if (showType == 3) {//中间的新鲜热卖
+                    NSArray * bannerList = arr_dic[@"bannerList"];
+                    if (showType == 3 && bannerList && bannerList.count > 0) {//中间的新鲜热卖
                         [arr addObject:arr_dic];
                         break;
                     }
                 }
                 for (NSDictionary * arr_dic in back_arr) {
                     NSInteger showType = [arr_dic[@"showType"] longValue];
-                    if (showType == 1) {//下面的商品组
+                    NSArray * goodsList = arr_dic[@"goodsList"];
+                    if (showType == 1 && goodsList && goodsList.count > 0) {//下面的商品组
                         [arr addObject:arr_dic];
                     }
                 }
@@ -344,6 +455,15 @@
         }];
     }];
 }
+//轮播图自动滚动通知
+-(void)autoScroll:(NSNotification *)sender{
+    NSDictionary * dic = [sender object];
+    NSInteger tag = [dic[@"tag"] longValue];
+    int page = [dic[@"page"] intValue];
+    if (tag == 200) {
+        self.leftLabel.text = [NSString stringWithFormat:@"%d",page];
+    }
+}
 //页面显示
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
@@ -354,9 +474,11 @@
         int count = [back[@"count"] intValue];
         [self refreshGoodsNumber:count];
     }];
+    [MYCENTER_NOTIFICATION addObserver:self selector:@selector(autoScroll:) name:AUTOMATIC_SCROLL object:nil];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     self.searchBar.hidden = true;
     self.shopView.hidden = true;
+    [MYCENTER_NOTIFICATION removeObserver:self name:AUTOMATIC_SCROLL object:nil];
 }
 @end

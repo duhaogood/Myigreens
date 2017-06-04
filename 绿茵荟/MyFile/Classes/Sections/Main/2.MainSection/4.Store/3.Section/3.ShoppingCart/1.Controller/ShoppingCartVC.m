@@ -523,6 +523,7 @@
         ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
         orderVC.order = back_dic[@"order"];
         orderVC.goodsList = back_dic[@"goodsList"];
+        orderVC.integral = 0;
         orderVC.receiptAddress = back_dic[@"receiptAddress"];
         orderVC.title = @"确认订单";
         NSMutableArray * arr = [NSMutableArray new];

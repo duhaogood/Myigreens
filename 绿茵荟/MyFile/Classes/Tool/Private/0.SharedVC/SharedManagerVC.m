@@ -143,9 +143,10 @@
     NSString * title = self.sharedDictionary[@"title"];
     NSString * img_url = self.sharedDictionary[@"img_url"];
     NSString * shared_url = self.sharedDictionary[@"shared_url"];
-    img_url = @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1495084662559&di=d0f52ce7c6c01f2dcc1530a663ef709e&imgtype=0&src=http%3A%2F%2Fimg1.qqdawang.com%2Ffile%2F20160930%2F67f48f87b7cbeb66eca361d277f84ef6.jpg";
+    NSString * shareDescribe = self.sharedDictionary[@"shareDescribe"];
+    
     //创建网页内容对象
-    UMShareWebpageObject *shareObject = [UMShareWebpageObject shareObjectWithTitle:title descr:nil thumImage:img_url];
+    UMShareWebpageObject *shareObject = [UMShareWebpageObject shareObjectWithTitle:title descr:shareDescribe thumImage:img_url];
     //设置网页地址
     shareObject.webpageUrl = shared_url;
     

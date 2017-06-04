@@ -292,6 +292,12 @@
             [SVProgressHUD showErrorWithStatus:@"不可有空数据" duration:1];
             return;
         }
+        if ([key isEqualToString:@"addr"]) {
+            if (string.length < 5) {
+                [SVProgressHUD showErrorWithStatus:@"详细地址\n长度小于5" duration:2];
+                return;
+            }
+        }
         [sendDict setValue:string forKey:key];
     }
     [sendDict setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];

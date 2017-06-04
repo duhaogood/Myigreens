@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface PostInfoViewController : UIViewController
+@property(nonatomic,assign)id delegate;
 @property(nonatomic,strong)NSDictionary * post_dic;
 @end

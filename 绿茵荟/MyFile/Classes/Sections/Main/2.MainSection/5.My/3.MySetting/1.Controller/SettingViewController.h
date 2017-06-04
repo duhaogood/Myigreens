@@ -15,7 +15,7 @@
 #import "AboutLYHViewController.h"
 #import "BusinessCooperateViewController.h"
 #import "FeedbackViewController.h"
-
+#import "LoginViewController.h"
 
 @interface SettingViewController : UIViewController
 @property(nonatomic,assign)bool push_state;//推送状态

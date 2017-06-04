@@ -27,6 +27,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
+    NSLog(@"point:%@",self.goodsInfo);
     self.view.backgroundColor = [MYTOOL RGBWithRed:247 green:247 blue:247 alpha:1];
     //左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(backToUpView)];
@@ -65,8 +66,7 @@
         {
             UIImageView * imgV = [UIImageView new];
             imgV.frame = CGRectMake(14, 17, 100, 100);
-            NSString * url = self.goodsInfo[@"url"];
-            imgV.image = [UIImage imageNamed:@"logo"];
+            NSString * url = self.selectProductDic[@"url"];
             if (url) {
                 [imgV sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage imageNamed:@"logo"]];
             }
@@ -96,7 +96,7 @@
         {
             UILabel * label = [UILabel new];
             label.frame = CGRectMake(128, 60, WIDTH-128-50, 20);
-            NSInteger enableStore = [productList[0][@"exchangeMaxCount"] longValue];
+            NSInteger enableStore = [productList[0][@"enableStore"] longValue];
             label.text = [NSString stringWithFormat:@"库存%ld",enableStore];
             label.font = [UIFont systemFontOfSize:18];
             [goodsView addSubview:label];
@@ -391,12 +391,6 @@
 }
 //兑换事件
 -(void)convertCallback{
-    NSLog(@"%@",self.goodsInfo);
-    
-    
-    
-    
-    
     if (self.goodsView.hidden) {
         self.goodsView.hidden = false;
         [UIView animateWithDuration:0.3 animations:^{
@@ -405,6 +399,14 @@
             self.webView.userInteractionEnabled = false;
         }];
     }else{
+//        NSLog(@"%@",self.selectProductDic);
+        int goodsCount = [self.goodsCountLabel.text intValue];
+        NSInteger enableStore = [self.selectProductDic[@"enableStore"] longValue];
+        if (goodsCount > enableStore) {
+            [SVProgressHUD showErrorWithStatus:@"可换数量有限哦" duration:2];
+            return;
+        }
+        
         NSString * interfaceName = @"/shop/order/confirmOrder.intf";
         NSMutableDictionary * sendDic = [NSMutableDictionary new];
         [sendDic setValue:MEMBERID forKey:@"memberId"];
@@ -413,47 +415,37 @@
         [sendDic setValue:productId_1 forKey:@"productId"];
         [sendDic setValue:quantity_1 forKey:@"quantity"];
         [sendDic setValue:@"1" forKey:@"integral"];
-        NSLog(@"send:%@",sendDic);
+//        NSLog(@"send:%@",sendDic);
+        [SVProgressHUD showWithStatus:@"购买中…" maskType:SVProgressHUDMaskTypeClear];
+        //        NSLog(@"send:%@",sendDic);
         [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-            NSLog(@"back:%@",back_dic);
-            return;
-#warning 明天调试
-            ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
-            orderVC.order = back_dic[@"order"];
-            orderVC.goodsList = back_dic[@"goodsList"];
-            orderVC.receiptAddress = back_dic[@"receiptAddress"];
-            orderVC.title = @"确认订单";
-            //            orderVC.goodsArray = back_dic[@"goodsList"];
-            NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:self.goodsInfo];
-            [dict setValue:self.selectProductDic[@"productId"] forKey:@"productId"];
-            orderVC.goodsInfoDictionary = dict;
-            [self.navigationController pushViewController:orderVC animated:true];
+//                        NSLog(@"back:%@",back_dic);
+//            NSLog(@"send:%@",sendDic);
+            [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+//                NSLog(@"back:%@",back_dic);
+                ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
+                orderVC.order = back_dic[@"order"];
+                orderVC.goodsList = back_dic[@"goodsList"];
+                orderVC.receiptAddress = back_dic[@"receiptAddress"];
+                orderVC.title = @"确认订单";
+                orderVC.integral = 1;
+                //            orderVC.goodsArray = back_dic[@"goodsList"];
+                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:self.goodsInfo];
+                [dict setValue:self.selectProductDic[@"productId"] forKey:@"productId"];
+                orderVC.goodsInfoDictionary = dict;
+                [self.navigationController pushViewController:orderVC animated:true];
+                
+            }];
         }];
-    }
+    
+    
+    
+    
+    
+    
+}
 }
 
-
-
-/*
- goodDetailUrl
- exchangeMaxCount = 1;
- goodsId = 9;
- goodsName = "\U65fa\U65fa\U6311\U8c46\U968f\U624b\U5305\U6d77\U82d4\U82b1\U751f45g/\U888b";
- point = 500;
- productList =         (
- {
- enableStore = 0;
- marketPrice = 0;
- price = 0;
- productId = 9;
- productName = "\U65fa\U65fa\U6311\U8c46\U968f\U624b\U5305\U6d77\U82d4\U82b1\U751f45g/\U888b";
- url = "http://static.v4.javamall.com.cn/attachment/goods/201202221444355358.jpg";
- }
- );
- shareDescribe = "";
- shareTitle = "\U65fa\U65fa\U6311\U8c46\U968f\U624b\U5305\U6d77\U82d4\U82b1\U751f45g/\U888b-\Uffe52.7";
- url = "http://static.v4.javamall.com.cn/attachment/goods/201202221444355358.jpg";
- */
 //返回上个界面
 -(void)backToUpView{
     [self.navigationController popViewControllerAnimated:true];

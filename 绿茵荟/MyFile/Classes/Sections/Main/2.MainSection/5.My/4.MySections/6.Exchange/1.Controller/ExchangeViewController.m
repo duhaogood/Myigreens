@@ -187,7 +187,7 @@
         //添加头视图的内容
         float height = header.frame.size.height;
         float down_height = [MYTOOL getHeightWithIphone_six:50];
-        NSLog(@"height:%.2f",height);
+//        NSLog(@"height:%.2f",height);
         //顶部背景
         {
             UIView * view = [UIView new];

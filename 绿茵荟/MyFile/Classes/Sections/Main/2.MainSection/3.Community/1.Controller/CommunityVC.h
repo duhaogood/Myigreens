@@ -17,5 +17,11 @@
 #import "PostInfoViewController.h"
 
 @interface CommunityVC : UIViewController
+@property(nonatomic,assign)bool donotUpdate;//不要更新
+
+
+//更新数据
+-(void)updateData;
+
 
 @end

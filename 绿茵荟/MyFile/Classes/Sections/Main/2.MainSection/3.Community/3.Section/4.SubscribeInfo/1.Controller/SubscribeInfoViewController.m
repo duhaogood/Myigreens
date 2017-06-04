@@ -22,7 +22,7 @@
     [super viewDidLoad];
     //加载主界面
     [self loadMainView];
-//    NSLog(@"%@",self.member_dic);
+    NSLog(@"%@",self.member_dic);
     //加载帖子数据
     pageNo = 1;
     [self loadPostArray];
@@ -85,8 +85,7 @@
     {
         UIImageView * user_icon = [UIImageView new];
         user_icon.frame = CGRectMake(WIDTH/2-40, back_imgV.frame.size.height-50, 80, 80);
-#warning 头像暂时写死，以后改
-        user_icon.image = [UIImage imageNamed:@"test_user"];
+        [user_icon sd_setImageWithURL:[NSURL URLWithString:self.member_dic[@"headUrl"][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"logo"]];
         user_icon.layer.masksToBounds = true;
         user_icon.layer.cornerRadius = 40;
         [back_view addSubview:user_icon];
@@ -112,7 +111,7 @@
         UILabel * signature_label = [UILabel new];
         NSString * signature = self.member_dic[@"signature"];
         if (!signature || signature.length == 0) {
-            signature = @"匿名用户阿斯蒂芬里撒范德阿斯蒂芬范德萨范德萨萨里撒范德阿斯蒂芬范德萨范德萨萨";
+            signature = @"这家伙很懒……";
         }
         signature_label.textAlignment = NSTextAlignmentCenter;
         signature_label.text = signature;
@@ -152,7 +151,7 @@
             space_view.backgroundColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
         }
         NSString * subscribeCount = [NSString stringWithFormat:@"%ld",[self.member_dic[@"subscribeCount"] longValue]];
-        NSString * bySubscribeCount = [NSString stringWithFormat:@"%ld",[self.member_dic[@"subscribeMember"] longValue]];
+        NSString * bySubscribeCount = [NSString stringWithFormat:@"%ld",[self.member_dic[@"bySubscribeCount"] longValue]];
         //订阅-subscribeCount
         {
             NSString * string = [NSString stringWithFormat:@"%@订阅",subscribeCount];

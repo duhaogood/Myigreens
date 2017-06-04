@@ -782,6 +782,7 @@
                             };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
         [SVProgressHUD showSuccessWithStatus:@"已经确认收货" duration:1];
+        [self.delegate updateViewAllState];
     }];
     
     

@@ -33,7 +33,7 @@
     productListArray = self.goodsInfoDictionary[@"productList"];
     //加载主界面
     [self loadMainView];
-    NSLog(@"商品详情:%@",self.goodsInfoDictionary);
+//    NSLog(@"商品详情:%@",self.goodsInfoDictionary);
 }
 //加载主界面
 -(void)loadMainView{
@@ -43,7 +43,8 @@
     {
         UIWebView * web = [UIWebView new];
         web.frame = CGRectMake(0, 0, WIDTH, HEIGHT-50);
-        NSURL *url = [NSURL URLWithString:@"http://115.28.40.117:8180/api/shop/goods/getGoodsDetail.intf"];
+        NSString * string = self.goodsInfoDictionary[@"goodDetailUrl"];
+        NSURL *url = [NSURL URLWithString:string];
         // 2. 把URL告诉给服务器,请求,从m.baidu.com请求数据
         NSURLRequest * request = [NSURLRequest requestWithURL:url];
         [web loadRequest:request];
@@ -407,16 +408,15 @@
 {
     SharedManagerVC * show = [SharedManagerVC new];
     show.delegate = self;
-    
-    NSString * goodsName = self.goodsInfoDictionary[@"goodsName"];
-    float price = [self.goodsInfoDictionary[@"price"] floatValue];
-    NSString * title = [NSString stringWithFormat:@"%@ - %.2f元",goodsName,price];
+    NSString * title = self.goodsInfoDictionary[@"shareTitle"];
     NSString * img_url = self.goodsInfoDictionary[@"url"];
-    NSString * shared_url = @"www.baidu.com";
+    NSString * shared_url = self.goodsInfoDictionary[@"goodDetailUrl"];
+    NSString * shareDescribe = self.goodsInfoDictionary[@"shareDescribe"];
     NSDictionary * sharedDic = @{
                                  @"title":title,
                                  @"img_url":img_url,
-                                 @"shared_url":shared_url
+                                 @"shared_url":shared_url,
+                                 @"shareDescribe":shareDescribe
                                  };
     show.sharedDictionary = sharedDic;
     [show show];
@@ -485,12 +485,24 @@
 }
 //购物车按钮回调
 -(void)shoppingCartBtnCallback{
+    if (![MYTOOL isLogin]) {
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
+        return ;
+    }
     ShoppingCartVC * shop = [ShoppingCartVC new];
     shop.title = @"我的购物车";
     [self.navigationController pushViewController:shop animated:true];
 }
 //加入购物车
 -(void)addToShoppingCartCallback{
+    if (![MYTOOL isLogin]) {
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
+        return ;
+    }
     if (self.goodsView.hidden) {
         self.goodsView.hidden = false;
         [UIView animateWithDuration:0.3 animations:^{
@@ -506,6 +518,7 @@
         NSDictionary * sendDic = @{
                                    @"quantity":self.goodsCountLabel.text,
                                    @"memberId":MEMBERID,
+                                   @"exchange":@"0",
                                    @"productId":[NSString stringWithFormat:@"%ld",productId]
                                    };
 //        NSLog(@"send:%@",sendDic);
@@ -535,6 +548,12 @@
 }
 //立即购买事件
 -(void)buyBtnCallback{
+    if (![MYTOOL isLogin]) {
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        [self.navigationController pushViewController:loginVC animated:true];
+        return ;
+    }
     if (self.goodsView.hidden) {
         self.goodsView.hidden = false;
         [UIView animateWithDuration:0.3 animations:^{
@@ -565,6 +584,7 @@
             ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
             orderVC.order = back_dic[@"order"];
             orderVC.goodsList = back_dic[@"goodsList"];
+            orderVC.integral = 0;
             orderVC.receiptAddress = back_dic[@"receiptAddress"];
             orderVC.title = @"确认订单";
 //            orderVC.goodsArray = back_dic[@"goodsList"];

@@ -69,7 +69,6 @@
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     
-    
 }
 
 
@@ -251,19 +250,19 @@
 #warning 以后删除
     
     UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"请选择服务器!" message:nil preferredStyle:UIAlertControllerStyleAlert];
-    NSString * server = @"http://115.28.40.117:8180/api";
+    NSString * server = @"yemast.com:8180-测试";//
     UIAlertAction *action1 = [UIAlertAction actionWithTitle:server style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
-        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://115.28.40.117:8180/api"];
+        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://yemast.com:8180/api"];
     }];
-    NSString * server2 = @"http://yema.wicp.net/api";
+    NSString * server2 = @"http://yema.wicp.net/api-老王";
     UIAlertAction *action2 = [UIAlertAction actionWithTitle:server2 style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
         [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://yema.wicp.net/api"];
         
     }];
-    NSString * server3 = @"http://106.14.148.72:8081/api";
+    //http://106.14.148.72:8081
+    NSString * server3 = @"myigreens.yemast.com:8081-正式";
     UIAlertAction *action3 = [UIAlertAction actionWithTitle:server3 style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
-        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://106.14.148.72:8081/api"];
-        
+        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://myigreens.yemast.com:8081/api"];
     }];
     [alert addAction:action1];
     [alert addAction:action2];
@@ -307,8 +306,9 @@
         [MYTOOL setProjectPropertyWithKey:@"memberId" andValue:nil];
         [SVProgressHUD showSuccessWithStatus:@"退出成功了" duration:1];
         AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-        MainVC * vc = (MainVC *)delegate.window.rootViewController;
-        vc.selectedIndex = 3;
+        LoginViewController * login = [LoginViewController new];
+        login.fromExitLogin = true;
+        delegate.window.rootViewController = login;
     }];
     UIAlertAction * aa_cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         

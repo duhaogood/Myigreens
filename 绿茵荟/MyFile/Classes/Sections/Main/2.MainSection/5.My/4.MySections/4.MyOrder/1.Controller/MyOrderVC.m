@@ -113,7 +113,7 @@
                                };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
         //
-        NSLog(@"back:%@",back_dic[@"order"]);
+//        NSLog(@"back:%@",back_dic[@"order"]);
         NSDictionary * orderDic = back_dic[@"order"];
         if (orderDic) {
             OrderInfoVC * infoVC = [OrderInfoVC new];
@@ -607,6 +607,7 @@
                             };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
         [SVProgressHUD showSuccessWithStatus:@"确认收货成功" duration:1];
+        [self updateViewAllState];
     }];
     
     
@@ -628,7 +629,7 @@
                                };
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
         NSArray * orderArray = back_dic[@"orderList"];
-//        NSLog(@"订单列表:%@",orderArray);
+//        NSLog(@"订单列表:%@",orderArray[0]);
         self.orderArray = orderArray;
         self.timerArray = [NSMutableArray new];
         for (NSDictionary * orderDic in orderArray) {

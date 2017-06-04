@@ -12,11 +12,13 @@
 @property(nonatomic,strong)NSArray * goodsList;//商品列表
 @property(nonatomic,strong)NSDictionary * order;//订单详情
 @property(nonatomic,strong)NSDictionary * receiptAddress;//接收地址信息
-
+@property(nonatomic,assign)int integral;//是否积分商品
 @property(nonatomic,strong)NSDictionary * goodsInfoDictionary;//商品直接进来传递的商品详情
 
 /**更改地址*/
 -(void)changeAddress:(NSDictionary *)addressDic;
 //更改快递方式
 -(void)changeExpressWithDictionary:(NSDictionary *)expressDict;
+//选择优惠券回调
+-(void)changeBonusWithDictionary:(NSDictionary *)bonusDict;
 @end

@@ -132,6 +132,9 @@
     //第一个图片
     if (img_url_array.count >= 1){
         UIImageView * imgView = [UIImageView new];
+        imgView.contentMode = UIViewContentModeScaleAspectFill;
+        imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+        [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
         imgView.layer.masksToBounds = true;
         imgView.layer.cornerRadius = 10;
         imgView.frame = CGRectMake(left_img, top_img, 185*WIDTH/414.0, (185*WIDTH/414.0)*271.0/185);
@@ -150,6 +153,9 @@
     //第二个图片
     if (img_url_array.count >= 2){
         UIImageView * imgView = [UIImageView new];
+        imgView.contentMode = UIViewContentModeScaleAspectFill;
+        imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+        [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
         imgView.layer.masksToBounds = true;
         imgView.layer.cornerRadius = 10;
         imgView.frame = CGRectMake(left_img, top_img, 185*WIDTH/414.0, (185*WIDTH/414.0)*128.0/185.0);
@@ -168,6 +174,9 @@
     //第三个图片
     if (img_url_array.count >= 3){
         UIImageView * imgView = [UIImageView new];
+        imgView.contentMode = UIViewContentModeScaleAspectFill;
+        imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+        [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
         imgView.layer.masksToBounds = true;
         imgView.layer.cornerRadius = 10;
         imgView.frame = CGRectMake(left_img, top_img, (182*WIDTH/414.0)*127.0/185.0/236.0*162, (185*WIDTH/414.0)*128.0/185.0);
@@ -186,6 +195,9 @@
     //第四个图片
     if (img_url_array.count >= 4){
         UIImageView * imgView = [UIImageView new];
+        imgView.contentMode = UIViewContentModeScaleAspectFill;
+        imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+        [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
         imgView.layer.masksToBounds = true;
         imgView.layer.cornerRadius = 10;
         imgView.frame = CGRectMake(left_img, top_img, (182*WIDTH/414.0)*127.0/185.0/236.0*162, (185*WIDTH/414.0)*127.0/185.0);

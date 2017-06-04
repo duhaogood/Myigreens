@@ -9,7 +9,8 @@
 #import "ScoreRuleViewController.h"
 
 @interface ScoreRuleViewController ()
-
+@property(nonatomic,copy)NSString * url_string;
+@property(nonatomic,strong)UIWebView * webView;
 @end
 
 @implementation ScoreRuleViewController
@@ -24,16 +25,21 @@
     UIWebView * webView = [UIWebView new];
     webView.frame = CGRectMake(0, 0, WIDTH, HEIGHT-64);
     webView.frame = self.view.bounds;
-    NSURL *url = [NSURL URLWithString:@"https://baidu.com"];
-    
-    // 2. 把URL告诉给服务器,请求,从m.baidu.com请求数据
-    NSURLRequest * request = [NSURLRequest requestWithURL:url];
-    [webView loadRequest:request];
+    self.webView = webView;
     [self.view addSubview:webView];
     
 }
 
-
+//获取html
+-(void)getHtml{
+    NSString * interfaceName = @"/sys/getSysInfoBykey.intf";
+    NSString * infoKey = @"integral_rule";
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"infoKey":infoKey} andSuccess:^(NSDictionary *back_dic) {
+        self.url_string = back_dic[@"info"][@"content"];
+        [self.webView loadHTMLString:self.url_string baseURL:nil];
+    }];
+    
+}
 //返回上个界面
 -(void)backToUpView{
     [self.navigationController popViewControllerAnimated:true];
@@ -41,6 +47,7 @@
 #pragma mark - view隐藏和显示
 -(void)viewWillAppear:(BOOL)animated{
     [MYTOOL hiddenTabBar];
+    [self getHtml];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [MYTOOL showTabBar];

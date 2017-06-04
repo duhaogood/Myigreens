@@ -13,8 +13,8 @@
 /**
  *  服务器地址
  */
-//#define SERVER_URL @"http://115.28.40.117:8180/api"
-//#define SERVER_URL @"http://yema.wicp.net/api"
+//#define SERVER_URL @"yemast.com:8180/api"//测试
+//#define SERVER_URL @"http://myigreens.yemast.com:8081/api"//正式库
 
 #define SERVER_URL [MYTOOL getProjectPropertyWithKey:@"server_url"]
 

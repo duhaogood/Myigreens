@@ -66,8 +66,9 @@
     NSDictionary * dict = self.systemMessageArray[indexPath.row];
     UITableViewCell * cell = [UITableViewCell new];
     //头像
+    UIImageView * user_icon = [UIImageView new];
     {
-        UIImageView * user_icon = [UIImageView new];
+        
         user_icon.frame = [MYTOOL getRectWithIphone_six_X:14 andY:12 andWidth:34 andHeight:34];
         user_icon.layer.masksToBounds = true;
         user_icon.layer.cornerRadius = user_icon.frame.size.width/2;
@@ -90,7 +91,7 @@
         name_label.font = [UIFont systemFontOfSize:15];
         name_label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
         CGSize size = [MYTOOL getSizeWithString:name andFont:[UIFont systemFontOfSize:15]];
-        name_label.frame = CGRectMake(56/375.0*WIDTH, 34/667.0*HEIGHT-8, size.width, 16);
+        name_label.frame = CGRectMake(56/375.0*WIDTH, user_icon.frame.origin.y + user_icon.frame.size.height/2-size.height/2, size.width, 16);
         name_label.text = name;
         [cell addSubview:name_label];
     }
@@ -133,7 +134,7 @@
     NSString * interfaceName = @"/member/systemMessage.intf";
     [SVProgressHUD showWithStatus:@"加载中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID} andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"back:%@",back_dic);
+//        NSLog(@"back:%@",back_dic);
         self.systemMessageArray = back_dic[@"systemMessageList"];
         [self.tableView reloadData];
     }];

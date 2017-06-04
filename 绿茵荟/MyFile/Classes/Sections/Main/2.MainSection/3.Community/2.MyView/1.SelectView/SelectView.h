@@ -11,6 +11,10 @@
 @interface SelectView : UITableView
 
 //初始化方法
--(instancetype)initWithFrame:(CGRect)frame andDataDictionary:(NSDictionary*)dataDictionary andDelegate:(id)delegate;
+-(instancetype)initWithFrame:(CGRect)frame andDataDictionary:(NSDictionary*)dataDictionary andDelegate:(id)delegate withBannerArray:(NSArray *)bannerArray;
+
+//设置图片数组
+-(void)setImgArray:(NSArray *)arr;
+
 
 @end

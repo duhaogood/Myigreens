@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "ConfirmOrderVC.h"
 @interface PointGoodsInfoVC : UIViewController
 @property(nonatomic,strong)NSDictionary * goodsInfo;//积分商品详情
 @end

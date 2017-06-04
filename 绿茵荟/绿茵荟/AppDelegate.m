@@ -38,7 +38,7 @@
     //    NSLog(@"memberId:%@",[MYTOOL getProjectPropertyWithKey:@"memberId"]);
     
     if (!SERVER_URL) {
-        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://115.28.40.117:8180/api"];
+        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://myigreens.yemast.com:8081/api"];
     }
     //wxc3b31ac5cd6d9d5d
     //微信注册
@@ -112,7 +112,7 @@
                     [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
                     MainVC * main = (MainVC *)self.window.rootViewController;
                     [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                    main.selectedIndex = 4;
+                    main.selectedIndex = 3;
                 }
             }];
             
@@ -134,6 +134,9 @@
                 NSLog(@"授权结果 authCode = %@", authCode?:@"");
             }];
         }
+    }
+    if ([url.host isEqualToString:@"Myigreens"]) {
+        [self receiveWebRequestWithUrl:url];
     }
     return result;
     
@@ -178,7 +181,7 @@
                     [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
                     MainVC * main = (MainVC *)self.window.rootViewController;
                     [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                    main.selectedIndex = 4;
+                    main.selectedIndex = 3;
                 }
             }];
             
@@ -200,9 +203,15 @@
                 NSLog(@"授权结果 authCode = %@", authCode?:@"");
             }];
         }
-        
+        if ([url.host isEqualToString:@"Myigreens"]) {
+            [self receiveWebRequestWithUrl:url];
+        }
     }
     return result;
+}
+//收到web端的请求
+-(void)receiveWebRequestWithUrl:(NSURL *)url{
+    NSLog(@"url:%@",url);
 }
 //收到一个来自微信的处理结果。调用一次sendReq后会收到onResp。
 - (void)onResp:(BaseResp *)resp{
@@ -221,7 +230,7 @@
                 [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
                 MainVC * main = (MainVC *)self.window.rootViewController;
                 [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                main.selectedIndex = 4;
+                main.selectedIndex = 3;
                 [SVProgressHUD showSuccessWithStatus:@"支付成功" duration:1];
                 break;
             }
@@ -233,7 +242,7 @@
                 [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
                 MainVC * main = (MainVC *)self.window.rootViewController;
                 [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                main.selectedIndex = 4;
+                main.selectedIndex = 3;
                 [SVProgressHUD showErrorWithStatus:@"支付取消\n请从我的订单查看" duration:2];
                 break;
             }
@@ -243,7 +252,7 @@
                 [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
                 MainVC * main = (MainVC *)self.window.rootViewController;
                 [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                main.selectedIndex = 4;
+                main.selectedIndex = 3;
                 [SVProgressHUD showErrorWithStatus:@"支付失败\n请从我的订单查看" duration:2];
                 //...做相应的处理，重新支付或删除支付
                 

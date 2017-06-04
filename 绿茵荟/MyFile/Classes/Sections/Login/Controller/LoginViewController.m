@@ -198,6 +198,7 @@
            [MYTOOL setProjectPropertyWithKey:@"user_tel" andValue:tel];
            [MYTOOL setProjectPropertyWithKey:@"isLogin" andValue:@"1"];
            [MYTOOL setProjectPropertyWithKey:@"memberId" andValue:memberId];
+           
            //跳转
            [(AppDelegate *)[UIApplication sharedApplication].delegate window].rootViewController = [MainVC new];
            
@@ -253,6 +254,16 @@
 }
 #pragma mark - 返回上个界面
 -(void)backBtn_callback{
+    if (self.fromExitLogin) {//跳转至主页
+        AppDelegate * app = (AppDelegate *)[UIApplication sharedApplication].delegate;
+        MainVC * main = [MainVC new];
+        app.window.rootViewController = main;
+        main.selectedIndex = 0;
+        return;
+    }
+    if (self.donotUpdate) {
+        [self.delegate setDonotUpdate:self.donotUpdate];
+    }
     [self.navigationController popViewControllerAnimated:true];
 }
 #pragma mark - view显示及消失

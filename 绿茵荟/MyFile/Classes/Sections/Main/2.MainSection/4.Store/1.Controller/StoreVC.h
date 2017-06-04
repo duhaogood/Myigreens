@@ -13,9 +13,10 @@
 #import "SDCycleScrollView.h"
 #import "GoodsTagViewController.h"
 #import "ShoppingCartVC.h"
+#import "TextBannerVC.h"
 @interface StoreVC : UIViewController
 @property(nonatomic,strong)StoreNetWorking * storeNetWorking;//处理网络请求
-
+@property(nonatomic,strong)UILabel * leftLabel;//前面数字
 
 
 

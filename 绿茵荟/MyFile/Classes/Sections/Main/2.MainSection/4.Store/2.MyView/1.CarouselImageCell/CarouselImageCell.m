@@ -22,10 +22,9 @@
     NSMutableArray * url_arr = [NSMutableArray new];
     for (NSDictionary * dic in carouselImage_array) {
         NSString * bannerUrl = dic[@"bannerUrl"];
+//        NSLog(@"url:%@",bannerUrl);
         [url_arr addObject:bannerUrl];
     }
-    
-    //模拟结束
     SDCycleScrollView * cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(10, 10, WIDTH-20, 151) imageURLStringsGroup:url_arr];
     cycleScrollView.layer.masksToBounds = true;
     cycleScrollView.layer.cornerRadius = 12;

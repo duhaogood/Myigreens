@@ -105,8 +105,22 @@
     }
     //商品名字
     UILabel * label = [cell viewWithTag:10001];
+    float top = 0;
     if (label) {
         label.text = goodsName;
+        CGRect rect = imgV.frame;
+        CGSize size = [MYTOOL getSizeWithLabel:label];
+        label.numberOfLines = 0;
+        int row = 1;
+        if (size.width > rect.size.width + label.font.pointSize) {
+            row = 2;
+            while (size.width > rect.size.width * 2 + label.font.pointSize * 2) {
+                label.font = [UIFont systemFontOfSize:label.font.pointSize - 0.1];
+                size = [MYTOOL getSizeWithLabel:label];
+            }
+        }
+        label.frame = CGRectMake(rect.origin.x, rect.origin.y+rect.size.height+19, rect.size.width, size.height * row);
+        top = rect.origin.y+rect.size.height+19+size.height * row;
     }else{
         UILabel * label = [UILabel new];
         label.tag = 10001;
@@ -115,8 +129,19 @@
         label.textAlignment = NSTextAlignmentCenter;
         label.font = [UIFont systemFontOfSize:15];
         CGRect rect = imgV.frame;
-        label.frame = CGRectMake(rect.origin.x, rect.origin.y+rect.size.height+19, rect.size.width, 15);
+        CGSize size = [MYTOOL getSizeWithLabel:label];
+        label.numberOfLines = 0;
+        int row = 1;
+        if (size.width > rect.size.width + label.font.pointSize) {
+            row = 2;
+            while (size.width > rect.size.width * 2 + label.font.pointSize * 2) {
+                label.font = [UIFont systemFontOfSize:label.font.pointSize - 0.1];
+                size = [MYTOOL getSizeWithLabel:label];
+            }
+        }
+        label.frame = CGRectMake(rect.origin.x, rect.origin.y+rect.size.height+19, rect.size.width, size.height * row);
         [cell addSubview:label];
+        top = rect.origin.y+rect.size.height+10+size.height * row + 10;
     }
     //商品价格
     UILabel * priceLabel = [cell viewWithTag:10002];
@@ -152,7 +177,8 @@
         label.textAlignment = NSTextAlignmentCenter;
         label.font = [UIFont systemFontOfSize:15];
         CGRect rect = imgV.frame;
-        label.frame = CGRectMake(rect.origin.x, rect.origin.y+rect.size.height+19+25, rect.size.width, 15);
+        top = 225;
+        label.frame = CGRectMake(rect.origin.x, top, rect.size.width, 15);
         [cell addSubview:label];
         label.text = [NSString stringWithFormat:@"¥%.2f",price];
         if ((int)price == price) {
@@ -161,12 +187,12 @@
         float marketPrice = [dicForCell[@"marketPrice"] floatValue];
         if (marketPrice) {//有市场价格
             //价格占一半
-            label.frame = CGRectMake(rect.origin.x, rect.origin.y+rect.size.height+19+25, rect.size.width/2, 15);
+            label.frame = CGRectMake(rect.origin.x, top, rect.size.width/2, 15);
             //市场价格
             {
                 UILabel * label_r = [UILabel new];
                 label_r.tag = 10003;
-                label_r.frame = CGRectMake(rect.origin.x+rect.size.width/2, rect.origin.y+rect.size.height+19+25, rect.size.width/2, 15);
+                label_r.frame = CGRectMake(rect.origin.x+rect.size.width/2, top, rect.size.width/2, 15);
                 label_r.textAlignment = NSTextAlignmentLeft;
                 label_r.textColor = [UIColor grayColor];
                 label_r.text = [NSString stringWithFormat:@" ￥%.2f",marketPrice];

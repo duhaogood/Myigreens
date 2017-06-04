@@ -100,10 +100,10 @@
     nc5.tabBarItem.selectedImage = [UIImage imageNamed:@"tab_user_sel.png"];
     [nc5.navigationBar setBackgroundImage:[UIImage imageNamed:@"nav_bg"] forBarMetrics:UIBarMetricsDefault];
     
-    [self addChildViewController:nc4];
+    //    [self addChildViewController:nc1];
     [self addChildViewController:nc2];
-    [self addChildViewController:nc1];
     [self addChildViewController:nc3];
+    [self addChildViewController:nc4];
     [self addChildViewController:nc5];
     
     

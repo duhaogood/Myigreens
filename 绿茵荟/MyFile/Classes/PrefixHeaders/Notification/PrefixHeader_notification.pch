@@ -15,6 +15,7 @@
 //支付成功
 #define NOTIFICATION_PAY_SUCCESS @"notification_pay_success"
 
-
+//自动滚动
+#define AUTOMATIC_SCROLL @"automaticScroll"
 
 #endif /* PrefixHeader_notification_pch */

@@ -25,8 +25,14 @@
         label.text = tagName;
         label.textColor = [MYTOOL RGBWithRed:106 green:151 blue:53 alpha:1];
         label.textAlignment = NSTextAlignmentCenter;
-        label.frame = CGRectMake(WIDTH/4, 23, WIDTH/2, 24);
         label.font = [UIFont systemFontOfSize:24];
+        CGSize size = [MYTOOL getSizeWithLabel:label];
+        float width = WIDTH - 140;
+        while (size.width > width) {
+            label.font = [UIFont systemFontOfSize:label.font.pointSize - 0.1];
+            size = [MYTOOL getSizeWithLabel:label];
+        }
+        label.frame = CGRectMake(70, 23, WIDTH-140, 24);
         [cell addSubview:label];
     }
     if (showType == 1) {//下面的商品组
@@ -43,7 +49,7 @@
             [btn setTitle:@"全部" forState:UIControlStateNormal];
             [btn setTitleColor:[MYTOOL RGBWithRed:119 green:119 blue:119 alpha:1] forState:UIControlStateNormal];
             btn.titleLabel.font = [UIFont systemFontOfSize:15];
-            btn.frame = CGRectMake(WIDTH-80, 20, 60, 30);
+            btn.frame = CGRectMake(WIDTH-65, 20, 60, 30);
             [cell addSubview:btn];
             [btn addTarget:delegate action:@selector(clickAllBtn_callBack:) forControlEvents:UIControlEventTouchUpInside];
             btn.tag = tagId;
@@ -124,7 +130,7 @@
         }
         spaceView.frame = CGRectMake(0, 70 + 240.0*row-10, WIDTH, 10);
     }else if (showType == 3) {//中间的新鲜热卖
-//        NSLog(@"bannerList:%@",dictionary[@"bannerList"]);
+        NSLog(@"bannerList:%@",dictionary[@"bannerList"]);
         //图片序号
         {
             UILabel * leftLabel = [UILabel new];
@@ -134,6 +140,7 @@
             leftLabel.frame = CGRectMake(WIDTH-72, 27, 36, 18);//39
             leftLabel.textAlignment = NSTextAlignmentRight;
             self.leftLabel = leftLabel;
+            [delegate setLeftLabel:leftLabel];
 //            leftLabel.backgroundColor = [UIColor greenColor];
             [cell addSubview:leftLabel];
             
@@ -152,16 +159,6 @@
             NSString * bannerUrl = dic[@"bannerUrl"];
             [url_arr addObject:bannerUrl];
         }
-        //模拟数据
-        NSArray * arr = @[
-                          @"http://img05.tooopen.com/images/20150531/tooopen_sy_127457023651.jpg",
-                          @"http://www.51wendang.com/pic/d2791169614460bb195dab7b/1-810-jpg_6-1080-0-0-1080.jpg",
-                          @"http://pic35.nipic.com/20131121/2531170_145358633000_2.jpg",
-                          @"http://pic44.nipic.com/20140717/12432466_121957328000_2.jpg",
-                          @"http://img13.poco.cn/mypoco/myphoto/20120828/15/55689209201208281549023849547194135_001.jpg"
-                          ];
-        url_arr = [NSMutableArray arrayWithArray:arr];
-        //模拟结束
         SDCycleScrollView * cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(15, 71, WIDTH-30, 229) imageURLStringsGroup:url_arr];
         cycleScrollView.tag = 200;
         cycleScrollView.layer.masksToBounds = true;
@@ -169,7 +166,7 @@
         cycleScrollView.delegate = delegate;
         [cell addSubview:cycleScrollView];
         cycleScrollView.infiniteLoop = false;//无限循环
-        cycleScrollView.autoScroll = false;//自动滚动
+        cycleScrollView.autoScroll = true;//自动滚动
         cycleScrollView.showPageControl = false;//不显示分页控件
         
         

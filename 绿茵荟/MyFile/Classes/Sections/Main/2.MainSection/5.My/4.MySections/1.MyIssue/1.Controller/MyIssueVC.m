@@ -186,6 +186,9 @@
     UIImageView * imgV = [UIImageView new];
     {
         NSString * headImageString = self.myIssueArray[indexPath.row][@"image"];
+        imgV.contentMode = UIViewContentModeScaleAspectFill;
+        imgV.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+        [imgV setContentScaleFactor:[[UIScreen mainScreen] scale]];
         imgV.frame = [MYTOOL getRectWithIphone_six_X:37 andY:20 andWidth:288 andHeight:143];
         [imgV sd_setImageWithURL:[NSURL URLWithString:headImageString]];
         [cell addSubview:imgV];
@@ -249,12 +252,13 @@
 -(void)loadMyIssueData{
     NSString * interfaceName = @"/community/getMemberPost.intf";
     NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    [MYTOOL netWorkingWithTitle:@"获取帖子"];
     NSDictionary * sendDic = @{
                                 @"memberId":memberId,
                                 @"pageNo":[NSString stringWithFormat:@"%d",pageNo]
                                };
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
+        NSLog(@"back:%@",back_dic);
         NSArray * arr = back_dic[@"postList"];
         //成功--如果页数=1，重置数组，如果页数>1，数据加上去
         if (pageNo > 1) {

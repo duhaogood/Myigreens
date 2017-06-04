@@ -298,8 +298,18 @@ NSString * const ID = @"cycleCell";
             targetIndex = 0;
         }
         [_mainView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:targetIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:NO];
+        NSDictionary * dic = @{
+                               @"tag":@(self.tag),
+                               @"page":@(targetIndex%self.imageURLStringsGroup.count + 1)
+                               };
+        [MYCENTER_NOTIFICATION postNotificationName:AUTOMATIC_SCROLL object:dic];
     }
     [_mainView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:targetIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionNone animated:YES];
+    NSDictionary * dic = @{
+                           @"tag":@(self.tag),
+                           @"page":@(targetIndex%self.imageURLStringsGroup.count + 1)
+                           };
+    [MYCENTER_NOTIFICATION postNotificationName:AUTOMATIC_SCROLL object:dic];
 }
 
 - (void)setupTimer

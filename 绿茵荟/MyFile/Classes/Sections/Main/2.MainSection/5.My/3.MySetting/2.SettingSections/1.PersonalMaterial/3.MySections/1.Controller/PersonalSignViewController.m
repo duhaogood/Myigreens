@@ -70,6 +70,10 @@
 }
 //提交保存按钮
 -(void)submitSaveBtn{
+    if (self.myTV.text.length > 20) {
+        [SVProgressHUD showErrorWithStatus:@"字数最多20" duration:2];
+        return;
+    }
     [MYTOOL hideKeyboard];
     [self.delegate personalSign_callBack:self.myTV.text];
     [SVProgressHUD showSuccessWithStatus:@"保存成功" duration:1];

@@ -392,7 +392,7 @@
         NSString * y = bir_array[@"year"][row0];
         NSString * m = bir_array[@"month"][row1];
         NSString * d = [NSString stringWithFormat:@"%ld",row2+1];
-        tf.text = [NSString stringWithFormat:@"%@.%02d.%02d",y,[m intValue],[d intValue]];
+        tf.text = [NSString stringWithFormat:@"%@-%02d-%02d",y,[m intValue],[d intValue]];
     }else{//地区 2
         NSInteger row0 = [self.picker selectedRowInComponent:0];
         NSInteger row1 = [self.picker selectedRowInComponent:1];
@@ -565,7 +565,13 @@
     
     if (user_icon_change) {//先上传图片
         //截取图片
-        NSData * imageData = UIImageJPEGRepresentation(self.userImgView.image,0.2);
+        
+        float rate = 1.0;
+        NSData * imageData = UIImageJPEGRepresentation([MYTOOL fixOrientationOfImage:self.userImgView.image],rate);
+        while (imageData.length > 2 * 1024 * 1024) {
+            rate -= 0.1;
+            imageData = UIImageJPEGRepresentation([MYTOOL fixOrientationOfImage:self.userImgView.image],rate);
+        }
         AFHTTPSessionManager * manager = [AFHTTPSessionManager manager];
         manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html",@"text/plain", nil];
         // 参数@"image":@"image",
@@ -638,7 +644,6 @@
         [send_dic setValue:selectAreaDic[@"regionName"] forKey:@"region"];
         
     }
-//    NSLog(@"即将更新用户:%@",send_dic);
     [SVProgressHUD showWithStatus:@"更新信息" maskType:SVProgressHUDMaskTypeClear];
 //    NSLog(@"即将发送数据:%@",send_dic);
     [MYNETWORKING getWithInterfaceName:@"/member/updateMember.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {

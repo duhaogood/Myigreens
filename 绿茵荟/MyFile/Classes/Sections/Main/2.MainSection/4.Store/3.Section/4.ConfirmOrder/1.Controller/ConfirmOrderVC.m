@@ -12,6 +12,7 @@
 #import "SelectPayTypeVC.h"
 #import "AddressManagerVC.h"
 #import "SelectExpressVC.h"
+#import "SelectBonusVC.h"
 @interface ConfirmOrderVC ()<UIScrollViewDelegate>
 @property(nonatomic,strong)UIScrollView * scrollView;//总背景
 @property(nonatomic,strong)ReceiverView * receiverView;//收货人view
@@ -28,6 +29,10 @@
 @property(nonatomic,strong)UILabel * totalPriceLabel;//总价label
 @property(nonatomic,strong)UILabel * totalPriceLabel2;//合计总价label
 @property(nonatomic,assign)SelectPayTypeVC * selectPayVC;//选择支付方式
+
+@property(nonatomic,strong)UIView * middle_goods_view;//中间view
+@property(nonatomic,strong)UIView * price_view;///价格view
+@property(nonatomic,strong)UIView * btn_view;//底部按钮view
 @end
 
 @implementation ConfirmOrderVC
@@ -92,7 +97,7 @@
     {
         float top = 10;
         goodsView.backgroundColor = [UIColor whiteColor];
-        goodsView.frame = CGRectMake(0, 111, WIDTH, 502);
+        self.middle_goods_view = goodsView;
         [scrollView addSubview:goodsView];
         //遍历商品
         {
@@ -177,8 +182,8 @@
                  */
             }
         }
-        goodsView.frame = CGRectMake(0, 111, WIDTH, 358+top);
-        self.scrollView.contentSize = CGSizeMake(0, top+358+160+109);
+        goodsView.frame = CGRectMake(0, 111, WIDTH, 300+top);
+        self.scrollView.contentSize = CGSizeMake(0, top+300+160+109);
         //选择优惠券
         {
             top += 8;
@@ -199,8 +204,9 @@
                 }
                 //可用张数
                 {
+                    NSString * text = self.order[@"couponTitle"];
                     UILabel * label = [UILabel new];
-                    label.text = @"0张可用";
+                    label.text = text;
                     label.font = [UIFont systemFontOfSize:15];
                     label.textColor = [MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1];
                     label.frame = CGRectMake(WIDTH/2-20, 17.5, WIDTH/2-30, 15);
@@ -310,7 +316,7 @@
         }
         //发票信息
         {
-            //不要发票
+            //匿名
             {
                 //按钮
                 top += 13;
@@ -346,9 +352,9 @@
                 top += 60;
                 UIButton * ticketBtn = [UIButton new];
                 ticketBtn.frame = CGRectMake(14, top-7, 30, 30);
-                [ticketBtn setImage:[UIImage imageNamed:@"radio_sel"] forState:UIControlStateNormal];
+                [ticketBtn setImage:[UIImage imageNamed:@"radio_nor"] forState:UIControlStateNormal];
                 [goodsView addSubview:ticketBtn];
-                ticketBtn.tag = 1;
+                ticketBtn.tag = 0;
                 self.ticketBtn = ticketBtn;
                 [ticketBtn addTarget:self action:@selector(ticketBtnCallback:) forControlEvents:UIControlEventTouchUpInside];
             }
@@ -366,6 +372,7 @@
                 top += 15+14;
                 //背景view
                 UIView * ticketView = [UIView new];
+                ticketView.hidden = true;
                 self.ticketView = ticketView;
                 {
                     ticketView.frame = CGRectMake(14, top, WIDTH-28, 39);
@@ -389,6 +396,7 @@
     //价格信息
     {
         UIView * priceView = [UIView new];
+        self.price_view = priceView;
         priceView.frame = CGRectMake(0, goodsView.frame.origin.y + goodsView.frame.size.height + 6, WIDTH, 99);
         priceView.backgroundColor = [UIColor whiteColor];
         [scrollView addSubview:priceView];
@@ -477,6 +485,7 @@
     //订单view
     {
         UIView * orderView = [UIView new];
+        self.btn_view = orderView;
         orderView.frame = CGRectMake(0, goodsView.frame.origin.y + goodsView.frame.size.height + 106, WIDTH, 50);
         orderView.backgroundColor = [UIColor whiteColor];
         [scrollView addSubview:orderView];
@@ -561,22 +570,11 @@
 }
 //提交订单
 -(void)submitOrderCallback{
-//    SelectPayTypeVC * payVC = [SelectPayTypeVC new];
-//    payVC.delegate = self;
-//    self.selectPayVC = payVC;
-//    [payVC show];
-//    return;
     //如果没有地址
     if (self.receiptAddress == nil || self.receiptAddress.allKeys.count == 0) {
         [SVProgressHUD showErrorWithStatus:@"请选择收货地址" duration:2];
         return;
     }
-    //如果快递方式未选择
-//    if (self.order[@"expressId"] == nil) {
-//        [SVProgressHUD showErrorWithStatus:@"请选择快递类型" duration:2];
-//        return;
-//    }
-    
     NSString * interface = @"/shop/order/createOrder.intf";
     NSMutableDictionary * sendDiction = [self getSendDictionaryToConfirmOrder];
     [sendDiction setValue:self.order[@"expressId"] forKey:@"shippingId"];//快递编号
@@ -589,7 +587,7 @@
     [sendDiction setValue:MEMBERID forKey:@"memberId"];//用户id
     /*以后删除*/
     [sendDiction setValue:@"1" forKey:@"shippingId"];
-    
+    [sendDiction setValue:@(self.integral) forKey:@"exchange"];
     //购物车号
     NSString * cartIds = self.order[@"cartIds"];
     if (cartIds && cartIds.length > 0) {//购物车
@@ -601,18 +599,21 @@
         [sendDiction setValue:productId forKey:@"productId"];//productId	产品id	数字	否
     }
     //是否匿名-anonymous
-    if(self.ticketBtn.tag == 1){
+    if(self.noTicketBtn.tag == 1){
         [sendDiction setValue:@"1" forKey:@"anonymous"];
+    }else{
+        [sendDiction setValue:@"0" forKey:@"anonymous"];
+    }
+    //发票信息
+    if (self.ticketBtn.tag == 1) {//需要发票
         //发票抬头-receiptName
         NSString * receiptName = self.ticketTF.text;
         if (receiptName.length == 0) {
             [SVProgressHUD showErrorWithStatus:@"发票抬头为空" duration:2];
             return;
-        }else{//发票抬头
+        }else{
             [sendDiction setValue:receiptName forKey:@"receiptName"];
         }
-    }else{
-        [sendDiction setValue:@"0" forKey:@"anonymous"];
     }
     //地址id-addressId
     NSObject * addressId = self.receiptAddress[@"addressId"];
@@ -666,26 +667,45 @@
 //不要发票回调-radio_nor-radio_sel
 -(void)noTicketBtnCallback:(UIButton *)btn{
     NSInteger tag = btn.tag;
-    if (tag == 1) {
-        return;
+    if (tag == 0) {//选中
+        [btn setImage:[UIImage imageNamed:@"radio_sel"] forState:UIControlStateNormal];
+        btn.tag = 1;
+    }else{
+        [btn setImage:[UIImage imageNamed:@"radio_nor"] forState:UIControlStateNormal];
+        btn.tag = 0;
     }
-    [btn setImage:[UIImage imageNamed:@"radio_sel"] forState:UIControlStateNormal];
-    btn.tag = 1;
-    self.ticketBtn.tag = 0;
-    self.ticketView.hidden = true;
-    [self.ticketBtn setImage:[UIImage imageNamed:@"radio_nor"] forState:UIControlStateNormal];
+    
 }
 //需要发票回调
 -(void)ticketBtnCallback:(UIButton *)btn{
     NSInteger tag = btn.tag;
-    if (tag == 1) {
-        return;
+    if (tag == 0) {//选中
+        [btn setImage:[UIImage imageNamed:@"radio_sel"] forState:UIControlStateNormal];
+        btn.tag = 1;
+        self.ticketView.hidden = false;
+        
+        //下面界面向上动
+        [UIView animateWithDuration:0.3 animations:^{
+            UIView * goodsView = self.middle_goods_view;
+            goodsView.frame = CGRectMake(0, goodsView.frame.origin.y, WIDTH, goodsView.frame.size.height+58);
+            self.price_view.frame = CGRectMake(0, goodsView.frame.origin.y + goodsView.frame.size.height + 6, WIDTH, 99);
+            self.btn_view.frame = CGRectMake(0, goodsView.frame.origin.y + goodsView.frame.size.height + 106, WIDTH, 50);
+            self.scrollView.contentSize = CGSizeMake(0, self.btn_view.frame.origin.y + self.btn_view.frame.size.height);
+        }];
+    }else{
+        [btn setImage:[UIImage imageNamed:@"radio_nor"] forState:UIControlStateNormal];
+        btn.tag = 0;
+        self.ticketView.hidden = true;
+        //下面界面向下动
+        [UIView animateWithDuration:0.3 animations:^{
+            UIView * goodsView = self.middle_goods_view;
+            goodsView.frame = CGRectMake(0, goodsView.frame.origin.y, WIDTH, goodsView.frame.size.height-58);
+            self.price_view.frame = CGRectMake(0, goodsView.frame.origin.y + goodsView.frame.size.height + 6, WIDTH, 99);
+            self.btn_view.frame = CGRectMake(0, goodsView.frame.origin.y + goodsView.frame.size.height + 106, WIDTH, 50);
+            self.scrollView.contentSize = CGSizeMake(0, self.btn_view.frame.origin.y + self.btn_view.frame.size.height);
+        }];
     }
-    [btn setImage:[UIImage imageNamed:@"radio_sel"] forState:UIControlStateNormal];
-    btn.tag = 1;
-    self.noTicketBtn.tag = 0;
-    self.ticketView.hidden = false;
-    [self.noTicketBtn setImage:[UIImage imageNamed:@"radio_nor"] forState:UIControlStateNormal];
+    
 }
 //选择优惠券
 -(void)selectDiscountCouponCallback{
@@ -695,7 +715,13 @@
                             };
     [MYTOOL netWorkingWithTitle:@"获取可用优惠券"];
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"back:%@",back_dic);
+//        NSLog(@"back:%@",back_dic);
+        NSArray * bonusList = back_dic[@"bonusList"];
+        SelectBonusVC * bonusVC = [SelectBonusVC new];
+        bonusVC.bonusList = bonusList;
+        bonusVC.title = @"选择优惠券";
+        bonusVC.delegate = self;
+        [self.navigationController pushViewController:bonusVC animated:true];
     }];
     /*
      8.10获取优惠券
@@ -725,6 +751,23 @@
     addressVC.delegate = self;
     [self.navigationController pushViewController:addressVC animated:true];
     
+}
+//选择优惠券回调
+-(void)changeBonusWithDictionary:(NSDictionary *)bonusDict{
+//    NSLog(@"bonusDict:%@",bonusDict);
+    [SVProgressHUD showWithStatus:@"更新中…" maskType:SVProgressHUDMaskTypeClear];
+    NSString * interfaceName = @"/shop/order/confirmOrder.intf";
+    NSMutableDictionary * sendDic = [self getSendDictionaryToConfirmOrder];
+    //    NSLog(@"send:%@",sendDic);
+    [sendDic setValue:bonusDict[@"couponId"] forKey:@"couponId"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+        //        NSLog(@"back:%@",back_dic);
+        self.goodsList = back_dic[@"goodsList"];
+        self.order = back_dic[@"order"];
+        self.receiptAddress = back_dic[@"receiptAddress"];
+        [self.receiverView updateReceiverInfo:self.receiptAddress];
+        [self reloadPrice];
+    }];
 }
 /**更改地址*/
 -(void)changeAddress:(NSDictionary *)addressDic{
@@ -792,7 +835,7 @@
         NSObject * productId = self.goodsInfoDictionary[@"productId"];
         [sendDic setValue:productId forKey:@"productId"];//productId	产品id	数字	否
     }
-    
+    [sendDic setValue:@(self.integral) forKey:@"integral"];//是否积分商品
     /*
      expressId	快递Id	数字	否
      couponId	优惠券Id	数字	否

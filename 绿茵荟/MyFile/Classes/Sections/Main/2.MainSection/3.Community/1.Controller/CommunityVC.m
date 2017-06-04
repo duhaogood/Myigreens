@@ -12,8 +12,11 @@
 #import "AddSubscribeViewController.h"
 #import "TopTenViewController.h"
 #import "SubmitPostViewController.h"
-
-@interface CommunityVC ()<UITableViewDataSource,UITableViewDelegate>
+#import "SDCycleScrollView.h"
+#import "TextBannerVC.h"
+#import "GoodsInfoViewController.h"
+#import "GoodsBannerVC.h"
+@interface CommunityVC ()<UITableViewDataSource,UITableViewDelegate,SDCycleScrollViewDelegate>
 @property(nonatomic,strong)NSMutableDictionary * btn_location_dic;
 @property(nonatomic,strong)UIImageView * imgV_downOfBtn;
 @property(nonatomic,strong)NSMutableDictionary * data_select_dictionary;//显示数据
@@ -22,6 +25,8 @@
 @property(nonatomic,strong)NSMutableArray * data_array;//显示的数组
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)UITextField * assist_tf;//辅助文本框，不显示
+@property(nonatomic,strong)NSArray * bannerArray;//banner数组
+@property(nonatomic,strong)UIButton * firstBtn;//精选按钮
 @end
 
 @implementation CommunityVC
@@ -36,6 +41,7 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.donotUpdate = false;
     self.assist_tf = [UITextField new];
     self.assist_tf.frame = CGRectMake(0, -1000, 10, 10);
     [self.view addSubview:self.assist_tf];
@@ -45,7 +51,7 @@
     //加载默认数据
     pageNo = 1;
     
-    SelectView * select_view = [[SelectView alloc]initWithFrame:CGRectMake(0, 0, WIDTH, HEIGHT-64) andDataDictionary:nil andDelegate:self];
+    SelectView * select_view = [[SelectView alloc]initWithFrame:CGRectMake(0, 0, WIDTH, HEIGHT-64) andDataDictionary:nil andDelegate:self withBannerArray:self.bannerArray];
     //[self.view addSubview:select_view];
     [self.view insertSubview:select_view atIndex:0];
     current_view = select_view;
@@ -65,6 +71,7 @@
     }];
     self.tableView = select_view;
     [self loadDefaultData];
+    [self loadBannerData];
 }
 //加载主页面
 -(void)loadMainView{
@@ -87,6 +94,7 @@
     UIButton * select_btn = [UIButton new];
     select_btn.frame = CGRectMake(center_view.frame.size.width/6-25, 6, 50, 30);
     [select_btn setTitle:@"精选" forState:UIControlStateNormal];
+    self.firstBtn = select_btn;
     [center_view addSubview:select_btn];
     current_btn = select_btn;
     [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",select_btn.frame.size.width/2-18+center_view.frame.size.width/6-25] forKey:@"精选"];
@@ -250,6 +258,8 @@
     if (![MYTOOL isLogin]) {
         //跳转至登录页
         LoginViewController * loginVC = [LoginViewController new];
+        loginVC.delegate = self;
+        loginVC.donotUpdate = self.donotUpdate;
         [self.navigationController pushViewController:loginVC animated:true];
         return;
     }
@@ -283,6 +293,8 @@
     if (![MYTOOL isLogin]) {
         //跳转至登录页
         LoginViewController * loginVC = [LoginViewController new];
+        loginVC.delegate = self;
+        loginVC.donotUpdate = self.donotUpdate;
         [self.navigationController pushViewController:loginVC animated:true];
         return;
     }
@@ -332,7 +344,7 @@
     }];
     [current_view removeFromSuperview];
     if ([title isEqualToString:@"精选"]) {
-        SelectView * select_view = [[SelectView alloc]initWithFrame:CGRectMake(0, 10, WIDTH, HEIGHT-64-49-10) andDataDictionary:nil andDelegate:self];
+        SelectView * select_view = [[SelectView alloc]initWithFrame:CGRectMake(0, 10, WIDTH, HEIGHT-64-49-10) andDataDictionary:nil andDelegate:self withBannerArray:self.bannerArray];
         //[self.view addSubview:select_view];
         [self.view insertSubview:select_view atIndex:0];
         current_view = select_view;
@@ -364,9 +376,14 @@
         
         
     }else{//订阅
-        if (!MEMBERID) {
-            [SVProgressHUD showErrorWithStatus:@"未登录!" duration:2];
-            return;
+        if (![MYTOOL isLogin]) {
+            [self submitCenterBtn:self.firstBtn];
+            //跳转至登录页
+            LoginViewController * loginVC = [LoginViewController new];
+            loginVC.delegate = self;
+            loginVC.donotUpdate = self.donotUpdate;
+            [self.navigationController pushViewController:loginVC animated:true];
+            return ;
         }
         UITableView * tableView = [UITableView new];
         tableView.frame = CGRectMake(0, 10-HEIGHT, WIDTH, HEIGHT - 74 - 49);
@@ -435,6 +452,7 @@
             NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:back_dic[@"post"]];
             [dict setValue:post_dic[@"postId"] forKey:@"postId"];
             postVC.post_dic = dict;
+            postVC.delegate = self;
             [self.navigationController pushViewController:postVC animated:true];
         }else{
             [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
@@ -464,11 +482,18 @@
             label.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
             label.text = content;
             CGSize size = [MYTOOL getSizeWithLabel:label];
+            UILabel * label2 = [UILabel new];
+            label2.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
+            label2.text = @"哈哈好";
+            CGSize size2 = [MYTOOL getSizeWithLabel:label2];
             int row = size.width / (WIDTH -60-10);
             if (size.width > (WIDTH -60-10)*row) {
                 row ++;
             }
-            height += space_y + size.height * row;
+            if (row > 2) {
+                row = 2;
+            }
+            height += space_y + size2.height * row;
         }
         //图片 150-180
         {
@@ -506,7 +531,7 @@
     NSArray * image_array = data_dic[@"url"];//帖子图片数组
     NSInteger postId = [data_dic[@"postId"] longValue];
     
-    NSString * praiseStatus = data_dic[@"praiseStatus"];//状态
+    bool praiseStatus = [data_dic[@"praiseStatus"] boolValue];//状态
     //间距
     float space_y = [MYTOOL getHeightWithIphone_six:15];
     //圈子
@@ -518,12 +543,13 @@
             float user_width = 40;
             UIImageView * userImgView = [UIImageView new];
             userImgView.frame = CGRectMake(10, space_y, user_width, user_width);
+        
             //        userImgView.backgroundColor = [UIColor greenColor];
             [cell addSubview:userImgView];
             userImgView.layer.masksToBounds = true;
             userImgView.layer.cornerRadius = user_width/2;
             
-            [userImgView sd_setImageWithURL:[NSURL URLWithString:@"http://b.hiphotos.baidu.com/zhidao/wh%3D450%2C600/sign=f0c5c08030d3d539c16807c70fb7c566/8ad4b31c8701a18bbef9f231982f07082838feba.jpg"]];
+            [userImgView sd_setImageWithURL:[NSURL URLWithString:headUrl] placeholderImage:[UIImage imageNamed:@"logo"]];
             [userImgView setUserInteractionEnabled:YES];
             UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
             tapGesture2.numberOfTapsRequired=1;
@@ -546,13 +572,28 @@
             tv.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
             tv.userInteractionEnabled = NO;
             tv.textColor = [MYTOOL RGBWithRed:79 green:79 blue:79 alpha:1];
-            CGSize size = [MYTOOL getSizeWithLabel:(UILabel *)tv];
+            CGSize size = [MYTOOL getSizeWithLabel:tv];
             int row = size.width / (WIDTH -60-10);
             if (size.width > (WIDTH -60-10)*row) {
                 row ++;
             }
             if (row > 1) {
                 tv.numberOfLines = 0;
+            }
+            if (row > 2) {
+                row = 2;
+                //过滤换行
+                NSString * string = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]; //去除掉首尾的空白字符和换行字符
+                NSString * text = @"";
+                for(int i = 0; i < string.length ; i ++){
+                    text = [string substringToIndex:i];
+                    tv.text = text;
+                    size = [MYTOOL getSizeWithLabel:tv];
+                    if (size.width >= (WIDTH -60-10) * 1.8) {
+//                        NSLog(@"text:%@",text);
+                        break;
+                    }
+                }
             }
             tv.frame = CGRectMake(60, top, WIDTH -60-10, size.height*row);
             [cell addSubview:tv];
@@ -564,6 +605,9 @@
             float height_img = width_img / 150 *180;
             if (image_array.count == 1) {
                 UIImageView * iv1 = [UIImageView new];
+                iv1.contentMode = UIViewContentModeScaleAspectFill;
+                iv1.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+                [iv1 setContentScaleFactor:[[UIScreen mainScreen] scale]];
                 iv1.frame = CGRectMake(65,top, width_img, height_img);
                 iv1.layer.masksToBounds = true;
                 iv1.layer.cornerRadius = 10;
@@ -572,6 +616,9 @@
             }else{
                 //1
                 UIImageView * iv1 = [UIImageView new];
+                iv1.contentMode = UIViewContentModeScaleAspectFill;
+                iv1.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+                [iv1 setContentScaleFactor:[[UIScreen mainScreen] scale]];
                 iv1.frame = CGRectMake(65,top , width_img, height_img);
                 iv1.layer.masksToBounds = true;
                 iv1.layer.cornerRadius = 10;
@@ -579,6 +626,9 @@
                 [cell addSubview:iv1];
                 //2
                 UIImageView * iv2 = [UIImageView new];
+                iv2.contentMode = UIViewContentModeScaleAspectFill;
+                iv2.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+                [iv2 setContentScaleFactor:[[UIScreen mainScreen] scale]];
                 iv2.frame = CGRectMake(65 + iv1.frame.size.width+10,top , width_img, height_img);
                 iv2.layer.masksToBounds = true;
                 iv2.layer.cornerRadius = 10;
@@ -590,62 +640,62 @@
         
         //下边小图标及数字
         {
-            //下边小图标  icon_praise
-            UIImageView * icon1 = [UIImageView new];
-            icon1.image = [UIImage imageNamed:@"icon_praise"];
-            icon1.frame = CGRectMake(WIDTH/2-30, top, 30, 30);
-            [cell addSubview:icon1];
-            //绑定监听
-            [icon1 setUserInteractionEnabled:YES];
-            icon1.tag = postId * 10 +1;
-            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
-            tapGesture.numberOfTapsRequired=1;
-            [icon1 addGestureRecognizer:tapGesture];
+            UIButton * btn = [UIButton new];
+            [btn setImage:[UIImage imageNamed:@"icon_praise"] forState:UIControlStateNormal];
+            if (praiseStatus) {
+                [btn setImage:[UIImage imageNamed:@"icon_praise_press"] forState:UIControlStateNormal];
+            }
+            btn.frame = CGRectMake(WIDTH/2-30, top, 30, 30);
+            [btn addTarget:self action:@selector(praise_callBack:) forControlEvents:UIControlEventTouchUpInside];
+            btn.tag = postId * 10 + [data_dic[@"praiseStatus"] intValue];
+            [cell addSubview:btn];
             
-            //数字
-            UILabel * num_label1 = [UILabel new];
-            num_label1.text = praiseCount;
-            num_label1.frame = CGRectMake(WIDTH/2, top+5, WIDTH/6, 20);
-            num_label1.font = [UIFont systemFontOfSize:12];
-            [cell addSubview:num_label1];
-            
-            //下边小图标  icon_message
-            UIImageView * icon2 = [UIImageView new];
-            icon2.image = [UIImage imageNamed:@"icon_message"];
-            icon2.frame = CGRectMake(WIDTH*2/3, top, 30, 30);
-            [cell addSubview:icon2];
-            //绑定监听
-            [icon2 setUserInteractionEnabled:YES];
-            icon2.tag = postId * 10 + 2;
-            UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
-            tapGesture2.numberOfTapsRequired=1;
-            [icon2 addGestureRecognizer:tapGesture2];
-            
-            //数字
-            UILabel * num_label2 = [UILabel new];
-            num_label2.text = commentCount;
-            num_label2.frame = CGRectMake(WIDTH*2/3+25, top+5, WIDTH/6-20, 20);
-            num_label2.font = [UIFont systemFontOfSize:12];
-            [cell addSubview:num_label2];
-            
-            //下边小图标  icon_message
-            UIImageView * icon3 = [UIImageView new];
-            icon3.image = [UIImage imageNamed:@"icon_share"];
-            icon3.frame = CGRectMake(WIDTH*5/6, top, 30, 30);
-            [cell addSubview:icon3];
-            //绑定监听
-            [icon3 setUserInteractionEnabled:YES];
-            icon3.tag = postId * 10 + 3;
-            UITapGestureRecognizer * tapGesture3 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
-            tapGesture3.numberOfTapsRequired=1;
-            [icon3 addGestureRecognizer:tapGesture3];
-            
-            //数字
-            UILabel * num_label3 = [UILabel new];
-            num_label3.text = @"分享";
-            num_label3.frame = CGRectMake(WIDTH*5/6+25, top+5, 40, 20);
-            num_label3.font = [UIFont systemFontOfSize:12];
-            [cell addSubview:num_label3];
+            {
+                //数字
+                UILabel * num_label1 = [UILabel new];
+                num_label1.text = praiseCount;
+                num_label1.frame = CGRectMake(WIDTH/2, top+5, WIDTH/6, 20);
+                num_label1.font = [UIFont systemFontOfSize:12];
+                [cell addSubview:num_label1];
+                
+                //下边小图标  icon_message
+                UIImageView * icon2 = [UIImageView new];
+                icon2.image = [UIImage imageNamed:@"icon_message"];
+                icon2.frame = CGRectMake((WIDTH-10-35-25 - WIDTH/2)/2+WIDTH/2, top, 30, 30);
+                [cell addSubview:icon2];
+                //绑定监听
+                [icon2 setUserInteractionEnabled:YES];
+                icon2.tag = postId * 10 + 2;
+                UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+                tapGesture2.numberOfTapsRequired=1;
+                [icon2 addGestureRecognizer:tapGesture2];
+                
+                //数字
+                UILabel * num_label2 = [UILabel new];
+                num_label2.text = commentCount;
+                num_label2.frame = CGRectMake((WIDTH-10-35-25 - WIDTH/2)/2+WIDTH/2+30, top+4, WIDTH/6-20, 20);
+                num_label2.font = [UIFont systemFontOfSize:12];
+                [cell addSubview:num_label2];
+                
+                //下边小图标  icon_message
+                UIImageView * icon3 = [UIImageView new];
+                icon3.image = [UIImage imageNamed:@"icon_share"];
+                icon3.frame = CGRectMake(WIDTH-10-35-25, top, 30, 30);
+                [cell addSubview:icon3];
+                //绑定监听
+                [icon3 setUserInteractionEnabled:YES];
+                icon3.tag = postId * 10 + 3;
+                UITapGestureRecognizer * tapGesture3 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
+                tapGesture3.numberOfTapsRequired=1;
+                [icon3 addGestureRecognizer:tapGesture3];
+                
+                //数字
+                UILabel * num_label3 = [UILabel new];
+                num_label3.text = @"分享";
+                num_label3.frame = CGRectMake(WIDTH-10-35, top+5, 40, 20);
+                num_label3.font = [UIFont systemFontOfSize:12];
+                [cell addSubview:num_label3];
+            }
             top += 30;
         }
         //分割线
@@ -658,6 +708,9 @@
         //图片
         {
             UIImageView * iv1 = [UIImageView new];
+            iv1.contentMode = UIViewContentModeScaleAspectFill;
+            iv1.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+            [iv1 setContentScaleFactor:[[UIScreen mainScreen] scale]];
             iv1.frame = CGRectMake(10,10 , WIDTH - 20, 169);
             iv1.layer.masksToBounds = true;
             iv1.layer.cornerRadius = 10;
@@ -674,8 +727,7 @@
             [cell addSubview:userImgView];
             userImgView.layer.masksToBounds = true;
             userImgView.layer.cornerRadius = user_width/2;
-            
-            [userImgView sd_setImageWithURL:[NSURL URLWithString:@"http://b.hiphotos.baidu.com/zhidao/wh%3D450%2C600/sign=f0c5c08030d3d539c16807c70fb7c566/8ad4b31c8701a18bbef9f231982f07082838feba.jpg"]];
+            [userImgView sd_setImageWithURL:[NSURL URLWithString:headUrl] placeholderImage:[UIImage imageNamed:@"logo"]];
             [userImgView setUserInteractionEnabled:YES];
             UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
             tapGesture2.numberOfTapsRequired=1;
@@ -694,12 +746,11 @@
         }
         //简介
         {
-            UITextView * tv = [UITextView new];
+            UILabel * tv = [UILabel new];
             tv.text = content;
-            tv.userInteractionEnabled = NO;
             tv.font = [UIFont systemFontOfSize:15];
             tv.textColor = [UIColor whiteColor];
-            tv.frame = CGRectMake(10, 106, WIDTH - 20, 40);
+            tv.frame = CGRectMake(10, 105, WIDTH - 20, 20);
             [cell addSubview:tv];
             tv.backgroundColor = [UIColor clearColor];
             tv.textAlignment = NSTextAlignmentCenter;
@@ -709,7 +760,7 @@
             UILabel * label = [UILabel new];
             label.text = releaseTime;
             label.textColor = [UIColor whiteColor];
-            label.frame = CGRectMake(WIDTH/4, 150, WIDTH/2, 20);
+            label.frame = CGRectMake(WIDTH/4, 125, WIDTH/2, 20);
             label.textAlignment = NSTextAlignmentCenter;
             label.font = [UIFont systemFontOfSize:12];
             [cell addSubview:label];
@@ -728,18 +779,16 @@
                 space_view_2.backgroundColor = [MYTOOL RGBWithRed:112 green:112 blue:112 alpha:1];
                 [cell addSubview:space_view_2];
             }
-            //下边小图标  icon_praise
-            UIImageView * icon1 = [UIImageView new];
-            icon1.image = [UIImage imageNamed:@"icon_praise"];
-            icon1.frame = CGRectMake(WIDTH/6-30, top, 30, 30);
-            [cell addSubview:icon1];
-            //绑定监听
-            [icon1 setUserInteractionEnabled:YES];
-            icon1.tag = postId * 10 +1;
-            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
-            tapGesture.numberOfTapsRequired=1;
-            [icon1 addGestureRecognizer:tapGesture];
-            
+            UIButton * btn = [UIButton new];
+            [btn setImage:[UIImage imageNamed:@"icon_praise"] forState:UIControlStateNormal];
+            if (praiseStatus) {
+                [btn setImage:[UIImage imageNamed:@"icon_praise_press"] forState:UIControlStateNormal];
+            }
+            btn.frame = CGRectMake(WIDTH/6-30, top, 30, 30);
+            [btn addTarget:self action:@selector(praise_callBack:) forControlEvents:UIControlEventTouchUpInside];
+            btn.tag = postId * 10 + [data_dic[@"praiseStatus"] intValue];
+            [cell addSubview:btn];
+            {
             //数字
             UILabel * num_label1 = [UILabel new];
             num_label1.text = praiseCount;
@@ -785,6 +834,7 @@
             num_label3.frame = CGRectMake(WIDTH*5/6, top+5, 40, 20);
             num_label3.font = [UIFont systemFontOfSize:12];
             [cell addSubview:num_label3];
+            }
         }
         //分割线
         UIView * spaceView = [UIView new];
@@ -798,7 +848,7 @@
         {
             UIImageView * userImgView = [UIImageView new];
             userImgView.frame = CGRectMake(14, 19, 41, 41);
-            userImgView.image = [UIImage imageNamed:@"test_user"];
+            [userImgView sd_setImageWithURL:[NSURL URLWithString:headUrl] placeholderImage:[UIImage imageNamed:@"logo"]];
             [cell addSubview:userImgView];
             userImgView.layer.masksToBounds = true;
             userImgView.layer.cornerRadius = 20;
@@ -850,14 +900,31 @@
         //内容
         {
             UILabel * label = [UILabel new];
-            label.text = content;
+            //过滤换行
+            NSString * string = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]; //去除掉首尾的空白字符和换行字符
+            label.text = string;
             label.font = [UIFont systemFontOfSize:16];
             label.textColor = [MYTOOL RGBWithRed:79 green:79 blue:79 alpha:1];
-            CGSize size = [MYTOOL getSizeWithString:content andFont:label.font];
+            CGSize size = [MYTOOL getSizeWithString:string andFont:label.font];
             float width = WIDTH-71;
             int c = size.width/width < 1 ? 1 : (size.width/width == 1 ? 1 : (int)size.width/width + 1);
             if (c > 1) {
                 label.numberOfLines = 0;
+                if (c > 2) {
+                    c = 2;
+                    //过滤换行
+                    string = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]; //去除掉首尾的空白字符和换行字符
+                    NSString * text = @"";
+                    for(int i = 0; i < string.length ; i ++){
+                        text = [string substringToIndex:i];
+                        label.text = text;
+                        size = [MYTOOL getSizeWithLabel:label];
+                        if (size.width >= (WIDTH -60-10) * 1.8) {
+                            //                        NSLog(@"text:%@",text);
+                            break;
+                        }
+                    }
+                }
             }
             label.frame = CGRectMake(61, top, WIDTH-71, size.height*c);
             [cell addSubview:label];
@@ -870,6 +937,9 @@
 //            NSLog(@"图片数组个数:%ld",url_array.count);
             if (url_array.count == 1) {
                 UIImageView * img = [UIImageView new];
+                img.contentMode = UIViewContentModeScaleAspectFill;
+                img.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+                [img setContentScaleFactor:[[UIScreen mainScreen] scale]];
                 img.image = [UIImage imageNamed:@"test_bg"];
                 img.frame = CGRectMake(61, top, WIDTH-61-20, height);
                 [img sd_setImageWithURL:[NSURL URLWithString:url_array[0][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"test_bg"]];
@@ -880,6 +950,9 @@
                 float width = (WIDTH-61-20)/2;
                 //第一张图片
                 UIImageView * img = [UIImageView new];
+                img.contentMode = UIViewContentModeScaleAspectFill;
+                img.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+                [img setContentScaleFactor:[[UIScreen mainScreen] scale]];
                 img.frame = CGRectMake(61, top, width, height);
                 [img sd_setImageWithURL:[NSURL URLWithString:url_array[0][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"test_bg"]];
                 img.layer.masksToBounds = true;
@@ -887,6 +960,9 @@
                 [cell addSubview:img];
                 //第二张图片
                 UIImageView * img2 = [UIImageView new];
+                img2.contentMode = UIViewContentModeScaleAspectFill;
+                img2.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+                [img2 setContentScaleFactor:[[UIScreen mainScreen] scale]];
                 img2.frame = CGRectMake(61+width+5, top, width, height);
                 [img2 sd_setImageWithURL:[NSURL URLWithString:url_array[1][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"9252150_170958052001_2.jpg"]];
                 img2.layer.masksToBounds = true;
@@ -900,17 +976,15 @@
             float y_center = (tableView.rowHeight - top) / 2 + top;
             //点赞
             {
-                //下边小图标  icon_praise
-                UIImageView * icon1 = [UIImageView new];
-                icon1.image = [UIImage imageNamed:@"icon_praise"];
-                icon1.frame = CGRectMake(WIDTH/2-30, y_center-15, 30, 30);
-                [cell addSubview:icon1];
-                //绑定监听
-                [icon1 setUserInteractionEnabled:YES];
-                icon1.tag = postId * 10 +1;
-                UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(callback_cellForSelectView:)];
-                tapGesture.numberOfTapsRequired=1;
-                [icon1 addGestureRecognizer:tapGesture];
+                UIButton * btn = [UIButton new];
+                [btn setImage:[UIImage imageNamed:@"icon_praise"] forState:UIControlStateNormal];
+                if (praiseStatus) {
+                    [btn setImage:[UIImage imageNamed:@"icon_praise_press"] forState:UIControlStateNormal];
+                }
+                btn.frame = CGRectMake(WIDTH/2-30, y_center-15, 30, 30);
+                [btn addTarget:self action:@selector(praise_callBack:) forControlEvents:UIControlEventTouchUpInside];
+                btn.tag = postId * 10 + [data_dic[@"praiseStatus"] intValue];
+                [cell addSubview:btn];
                 
                 //数字
                 UILabel * num_label1 = [UILabel new];
@@ -985,7 +1059,7 @@
     //帖子id
     NSInteger postId = tag / 10;
     if (tag % 10 == 1) {//点赞
-        [self praise_callBack:postId];
+        
     }else if(tag % 10 == 2) {//回复
         [self reply_callBack:postId];
     }else if(tag % 10 == 3) {//分享
@@ -1001,27 +1075,43 @@
         [self share_callBack:dictionary];
     }
 }
-#pragma mark - cell中点击时间
+#pragma mark - cell中点击事件
 //点赞事件
--(void)praise_callBack:(NSInteger)postId{
+-(void)praise_callBack:(UIButton *)btn{
+    NSInteger postId = btn.tag / 10;
+    bool praiseStatus = btn.tag % 10;
     if (![MYTOOL isLogin]) {
         //跳转至登录页
         LoginViewController * loginVC = [LoginViewController new];
+        loginVC.delegate = self;
+        loginVC.donotUpdate = self.donotUpdate;
         [self.navigationController pushViewController:loginVC animated:true];
         return;
     }
-    [SVProgressHUD showWithStatus:@"点赞中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
-    //拼接上传参数
-    NSMutableDictionary * send_dic = [NSMutableDictionary new];
-    [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
-    [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
-    //开始上传
-    [MYNETWORKING getWithInterfaceName:@"/community/postPraise.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
-        [SVProgressHUD dismiss];
-//        NSLog(@"back:%@",back_dic);
-        pageNo = 1;
-        [self loadDefaultData];
-    }];
+    if (praiseStatus) {//取消
+        [SVProgressHUD showWithStatus:@"取消中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+        //拼接上传参数
+        NSMutableDictionary * send_dic = [NSMutableDictionary new];
+        [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
+        [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
+        //开始上传
+        [MYNETWORKING getWithInterfaceName:@"/community/delPostPraise.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+            pageNo = 1;
+            [self loadDefaultData];
+        }];
+    }else{//赞帖
+        [SVProgressHUD showWithStatus:@"点赞中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+        //拼接上传参数
+        NSMutableDictionary * send_dic = [NSMutableDictionary new];
+        [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
+        [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
+        //开始上传
+        [MYNETWORKING getWithInterfaceName:@"/community/postPraise.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+            pageNo = 1;
+            [self loadDefaultData];
+            
+        }];
+    }
     
     
     
@@ -1032,6 +1122,8 @@
     if (![MYTOOL isLogin]) {
         //跳转至登录页
         LoginViewController * loginVC = [LoginViewController new];
+        loginVC.delegate = self;
+        loginVC.donotUpdate = self.donotUpdate;
         [self.navigationController pushViewController:loginVC animated:true];
         return;
     }
@@ -1052,6 +1144,8 @@
         [MYNETWORKING getWithInterfaceName:@"/community/postRevert.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
             [SVProgressHUD dismiss];
 //            NSLog(@"back:%@",back_dic);
+            pageNo = 1;
+            [self loadDefaultData];
         }];
         
         
@@ -1071,10 +1165,20 @@
 }
 //分享事件
 -(void)share_callBack:(NSDictionary *)post_dic{
-    [SVProgressHUD showErrorWithStatus:@"还没做呢" duration:1];
-    NSLog(@"分享数据:%@",post_dic);
+    SharedManagerVC * share = [SharedManagerVC new];
+    share.sharedDictionary = @{
+                               @"title":post_dic[@"shareTitle"],
+                               @"shareDescribe":post_dic[@"shareDescribe"],
+                               @"img_url":post_dic[@"url"][0][@"smallUrl"],
+                               @"shared_url":post_dic[@"postDetailUrl"] ? post_dic[@"postDetailUrl"] : @""
+                               };
+    [share show];
 }
-
+//更新数据
+-(void)updateData{
+    pageNo = 1;
+    [self loadDefaultData];
+}
 
 //缩放图片
 -(void)showZoomImageView:(UITapGestureRecognizer *)tap
@@ -1197,13 +1301,106 @@
     }];
     
 }
+
+#pragma mark - SDCycleScrollViewDelegate
+- (void)cycleScrollView:(SDCycleScrollView *)cycleScrollView didSelectItemAtIndex:(NSInteger)index{
+    NSDictionary * carouselDic = self.bannerArray[index];
+    NSInteger category = [carouselDic[@"category"] longValue];
+    //Category：导航类别(1：富文本 2：商品 3：帖子 4:商品组)
+    if (category == 1) {//富文本
+        NSString * content = carouselDic[@"content"];
+        TextBannerVC * text = [TextBannerVC new];
+        text.content = content;
+        [self.navigationController pushViewController:text animated:true];
+    }else if (category == 2) {//商品
+        //网络获取商品详情
+        NSString * interfaceName = @"/shop/goods/getGoodsInfo.intf";
+        NSString * cityId = [MYTOOL getProjectPropertyWithKey:@"cityId"];
+        if (cityId == nil || cityId.length == 0) {
+            cityId = @"320300";
+        }
+        NSDictionary * sendDict = @{
+                                    @"goodsId":carouselDic[@"categoryId"],
+                                    @"cityId":cityId
+                                    };
+        [MYTOOL netWorkingWithTitle:@"获取商品"];
+        [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDict andSuccess:^(NSDictionary *back_dic) {
+            NSLog(@"商品:%@",back_dic);
+            GoodsInfoViewController * info = [GoodsInfoViewController new];
+            info.goodsInfoDictionary = back_dic[@"goods"];
+            [self.navigationController pushViewController:info animated:true];
+        }];
+    }else if (category == 3) {//帖子
+        NSMutableDictionary * send_dic = [NSMutableDictionary new];
+        NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+        if (memberId) {
+            [send_dic setValue:memberId forKey:@"memberId"];
+        }
+        [send_dic setValue:carouselDic[@"categoryId"] forKey:@"postId"];
+        
+        //开始请求
+        [SVProgressHUD showWithStatus:@"获取帖子" maskType:SVProgressHUDMaskTypeClear];
+        [MYNETWORKING getWithInterfaceName:@"/community/getPostInfo.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+            bool flag = [back_dic[@"code"] boolValue];
+            if (flag) {
+                [SVProgressHUD dismiss];
+                PostInfoViewController * postVC = [PostInfoViewController new];
+                postVC.title = @"帖子详情";
+                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:back_dic[@"post"]];
+                [dict setValue:@([carouselDic[@"categoryId"] intValue]) forKey:@"postId"];
+                postVC.post_dic = dict;
+                [self.navigationController pushViewController:postVC animated:true];
+            }else{
+                [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
+            }
+        }];
+    }else if (category == 4) {//商品组
+        NSString * interface = @"/shop/goods/getGoodList.intf";
+        [MYTOOL netWorkingWithTitle:@"获取商品组"];
+        NSInteger bannerId = [carouselDic[@"bannerId"] longValue];
+        NSDictionary * send = @{
+                                @"bannerId":[NSString stringWithFormat:@"%ld",bannerId]
+                                };
+        [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+            //                NSLog(@"back:%@",back_dic);
+            NSArray * goodsList = back_dic[@"goodsList"];
+            GoodsBannerVC * goodsB = [GoodsBannerVC new];
+            goodsB.title = back_dic[@"title"];
+            goodsB.goodsList = goodsList;
+            [self.navigationController pushViewController:goodsB animated:true];
+        }];
+        
+    }
+    
+    
+}
+//加载轮播图数据
+-(void)loadBannerData{
+    NSString * interface = @"/sys/getBanner.intf";
+    NSDictionary * send = @{
+                            @"key":@"community"
+                            };
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        NSArray * array = back_dic[@"list"];
+        self.bannerArray = array;
+        if ([self.tableView isKindOfClass:[SelectView class]]) {
+            SelectView * select = (SelectView *)self.tableView;
+            [select setImgArray:array];
+        }
+    }];
+    
+}
 -(void)viewWillAppear:(BOOL)animated{
     //左按钮-nav_-add
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_-add"] style:UIBarButtonItemStyleDone target:self action:@selector(addOfNavigationBar)];
     //右按钮-nav_top
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_top"] style:UIBarButtonItemStyleDone target:self action:@selector(topOfNavigationBar)];
     [self.navigation_titleView setHidden:NO];
-    [self loadDefaultData];
+    if (!self.donotUpdate) {
+        [self loadDefaultData];
+        self.donotUpdate = true;
+    }
+    
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [self.navigation_titleView setHidden:true];

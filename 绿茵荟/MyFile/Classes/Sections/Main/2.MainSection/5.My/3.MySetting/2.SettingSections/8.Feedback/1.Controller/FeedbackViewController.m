@@ -95,6 +95,10 @@
         [SVProgressHUD showErrorWithStatus:@"输入意见" duration:2];
         return;
     }
+    if(content.length > 100) {
+        [SVProgressHUD showErrorWithStatus:@"超过100个字符" duration:2];
+        return;
+    }
     NSString * interfaceName = @"/sys/saveFeedBack.intf";
     NSDictionary * sendDic = @{
                                @"memberId":[MYTOOL getProjectPropertyWithKey:@"memberId"],
