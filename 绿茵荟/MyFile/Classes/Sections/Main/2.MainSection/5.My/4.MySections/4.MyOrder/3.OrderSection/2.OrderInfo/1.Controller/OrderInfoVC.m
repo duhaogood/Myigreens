@@ -11,6 +11,7 @@
 #import "MyOrderVC.h"
 #import "ShowExpress.h"
 #import "ContactCustomerVC.h"
+#import "GoodsInfoViewController.h"
 @interface OrderInfoVC ()<UIScrollViewDelegate>
 @property(nonatomic,strong)SelectPayTypeVC * selectPayVC;
 @property(nonatomic,strong)UIScrollView * scrollView;//总背景
@@ -30,7 +31,6 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
     //加载主界面
     [self loadMainView];
-    NSLog(@"订单详情-时间剩余:%d",self.timeLeft);
 }
 //加载主界面
 -(void)loadMainView{
@@ -229,6 +229,11 @@
                     imgV.frame = CGRectMake(0, 8, width_img, width_img);
                     [imgV sd_setImageWithURL:[NSURL URLWithString:goodsDictionary[@"url"]] placeholderImage:[UIImage imageNamed:@"logo"]];
                     [bgView addSubview:imgV];
+                    imgV.tag = [goodsDictionary[@"goodsId"] longValue];
+                    [imgV setUserInteractionEnabled:YES];
+                    UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickImgOfGoods:)];
+                    tapGesture.numberOfTapsRequired=1;
+                    [imgV addGestureRecognizer:tapGesture];
                 }
                 //商品名称
                 float right_top = 0;
@@ -681,27 +686,27 @@
             
         }
     }
-    
-    
-    {
-        /*
-         createDate = "2017-05-12";
-         discountPrice = 0;
-         expressName = "";
-         
-         hotLine = "";
-         invoiceTitle = "";
-         needInvoice = 0;
-         orderId = 126;
-         orderNo = "";
-         orderStatus = 1;
-         payStatus = 0;
-         quantity = 1;
-         statusName = "\U5f85\U4ed8\U6b3e";
-         timeLeft = "-244786";
-         */
-    }
     self.scrollView.contentSize = CGSizeMake(0, top_all);
+}
+//商品图片点击事件
+-(void)clickImgOfGoods:(UITapGestureRecognizer *)tap{
+    NSInteger tag = tap.view.tag;
+    //网络获取商品详情
+    NSString * interfaceName = @"/shop/goods/getGoodsInfo.intf";
+    NSString * cityId = [MYTOOL getProjectPropertyWithKey:@"cityId"];
+    if (cityId == nil || cityId.length == 0) {
+        cityId = @"320300";
+    }
+    NSDictionary * sendDict = @{
+                                @"goodsId":[NSString stringWithFormat:@"%ld",tag],
+                                @"cityId":cityId
+                                };
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDict andSuccess:^(NSDictionary *back_dic) {
+        GoodsInfoViewController * info = [GoodsInfoViewController new];
+        //                        NSLog(@"商品详情:%@",back_dic[@"goods"]);
+        info.goodsInfoDictionary = back_dic[@"goods"];
+        [self.navigationController pushViewController:info animated:true];
+    }];
 }
 //定时器
 -(void)timerWork{

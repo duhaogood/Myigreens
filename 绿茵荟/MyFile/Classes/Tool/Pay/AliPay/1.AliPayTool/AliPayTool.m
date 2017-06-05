@@ -45,8 +45,13 @@
     order.notify_url = [NSString stringWithFormat:@"%@%@",SERVER_URL,@"/shop/order/notifyAlipay.intf"];
     // NOTE: 商品数据
     order.biz_content = [BizContent new];
-    order.biz_content.body = @"我是真实数据";
-    order.biz_content.subject = @"不信可以调查我呀";
+    NSString * body = goodsDictionary[@"goodsList"][0][@"goodsName"];
+    NSString * subject = goodsDictionary[@"goodsList"][0][@"productName"];
+//    NSLog(@"body:%@",body);
+//    NSLog(@"subject:%@",subject);
+//    NSLog(@"orderId:%ld",orderId);
+    order.biz_content.body = body;
+    order.biz_content.subject = subject;
     order.biz_content.out_trade_no = [NSString stringWithFormat:@"%ld",orderId]; //订单ID（由商家自行制定）
     order.biz_content.timeout_express = @"30m"; //超时时间设置
     order.biz_content.total_amount = [NSString stringWithFormat:@"%.2f", [goodsDictionary[@"totalPrice"] floatValue]]; //商品价格

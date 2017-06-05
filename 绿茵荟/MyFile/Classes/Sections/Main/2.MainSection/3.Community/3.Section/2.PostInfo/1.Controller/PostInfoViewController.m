@@ -294,29 +294,59 @@
 }
 //举报帖子入口
 -(void)reportBtnCallBack{
-    UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要举报此帖？" preferredStyle:(UIAlertControllerStyleActionSheet)];
     
-    UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定举报" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+    NSLog(@"帖子:%@",self.post_dic);
+    int myMemberId = [MEMBERID intValue];
+    NSInteger memberId = [self.post_dic[@"member"][@"memberId"] longValue];
+    if (myMemberId == memberId) {//自己帖子，删除
+        UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要删除此帖？" preferredStyle:(UIAlertControllerStyleActionSheet)];
         
-        [SVProgressHUD showWithStatus:@"举报中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
-        //拼接上传参数
-        NSMutableDictionary * send_dic = [NSMutableDictionary new];
-        NSInteger postId = [self.post_dic[@"postId"] longValue];
-        [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
-        [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
-        //开始上传
-        [MYNETWORKING getWithInterfaceName:@"/community/postInform.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
-//            NSLog(@"back:%@",back_dic);
-            [SVProgressHUD showSuccessWithStatus:@"举报成功" duration:1];
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定删除" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            
+            [SVProgressHUD showWithStatus:@"删除中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+            
+            NSInteger postCommentId = [self.post_dic[@"postId"] longValue];
+            NSString * interfaceName = @"/community/delPost.intf";
+            [SVProgressHUD showWithStatus:@"正在删除" maskType:SVProgressHUDMaskTypeClear];
+            [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"postId":[NSString stringWithFormat:@"%ld",postCommentId]} andSuccess:^(NSDictionary *back_dic) {
+                //            NSLog(@"back:%@",back_dic);
+                [SVProgressHUD showSuccessWithStatus:@"删除成功" duration:1];
+                [self.navigationController popViewControllerAnimated:true];
+            }];
+            
         }];
         
-    }];
-    
-    UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
-    [alert addAction:action];
-    [alert addAction:cancel];
-    [self showDetailViewController:alert sender:nil];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
+        [alert addAction:action];
+        [alert addAction:cancel];
+        [self showDetailViewController:alert sender:nil];
 
+        
+        
+    }else{//别人帖子，举报
+        UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要举报此帖？" preferredStyle:(UIAlertControllerStyleActionSheet)];
+        
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定举报" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            
+            [SVProgressHUD showWithStatus:@"举报中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+            //拼接上传参数
+            NSMutableDictionary * send_dic = [NSMutableDictionary new];
+            NSInteger postId = [self.post_dic[@"postId"] longValue];
+            [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
+            [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
+            //开始上传
+            [MYNETWORKING getWithInterfaceName:@"/community/postInform.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+                //            NSLog(@"back:%@",back_dic);
+                [SVProgressHUD showSuccessWithStatus:@"举报成功" duration:1];
+            }];
+            
+        }];
+        
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
+        [alert addAction:action];
+        [alert addAction:cancel];
+        [self showDetailViewController:alert sender:nil];
+    }
 }
 
 #pragma mark - 上拉、下拉刷新
@@ -548,6 +578,7 @@
         [self.navigationController pushViewController:loginVC animated:true];
         return ;
     }
+    NSLog(@"帖子:%@",self.post_dic);
     NSDictionary * comment = self.review_array[tap.view.tag];
 //    NSLog(@"comment:%@",comment);
     NSInteger postCommentId = [self.review_array[tap.view.tag][@"postCommentId"] longValue];

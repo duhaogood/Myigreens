@@ -130,7 +130,7 @@
                     UILabel * reader_label = [UILabel new];
                     reader_label.frame = CGRectMake(WIDTH/3*2+0.5, top_center-8, WIDTH/3-0.5, 16);
                     reader_label.textAlignment = NSTextAlignmentCenter;
-                    reader_label.text = @"0阅读者";
+                    reader_label.text = @"0订阅者";
                     reader_label.textColor = [UIColor whiteColor];
                     [view addSubview:reader_label];
                     self.reader_label = reader_label;
@@ -291,7 +291,7 @@
             self.subscribe_label.text = [NSString stringWithFormat:@"%ld订阅",subscribeCount];
             //阅读者
             NSInteger bySubscribeCount = [self.member_dic[@"bySubscribeCount"] longValue];
-            self.reader_label.text = [NSString stringWithFormat:@"%ld阅读者",bySubscribeCount];
+            self.reader_label.text = [NSString stringWithFormat:@"%ld订阅者",bySubscribeCount];
             [self.myView reloadData];
             
             NSString * interfaceName = @"/member/myMessage.intf";

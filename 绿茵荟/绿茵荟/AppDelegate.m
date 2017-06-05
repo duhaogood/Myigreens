@@ -38,7 +38,8 @@
     //    NSLog(@"memberId:%@",[MYTOOL getProjectPropertyWithKey:@"memberId"]);
     
     if (!SERVER_URL) {
-        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://myigreens.yemast.com:8081/api"];
+//        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://myigreens.yemast.com:8081/api"];//正式
+        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://yemast.com:8180/api"];//测试
     }
     //wxc3b31ac5cd6d9d5d
     //微信注册

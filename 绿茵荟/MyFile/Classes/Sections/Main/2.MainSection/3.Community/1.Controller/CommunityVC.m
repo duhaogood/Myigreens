@@ -1148,11 +1148,11 @@
     }
 //    NSLog(@"准备回复");
     //弹出的回复界面
-    UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"请回复" preferredStyle:(UIAlertControllerStyleAlert)];
+    UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"请评论" preferredStyle:(UIAlertControllerStyleAlert)];
     
     UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
         
-        [SVProgressHUD showWithStatus:@"回复中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+        [SVProgressHUD showWithStatus:@"评论中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
         NSString * msg = alert.textFields.firstObject.text;
         //拼接上传参数
         NSMutableDictionary * send_dic = [NSMutableDictionary new];
@@ -1174,7 +1174,7 @@
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
     [alert addAction:action];
     [alert addTextFieldWithConfigurationHandler:^(UITextField *tf){
-        tf.placeholder = @"请输入回复消息";
+        tf.placeholder = @"请输入评论消息";
     }];
     [alert addAction:cancel];
     [self showDetailViewController:alert sender:nil];

@@ -26,6 +26,7 @@
 @property(nonatomic,strong)UILabel * quantityLabel;//数量label
 @property(nonatomic,strong)UILabel * goodsPriceLabel;//商品价格label
 @property(nonatomic,strong)UILabel * expressPriceLabel;//运费label
+@property(nonatomic,strong)UILabel * pointLabel;//积分label
 @property(nonatomic,strong)UILabel * totalPriceLabel;//总价label
 @property(nonatomic,strong)UILabel * totalPriceLabel2;//合计总价label
 @property(nonatomic,assign)SelectPayTypeVC * selectPayVC;//选择支付方式
@@ -407,82 +408,96 @@
         [scrollView addSubview:priceView];
         //3行文字，间隔13.5
         {
-            //商品个数--总价
-            {
-                NSInteger count = 0;
-                for (NSDictionary * dic in self.goodsList) {
-                    NSInteger quantity = [dic[@"quantity"] longValue];
-                    count += quantity;
-                }
-                UILabel * label = [UILabel new];
-                label.text = [NSString stringWithFormat:@"共%ld件商品:",count];
-                self.quantityLabel = label;
-                label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
-                label.frame = CGRectMake(14, 13.5, WIDTH/2, 15);
-                label.font = [UIFont systemFontOfSize:15];
-                [priceView addSubview:label];
-                //总价
-                {
-                    UILabel * label = [UILabel new];
-                    self.totalPriceLabel = label;
-                    float orderPrice = [self.order[@"orderPrice"] floatValue];
-                    label.text = [NSString stringWithFormat:@"¥%.2f",orderPrice];
-                    if ((int)orderPrice == orderPrice) {
-                        label.text = [NSString stringWithFormat:@"¥%d",(int)orderPrice];
-                    }
-                    label.textColor = [MYTOOL RGBWithRed:229 green:64 blue:73 alpha:1];
-                    label.font = [UIFont systemFontOfSize:16];
-                    label.textAlignment = NSTextAlignmentRight;
-                    label.frame = CGRectMake(WIDTH/2, 13, WIDTH/2-15, 16);
-                    [priceView addSubview:label];
-                }
+            bool integral = [self.order[@"integral"] boolValue];
+            NSArray * showPriceItems = nil;
+            //商品个数
+            NSInteger count = 0;
+            for (NSDictionary * dic in self.goodsList) {
+                NSInteger quantity = [dic[@"quantity"] longValue];
+                count += quantity;
+            }
+            NSString * countString = [NSString stringWithFormat:@"共%ld件商品:",count];
+            //商品总钱
+            float orderPrice = [self.order[@"orderPrice"] floatValue];
+            NSString * priceString = [NSString stringWithFormat:@"¥%.2f",orderPrice];
+            if ((int)orderPrice == orderPrice) {
+                priceString = [NSString stringWithFormat:@"¥%d",(int)orderPrice];
             }
             //运费
-            {
-                UILabel * label = [UILabel new];
-                label.text = @"运费:";
-                label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
-                label.frame = CGRectMake(14, 13.5*2+15, WIDTH/2, 15);
-                label.font = [UIFont systemFontOfSize:15];
-                [priceView addSubview:label];
-                //运费
-                {
-                    UILabel * label = [UILabel new];
-                    self.expressPriceLabel = label;
-                    float expressPrice = [self.order[@"expressPrice"] floatValue];
-                    label.text = [NSString stringWithFormat:@"¥%.2f",expressPrice];
-                    if ((int)expressPrice == expressPrice) {
-                        label.text = [NSString stringWithFormat:@"¥%d",(int)expressPrice];
-                    }
-                    label.textColor = [MYTOOL RGBWithRed:229 green:64 blue:73 alpha:1];
-                    label.font = [UIFont systemFontOfSize:16];
-                    label.textAlignment = NSTextAlignmentRight;
-                    label.frame = CGRectMake(WIDTH/2, 13.5*2+13, WIDTH/2-15, 16);
-                    [priceView addSubview:label];
-                }
+            float expressPrice = [self.order[@"expressPrice"] floatValue];
+            NSString * expressPriceString = [NSString stringWithFormat:@"¥%.2f",expressPrice];
+            if ((int)expressPrice == expressPrice) {
+                expressPriceString = [NSString stringWithFormat:@"¥%d",(int)expressPrice];
             }
             //合计
-            {
-                UILabel * label = [UILabel new];
-                label.text = @"合计:";
-                label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
-                label.frame = CGRectMake(14, 13.5*3+30, WIDTH/2, 15);
-                label.font = [UIFont systemFontOfSize:15];
-                [priceView addSubview:label];
-                //合计钱数
+            float totalPrice = [self.order[@"totalPrice"] floatValue];
+            NSString * totalPriceString = [NSString stringWithFormat:@"¥%.2f",totalPrice];
+            if ((int)totalPrice == totalPrice) {
+                totalPriceString = [NSString stringWithFormat:@"¥%d",(int)totalPrice];
+            }
+            if (integral) {//积分商品
+                //积分
+                NSInteger totalPoint = [self.order[@"totalPoint"] longValue];
+                NSString * totalPointString = [NSString stringWithFormat:@"%ld",totalPoint];
+                showPriceItems = @[
+                                   @[countString,priceString],
+                                   @[@"运费:",expressPriceString],
+                                   @[@"使用积分:",totalPointString],
+                                   @[@"合计:",totalPriceString]
+                                   ];
+            }else{//不是积分
+                showPriceItems = @[
+                                   @[countString,priceString],
+                                   @[@"运费:",expressPriceString],
+                                   @[@"合计:",totalPriceString]
+                                   ];
+            }
+            /*
+             总高度99，字体都是15
+             */
+            UILabel * label = [UILabel new];
+            label.font = [UIFont systemFontOfSize:15];
+            label.text = @"价格10000";
+            CGSize size = [MYTOOL getSizeWithLabel:label];
+            //文字高度
+            float label_height = size.height;
+            //每行文字间隔
+            float space = (99-label_height * showPriceItems.count)/(showPriceItems.count +1);
+            for(int i = 0; i < showPriceItems.count ; i ++){
+                float top = space + (space + label_height)*i;
+                NSString * left_string = showPriceItems[i][0];
+                NSString * right_string = showPriceItems[i][1];
+                //左侧
                 {
-                    float totalPrice = [self.order[@"totalPrice"] floatValue];
                     UILabel * label = [UILabel new];
-                    self.totalPriceLabel = label;
-                    label.text = [NSString stringWithFormat:@"¥%.2f",totalPrice];
-                    if ((int)totalPrice == totalPrice) {
-                        label.text = [NSString stringWithFormat:@"¥%d",(int)totalPrice];
+                    label.text = left_string;
+                    if (i == 0) {//总价
+                        self.quantityLabel = label;
                     }
+                    label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
+                    label.frame = CGRectMake(14, top, WIDTH/2, 15);
+                    label.font = [UIFont systemFontOfSize:15];
+                    [priceView addSubview:label];
+                }
+                //右侧
+                {
+                    UILabel * label = [UILabel new];
+                    label.text = right_string;
                     label.textColor = [MYTOOL RGBWithRed:229 green:64 blue:73 alpha:1];
                     label.font = [UIFont systemFontOfSize:16];
                     label.textAlignment = NSTextAlignmentRight;
-                    label.frame = CGRectMake(WIDTH/2, 13.5*3+30-2, WIDTH/2-15, 16);
+                    label.frame = CGRectMake(WIDTH/2, top, WIDTH/2-15, 16);
                     [priceView addSubview:label];
+                    if(i == 0){//总价
+                        self.totalPriceLabel = label;
+                    }else if(i == 1){//运费
+                        self.expressPriceLabel = label;
+                    }else if(i == showPriceItems.count - 1){//最下面合计
+                        self.totalPriceLabel = label;
+                    }else{//积分
+                        self.pointLabel = label;
+                    }
+                    
                 }
             }
         }
@@ -539,7 +554,7 @@
     NSString * interfaceName = @"/shop/order/confirmOrder.intf";
     NSMutableDictionary * sendDic = [self getSendDictionaryToConfirmOrder];
     [sendDic setValue:expressDict[@"expressId"] forKey:@"expressId"];
-    NSLog(@"send:%@",sendDic);
+//    NSLog(@"send:%@",sendDic);
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
                 NSLog(@"back:%@",back_dic);
         self.goodsList = back_dic[@"goodsList"];
@@ -625,7 +640,7 @@
     if (addressId) {
         [sendDiction setValue:addressId forKey:@"addressId"];
     }
-    NSLog(@"send:%@",sendDiction);
+//    NSLog(@"send:%@",sendDiction);
     [SVProgressHUD showWithStatus:@"创建订单中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDiction andSuccess:^(NSDictionary *back_dic) {
 //        NSLog(@"创建订单:%@",back_dic);
@@ -636,7 +651,7 @@
                                 @"orderId":back_dic[@"orderId"]
                                 };
         [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-            NSLog(@"订单:%@",back_dic);
+//            NSLog(@"订单:%@",back_dic);
             [SVProgressHUD showSuccessWithStatus:@"订单创建成功" duration:1];
             SelectPayTypeVC * payVC = [SelectPayTypeVC new];
             payVC.isSuccess = true;
@@ -763,10 +778,12 @@
     [SVProgressHUD showWithStatus:@"更新中…" maskType:SVProgressHUDMaskTypeClear];
     NSString * interfaceName = @"/shop/order/confirmOrder.intf";
     NSMutableDictionary * sendDic = [self getSendDictionaryToConfirmOrder];
-    //    NSLog(@"send:%@",sendDic);
-    [sendDic setValue:bonusDict[@"couponId"] forKey:@"couponId"];
+    if(bonusDict[@"bonusId"]){
+        [sendDic setValue:bonusDict[@"bonusId"] forKey:@"couponId"];
+    }
+//        NSLog(@"send:%@",sendDic);
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        //        NSLog(@"back:%@",back_dic);
+                NSLog(@"back:%@",back_dic);
         self.goodsList = back_dic[@"goodsList"];
         self.order = back_dic[@"order"];
         self.receiptAddress = back_dic[@"receiptAddress"];
@@ -816,6 +833,12 @@
     if ((int)totalPrice == totalPrice) {
         self.totalPriceLabel2.text = [NSString stringWithFormat:@"¥%d",(int)totalPrice];
     }
+    if ([self.order[@"integral"] boolValue] && self.pointLabel) {
+        //积分
+        NSInteger totalPoint = [self.order[@"totalPoint"] longValue];
+        NSString * totalPointString = [NSString stringWithFormat:@"%ld",totalPoint];
+        self.pointLabel.text = totalPointString;
+    }
 }
 //点击事件
 -(void)handleTapGesture:( UITapGestureRecognizer *)tapRecognizer
@@ -841,6 +864,7 @@
         [sendDic setValue:productId forKey:@"productId"];//productId	产品id	数字	否
     }
     [sendDic setValue:@(self.integral) forKey:@"integral"];//是否积分商品
+    [sendDic setValue:self.order[@"couponId"] forKey:@"couponId"];
     /*
      expressId	快递Id	数字	否
      couponId	优惠券Id	数字	否

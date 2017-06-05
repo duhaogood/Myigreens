@@ -3575,7 +3575,7 @@
 				TargetAttributes = {
 					78C237AE1ED2FA7F000CD40E = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = XDPHBM3QS8;
+						DevelopmentTeam = 6GP3UUECW6;
 						ProvisioningStyle = Automatic;
 					};
 					78C237C71ED2FA80000CD40E = {
@@ -3953,7 +3953,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = XDPHBM3QS8;
+				DEVELOPMENT_TEAM = 6GP3UUECW6;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4010,7 +4010,7 @@
 					"-all_load",
 					"-Objc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.hao.green;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yemast.myigreens;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -4019,7 +4019,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = XDPHBM3QS8;
+				DEVELOPMENT_TEAM = 6GP3UUECW6;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4076,7 +4076,7 @@
 					"-all_load",
 					"-Objc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.hao.green;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yemast.myigreens;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

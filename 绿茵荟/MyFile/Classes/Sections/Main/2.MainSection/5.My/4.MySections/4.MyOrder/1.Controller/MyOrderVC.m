@@ -661,7 +661,6 @@
 }
 //定时器刷新剩余时间
 -(void)refreshTimeLeft{
-    NSLog(@"123");
     bool flag = false;
     for (NSMutableDictionary * dic in self.timerArray) {
         //订单号
