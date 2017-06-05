@@ -49,7 +49,7 @@
     //加载主界面
     [self loadMainView];
     offset_y = -1;
-//    NSLog(@"商品数组:%@",self.goodsArray);
+//    NSLog(@"商品数组:%@",self.goodsList);
     isSuccess = false;
 //    NSLog(@"order:%@",self.order);
 }

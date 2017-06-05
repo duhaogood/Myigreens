@@ -85,7 +85,14 @@
     self.tableView = tableView;
     //不显示分割线
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self updateViewDate];
+        // 结束刷新
+        [tableView.mj_header endRefreshing];
+    }];
     
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    tableView.mj_header.automaticallyChangeAlpha = YES;
 }
 
 
@@ -451,6 +458,45 @@
                 //                NSLog(@"count3:%ld",self.tagsList_array.count);
                 //此时加载界面
                 [self loadMainView];
+            }];
+        }];
+    }];
+}
+//重新刷新界面结构
+-(void)updateViewDate{
+    //轮播图数据有问题
+    [self.storeNetWorking getCarouselImageData:^(NSDictionary * backDict) {//获取轮播图数据
+        self.carouselImage_array = backDict[@"list"];
+        
+        NSArray * array = backDict[@"list"];
+        self.carouselImage_array = array;
+        //                NSLog(@"轮播图:%@",self.carouselImage_array);
+        [self.storeNetWorking getGoodsCategory:^(NSDictionary * backDict2) {//获取商品分类数据
+            self.goodsCategory_array = backDict2[@"goodsCatList"];
+            //                        NSLog(@"分类数据:%@",self.goodsCategory_array);
+            [self.storeNetWorking getViewData:^(NSDictionary * backDict3) {//获取商品组数据
+                //self.tagsList_array
+                NSArray * back_arr = backDict3[@"tagsList"];
+                NSMutableArray * arr = [NSMutableArray new];
+                for (NSDictionary * arr_dic in back_arr) {
+                    NSInteger showType = [arr_dic[@"showType"] longValue];
+                    NSArray * bannerList = arr_dic[@"bannerList"];
+                    if (showType == 3 && bannerList && bannerList.count > 0) {//中间的新鲜热卖
+                        [arr addObject:arr_dic];
+                        break;
+                    }
+                }
+                for (NSDictionary * arr_dic in back_arr) {
+                    NSInteger showType = [arr_dic[@"showType"] longValue];
+                    NSArray * goodsList = arr_dic[@"goodsList"];
+                    if (showType == 1 && goodsList && goodsList.count > 0) {//下面的商品组
+                        [arr addObject:arr_dic];
+                    }
+                }
+                self.tagsList_array = [NSArray arrayWithArray:arr];
+                //                NSLog(@"count3:%ld",self.tagsList_array.count);
+                //此时加载界面
+                [self.tableView reloadData];
             }];
         }];
     }];

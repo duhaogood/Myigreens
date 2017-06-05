@@ -9,11 +9,13 @@
 #import "BusinessCooperateViewController.h"
 
 @interface BusinessCooperateViewController ()
-
+@property(nonatomic,strong)UIWebView * webView;
 @end
 
 @implementation BusinessCooperateViewController
-
+{
+    NSString * content;//h5地址
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -24,16 +26,21 @@
     UIWebView * webView = [UIWebView new];
     webView.frame = CGRectMake(0, 0, WIDTH, HEIGHT-64);
     webView.frame = self.view.bounds;
-    NSURL *url = [NSURL URLWithString:@"https://baidu.com"];
-    
-    // 2. 把URL告诉给服务器,请求,从m.baidu.com请求数据
-    NSURLRequest * request = [NSURLRequest requestWithURL:url];
-    [webView loadRequest:request];
+    self.webView = webView;
     [self.view addSubview:webView];
     
 }
 
-
+//获取html
+-(void)getHtml{
+    NSString * interfaceName = @"/sys/getSysInfoBykey.intf";
+    NSString * infoKey = @"business_cooperation";
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"infoKey":infoKey} andSuccess:^(NSDictionary *back_dic) {
+        content = back_dic[@"info"][@"content"];
+        [self.webView loadHTMLString:content baseURL:nil];
+    }];
+    
+}
 //返回上个界面
 -(void)backToUpView{
     [self.navigationController popViewControllerAnimated:true];
@@ -41,6 +48,7 @@
 #pragma mark - view隐藏和显示
 -(void)viewWillAppear:(BOOL)animated{
     [MYTOOL hiddenTabBar];
+    [self getHtml];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [MYTOOL showTabBar];

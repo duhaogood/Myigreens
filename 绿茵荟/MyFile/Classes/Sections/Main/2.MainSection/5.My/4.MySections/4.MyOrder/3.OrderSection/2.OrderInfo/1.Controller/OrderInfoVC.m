@@ -106,6 +106,7 @@
         }
         //接收地址信息
         NSDictionary * receiptAddress = self.orderDictionary[@"receiptAddress"];
+        NSLog(@"地址:%@",receiptAddress);
         {
             //文字字体
             float fontSize = [MYTOOL getHeightWithIphone_six:15];
@@ -139,6 +140,18 @@
             }
             //地址
             {
+                float left = 14;
+                //提示
+                {
+                    UILabel * label = [UILabel new];
+                    label.font = font;
+                    label.text = @"收货地址：";
+                    label.textColor = MYCOLOR_46_42_42;
+                    CGSize size = [MYTOOL getSizeWithLabel:label];
+                    label.frame = CGRectMake(left, view_height/2-fontSize/2, size.width, size.height);
+                    [view addSubview:label];
+                    left += size.width + 5;
+                }
                 UILabel * label = [UILabel new];
                 label.font = font;
                 label.textColor = MYCOLOR_46_42_42;
@@ -146,19 +159,23 @@
                 if (!address) {
                     address = @"***********";
                 }
-                label.text = [NSString stringWithFormat:@"收货地址:%@",address];
+                NSString * area = receiptAddress[@"area"];
+                label.text = [NSString stringWithFormat:@"%@%@",area,address];
                 CGSize size = [MYTOOL getSizeWithLabel:label];
-                float name_width = WIDTH - 28;
-                if (size.width > name_width*2) {
+                float name_width = WIDTH - 14 - left;
+                if (size.width > name_width) {
                     while (size.width >= name_width * 2 - font.pointSize) {
                         font = [UIFont systemFontOfSize:font.pointSize-0.1];
                         label.font = font;
                         size = [MYTOOL getSizeWithLabel:label];
                     }
+                    label.frame = CGRectMake(left, view_height/2-fontSize/2, name_width, size.height*2);
+                    label.numberOfLines = 0;
+                }else{
+                    label.frame = CGRectMake(left, view_height/2-fontSize/2, name_width, size.height);
                 }
-                label.frame = CGRectMake(14, view_height/2-fontSize/2, WIDTH-28, size.height*2);
+                
                 [view addSubview:label];
-                label.numberOfLines = 0;
             }
         }
         top_all += view_height + 10;
@@ -186,12 +203,13 @@
         //订单号
         {
             UIFont * font = [UIFont systemFontOfSize:14];
-            NSInteger orderId = [self.orderDictionary[@"orderId"] longValue];
+//            NSInteger orderId = [self.orderDictionary[@"orderId"] longValue];
+            NSString * orderNo = self.orderDictionary[@"orderNo"];
             //label
             {
                 UILabel * label = [UILabel new];
                 label.frame = CGRectMake(14, 14, WIDTH/3.0*2, font.pointSize);
-                label.text = [NSString stringWithFormat:@"订单号:%ld",orderId];
+                label.text = [NSString stringWithFormat:@"订单号:%@",orderNo];
                 label.font = font;
                 label.textColor = MYCOLOR_46_42_42;
                 [view addSubview:label];
@@ -213,7 +231,7 @@
         {
             view_top = 45;
             NSArray * goodsList = self.orderDictionary[@"goodsList"];
-            NSLog(@"商品数量:%ld",goodsList.count);
+//            NSLog(@"商品数量:%ld",goodsList.count);
             float height_goodsView = [MYTOOL getHeightWithIphone_six:111];
             for (int i = 0; i < goodsList.count; i ++) {
                 NSDictionary * goodsDictionary = goodsList[i];
@@ -363,6 +381,8 @@
         }
         //留言
         {
+            float label_middle_top = 0;
+            float left = 0;
             //左侧提示
             {
                 UILabel * label = [UILabel new];
@@ -372,12 +392,28 @@
                 view_top += 18;
                 CGSize size = [MYTOOL getSizeWithLabel:label];
                 label.frame = CGRectMake(14, view_top, size.width, size.height);
+                label_middle_top = view_top + size.height/2;
+                left = 14 + size.width + 10;
                 [view addSubview:label];
                 view_top += size.height;
             }
             //右侧显示
             {
-                
+                NSString * remarks = self.orderDictionary[@"remarks"];
+                UILabel * label = [UILabel new];
+                label.text = remarks;
+                label.font = [UIFont systemFontOfSize:12];
+                CGSize size = [MYTOOL getSizeWithLabel:label];
+                float width = WIDTH - 14 - left;
+                label.frame = CGRectMake(left, label_middle_top - size.height/2, width, size.height);
+                if (size.width > width) {
+                    label.numberOfLines = 0;
+                    label.frame = CGRectMake(left, label_middle_top - size.height/2, width, size.height*2);
+                }else{
+                    label.textAlignment = NSTextAlignmentRight;
+                }
+                label.textColor = MYCOLOR_181_181_181;
+                [view addSubview:label];
             }
         }
         //分割线

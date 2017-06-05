@@ -294,7 +294,7 @@
         }
         if ([key isEqualToString:@"addr"]) {
             if (string.length < 5) {
-                [SVProgressHUD showErrorWithStatus:@"详细地址\n长度小于5" duration:2];
+                [SVProgressHUD showErrorWithStatus:@"详细地址\n长度不小于5" duration:2];
                 return;
             }
         }

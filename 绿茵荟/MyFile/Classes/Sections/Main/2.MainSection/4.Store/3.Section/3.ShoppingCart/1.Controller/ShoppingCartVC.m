@@ -15,6 +15,7 @@
 @property(nonatomic,strong)UIView * priceView;//总价view
 @property(nonatomic,strong)UILabel * allPriceLabel;//总价label
 @property(nonatomic,strong)UILabel * allCountLabel;//总个数label
+@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
 @end
 
 @implementation ShoppingCartVC
@@ -37,8 +38,29 @@
     tableView.delegate = self;
     self.tableView = tableView;
     tableView.rowHeight = 126;
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     //解决tableView露白
     self.automaticallyAdjustsScrollViewInsets = false;
+    //覆盖一个没有数据时显示的view
+    //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+    {
+        UIView * view = [UIView new];
+        view.frame = tableView.bounds;
+        self.noDateView = view;
+        view.hidden = true;
+        [tableView addSubview:view];
+        view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+        //没有数据提示
+        {
+            UILabel * label = [UILabel new];
+            label.text = @"购物车空空如也";
+            label.textAlignment = NSTextAlignmentCenter;
+            label.textColor = MYCOLOR_46_42_42;
+            label.font = [UIFont systemFontOfSize:15];
+            label.frame = CGRectMake(0, 10, WIDTH, 20);
+            [view addSubview:label];
+        }
+    }
     //下侧view
     {
         UIView * downView = [UIView new];
@@ -162,9 +184,6 @@
 #pragma mark - UITableViewDelegate
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     NSDictionary * goodsDic = self.goodsOfCart_array[indexPath.row];
-//    NSLog(@"goods:%@",goodsDic);
-//    return;
-    
     NSInteger goodsId = [goodsDic[@"goodsId"] longValue];
     //网络获取商品详情
     NSString * interfaceName = @"/shop/goods/getGoodsInfo.intf";
@@ -188,10 +207,8 @@
     return self.goodsOfCart_array.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-//    NSLog(@"cell:%ld",indexPath.row);
     UITableViewCell * cell = [UITableViewCell new];
     NSMutableDictionary * goodsDic = self.goodsOfCart_array[indexPath.row];
-//    NSInteger goodsId = [goodsDic[@"goodsId"] longValue];
     float height = tableView.rowHeight;
     //选中按钮-btn_circle_nor-btn_circle_sel
     {
@@ -343,6 +360,15 @@
         label.frame = CGRectMake(WIDTH-10-size.width, 93, size.width, 16);
         [cell addSubview:label];
         [goodsDic setValue:label forKey:@"priceLabel"];
+    }
+    //分割线
+    {
+        if (indexPath.row < self.goodsOfCart_array.count - 1) {
+            UIView * view = [UIView new];;
+            view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+            view.frame = CGRectMake(10, 125, WIDTH-20, 1);
+            [cell addSubview:view];
+        }
     }
     /*
      cartId	购物车id	数字
@@ -590,6 +616,11 @@
             }
             [dict setObject:@"1" forKey:@"select"];
             [self.goodsOfCart_array addObject:dict];
+        }
+        if (self.goodsOfCart_array.count == 0) {
+            self.noDateView.hidden = false;
+        }else{
+            self.noDateView.hidden = true;
         }
         [self.tableView reloadData];
         [self reloadAllPrice];

@@ -7,7 +7,7 @@
 //
 
 #import "AccountTieViewController.h"
-
+#import <UMSocialCore/UMSocialCore.h>
 @interface AccountTieViewController ()
 @property(nonatomic,strong)NSMutableDictionary * title_swich_dictionary;//标题和开关
 @end
@@ -16,7 +16,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.member_dic = DHTOOL.memberDic;
     //加载主界面
     [self loadMainView];
 }
@@ -62,12 +62,140 @@
     for (NSString * key in self.title_swich_dictionary.allKeys) {
         UISwitch * s_btn = self.title_swich_dictionary[key];
         if ([s_btn isEqual:btn]) {
-//            NSLog(@"点击:%@,目前状态:%d",key,btn.on);
-            
+            NSLog(@"点击:%@,目前状态:%d",key,btn.on);
+            if (btn.on) {
+                [self startTieWithTitle:key];
+            }else{
+                [self cancelTieWithTitle:key];
+            }
             return;
         }
     }
 }
+//第三方绑定
+-(void)startTieWithTitle:(NSString *)title{
+    //@"新浪微博",@"微信",@"QQ"
+    if ([title isEqualToString:@"新浪微博"]) {
+        [self getAuthWithUserInfoFromSina];
+    }else if ([title isEqualToString:@"微信"]) {
+        [self getAuthWithUserInfoFromWechat];
+    }else {
+        [self getAuthWithUserInfoFromQQ];
+    }
+    NSString * interface = @"/member/bindThirdApp.intf";
+}
+//取消绑定
+-(void)cancelTieWithTitle:(NSString *)title{
+    //@"新浪微博",@"微信",@"QQ"
+    NSString * interface = @"/member/cancelBind.intf";
+    
+    NSDictionary * send = @{
+                            @"memberId":MEMBERID,
+                            @"app":@"",
+                            @"terminal":@"ios"
+                            };
+    
+    
+}
+//微博授权
+- (void)getAuthWithUserInfoFromSina{
+    [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_Sina currentViewController:nil completion:^(id result, NSError *error) {
+        if (error) {
+            UISwitch * btn =  self.title_swich_dictionary[@"新浪微博"];
+            btn.on = false;
+        } else {
+            UMSocialUserInfoResponse *resp = result;
+            
+            // 授权信息
+            NSLog(@"Sina uid: %@", resp.uid);
+            NSLog(@"Sina accessToken: %@", resp.accessToken);
+            NSLog(@"Sina refreshToken: %@", resp.refreshToken);
+            NSLog(@"Sina expiration: %@", resp.expiration);
+            
+            // 用户信息
+            NSLog(@"Sina name: %@", resp.name);
+            NSLog(@"Sina iconurl: %@", resp.iconurl);
+            NSLog(@"Sina gender: %@", resp.unionGender);
+            
+            // 第三方平台SDK源数据
+            NSLog(@"Sina originalResponse: %@", resp.originalResponse);
+        }
+    }];
+}
+//qq授权
+- (void)getAuthWithUserInfoFromQQ{
+    [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_QQ currentViewController:nil completion:^(id result, NSError *error) {
+        if (error) {
+            UISwitch * btn =  self.title_swich_dictionary[@"QQ"];
+            btn.on = false;
+        } else {
+            UMSocialUserInfoResponse *resp = result;
+            
+            // 授权信息
+            NSLog(@"QQ uid: %@", resp.uid);
+            NSLog(@"QQ openid: %@", resp.openid);
+            NSLog(@"QQ accessToken: %@", resp.accessToken);
+            NSLog(@"QQ expiration: %@", resp.expiration);
+            
+            // 用户信息
+            NSLog(@"QQ name: %@", resp.name);
+            NSLog(@"QQ iconurl: %@", resp.iconurl);
+            NSLog(@"QQ gender: %@", resp.unionGender);
+            
+            // 第三方平台SDK源数据
+            NSLog(@"QQ originalResponse: %@", resp.originalResponse);
+        }
+    }];
+}
+//微信授权
+- (void)getAuthWithUserInfoFromWechat{
+    [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_WechatSession currentViewController:nil completion:^(id result, NSError *error) {
+        if (error) {
+            UISwitch * btn =  self.title_swich_dictionary[@"微信"];
+            btn.on = false;
+        } else {
+            UMSocialUserInfoResponse *resp = result;
+            
+            // 授权信息
+            NSLog(@"Wechat uid: %@", resp.uid);
+            NSLog(@"Wechat openid: %@", resp.openid);
+            NSLog(@"Wechat accessToken: %@", resp.accessToken);
+            NSLog(@"Wechat refreshToken: %@", resp.refreshToken);
+            NSLog(@"Wechat expiration: %@", resp.expiration);
+            
+            // 用户信息
+            NSLog(@"Wechat name: %@", resp.name);
+            NSLog(@"Wechat iconurl: %@", resp.iconurl);
+            NSLog(@"Wechat gender: %@", resp.unionGender);
+            
+            // 第三方平台SDK源数据
+            NSLog(@"Wechat originalResponse: %@", resp.originalResponse);
+        }
+    }];
+}
+#pragma mark - 重新网络获取个人信息数据刷新页面
+-(void)getUserInfoAgagin{
+    //获取我的信息
+    NSString * interfaceName = @"/member/getMember.intf";
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
+        //        NSLog(@"back:%@",back_dic);
+        self.member_dic = back_dic[@"member"];
+        DHTOOL.memberDic = back_dic[@"member"];
+        //3个状态
+        bool qqStatus = [self.member_dic[@"qqStatus"] boolValue];
+        bool wechatStatus = [self.member_dic[@"wechatStatus"] boolValue];
+        bool weiboStatus = [self.member_dic[@"weiboStatus"] boolValue];
+        UISwitch * qqSwitch = self.title_swich_dictionary[@"QQ"];
+        UISwitch * wechatSwitch = self.title_swich_dictionary[@"微信"];
+        UISwitch * weiboSwitch = self.title_swich_dictionary[@"新浪微博"];
+        qqSwitch.on = qqStatus;
+        wechatSwitch.on = wechatStatus;
+        weiboSwitch.on = weiboStatus;
+    }];
+    
+}
+
 //返回上个界面
 -(void)backToUpView{
     [self.navigationController popViewControllerAnimated:true];

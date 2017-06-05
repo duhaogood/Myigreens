@@ -17,6 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.member_dic = DHTOOL.memberDic;
     //加载界面数据
     {
         self.view_data_array = @[

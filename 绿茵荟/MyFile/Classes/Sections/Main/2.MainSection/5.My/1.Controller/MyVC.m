@@ -271,6 +271,7 @@
         [MYNETWORKING getNumberOfShoppingCartCallback:^(NSDictionary *backDict) {
             shopCartNumber = [backDict[@"count"] intValue];
             self.member_dic = back_dic[@"member"];
+            DHTOOL.memberDic = self.member_dic;
             //用户头像
             NSString * headUrl = self.member_dic[@"headUrl"][@"normalUrl"];//
             if (headUrl && headUrl.length) {

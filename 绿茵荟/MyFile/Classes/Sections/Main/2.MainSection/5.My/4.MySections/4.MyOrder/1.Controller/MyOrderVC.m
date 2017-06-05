@@ -18,6 +18,7 @@
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)UIView * greenView;//按钮下方view
 @property(nonatomic,assign)SelectPayTypeVC * selectPayVC;//选择支付方式
+@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
 @end
 
 @implementation MyOrderVC
@@ -83,6 +84,26 @@
         self.automaticallyAdjustsScrollViewInsets = false;
         //不显示分割线
         tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        //覆盖一个没有数据时显示的view
+        //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+        {
+            UIView * view = [UIView new];
+            view.frame = tableView.bounds;
+            self.noDateView = view;
+            view.hidden = true;
+            [tableView addSubview:view];
+            view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+            //没有数据提示
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"暂无订单数据";
+                label.textAlignment = NSTextAlignmentCenter;
+                label.textColor = MYCOLOR_46_42_42;
+                label.font = [UIFont systemFontOfSize:15];
+                label.frame = CGRectMake(0, 10, WIDTH, 20);
+                [view addSubview:label];
+            }
+        }
     }
 }
 //订单状态按钮回调
@@ -166,7 +187,7 @@
     {
         UILabel * label = [UILabel new];
         label.font = [UIFont systemFontOfSize:15];
-        NSString * orderNo = orderDic[@"orderId"];
+        NSString * orderNo = orderDic[@"orderNo"];
         label.text = [NSString stringWithFormat:@"订单号：%@",orderNo];
         CGSize size = [MYTOOL getSizeWithLabel:label];
         label.frame = CGRectMake(15, 12, size.width, size.height);
@@ -655,7 +676,11 @@
         [timer invalidate];
         timer = nil;
         timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(refreshTimeLeft) userInfo:nil repeats:true];
-        
+        if (orderArray.count == 0) {
+            self.noDateView.hidden = false;
+        }else{
+            self.noDateView.hidden = true;
+        }
         [self.tableView reloadData];
     }];
 }

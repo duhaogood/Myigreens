@@ -904,6 +904,8 @@
         float top = 0;
         {
             UILabel * label = [UILabel new];
+            //过滤换行
+            signature = [signature stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
             label.text = signature;
             label.font = [UIFont systemFontOfSize:12];
             label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
@@ -911,6 +913,7 @@
             int c = size.width/(WIDTH-71) < 1 ? 1 : (size.width/(WIDTH-71) == 1 ? 1 : (int)size.width/(WIDTH-71) + 1);
             if (c > 1) {
                 label.numberOfLines = 0;
+                c = 2;
             }
             label.frame = CGRectMake(61, 45, WIDTH-71, size.height*c);
             [cell addSubview:label];
