@@ -22,7 +22,7 @@
     [super viewDidLoad];
     //加载主界面
     [self loadMainView];
-    NSLog(@"%@",self.member_dic);
+//    NSLog(@"%@",self.member_dic);
     //加载帖子数据
     pageNo = 1;
     [self loadPostArray];
@@ -132,7 +132,7 @@
         city_icon.image = [UIImage imageNamed:@"icon_location"];
         [back_view addSubview:city_icon];
         UILabel * city_label = [UILabel new];
-        city_label.text = @"江苏 南京";
+        city_label.text = [NSString stringWithFormat:@"%@ %@",self.member_dic[@"province"],self.member_dic[@"city"]];
         city_label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
         city_label.font = [UIFont systemFontOfSize:12];
         [back_view addSubview:city_label];

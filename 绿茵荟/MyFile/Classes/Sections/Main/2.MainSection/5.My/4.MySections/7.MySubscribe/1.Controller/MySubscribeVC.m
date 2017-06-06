@@ -129,6 +129,9 @@
         int c = size.width/(WIDTH-76-85) < 1 ? 1 : (size.width/(WIDTH-76-85) == 1 ? 1 : (int)size.width/(WIDTH-76-85) + 1);
         if (c > 1) {
             label.numberOfLines = 0;
+            if(c > 2){
+                c = 2;
+            }
         }
         label.frame = CGRectMake(75, 45, WIDTH-76-85, size.height*c);
     }

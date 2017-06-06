@@ -1305,6 +1305,7 @@
         [self.tableView reloadData];
         if ([title isEqualToString:@"精选"]) {
             [(UITableView *)current_view reloadData];
+            [self loadBannerData];
         }else if([title isEqualToString:@"圈子"]){
             [(UITableView *)down_img_circle_view reloadData];
         }else{//订阅
@@ -1334,6 +1335,8 @@
         NSString * content = carouselDic[@"content"];
         TextBannerVC * text = [TextBannerVC new];
         text.content = content;
+        NSString * viewUrl = carouselDic[@"viewUrl"];
+        text.viewUrl = viewUrl;
         [self.navigationController pushViewController:text animated:true];
     }else if (category == 2) {//商品
         //网络获取商品详情
@@ -1348,7 +1351,7 @@
                                     };
         [MYTOOL netWorkingWithTitle:@"获取商品"];
         [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDict andSuccess:^(NSDictionary *back_dic) {
-            NSLog(@"商品:%@",back_dic);
+//            NSLog(@"商品:%@",back_dic);
             GoodsInfoViewController * info = [GoodsInfoViewController new];
             info.goodsInfoDictionary = back_dic[@"goods"];
             [self.navigationController pushViewController:info animated:true];
@@ -1405,6 +1408,7 @@
                             };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
         NSArray * array = back_dic[@"list"];
+//        NSLog(@"count:%ld",array.count);
         self.bannerArray = array;
         if ([self.tableView isKindOfClass:[SelectView class]]) {
             SelectView * select = (SelectView *)self.tableView;

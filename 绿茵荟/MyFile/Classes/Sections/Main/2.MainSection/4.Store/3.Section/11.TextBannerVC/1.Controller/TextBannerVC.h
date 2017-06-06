@@ -10,4 +10,5 @@
 
 @interface TextBannerVC : UIViewController
 @property(nonatomic,copy)NSString * content;
+@property(nonatomic,copy)NSString * viewUrl;
 @end

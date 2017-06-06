@@ -729,7 +729,7 @@
 }
 //选择优惠券
 -(void)selectDiscountCouponCallback{
-    NSString * interface = @"/shop/goods/getBonus.intf";
+    NSString * interface = @"/shop/goods/getUserBonus.intf";
     NSDictionary * send = @{
                             @"memberId":MEMBERID
                             };
@@ -774,14 +774,14 @@
 }
 //选择优惠券回调
 -(void)changeBonusWithDictionary:(NSDictionary *)bonusDict{
-//    NSLog(@"bonusDict:%@",bonusDict);
+    NSLog(@"bonusDict:%@",bonusDict);
     [SVProgressHUD showWithStatus:@"更新中…" maskType:SVProgressHUDMaskTypeClear];
     NSString * interfaceName = @"/shop/order/confirmOrder.intf";
     NSMutableDictionary * sendDic = [self getSendDictionaryToConfirmOrder];
     if(bonusDict[@"bonusId"]){
         [sendDic setValue:bonusDict[@"bonusId"] forKey:@"couponId"];
     }
-//        NSLog(@"send:%@",sendDic);
+        NSLog(@"send:%@",sendDic);
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
                 NSLog(@"back:%@",back_dic);
         self.goodsList = back_dic[@"goodsList"];
@@ -810,6 +810,8 @@
 }
 //重新加载下侧价格
 -(void)reloadPrice{
+    //优惠券标题更新
+    self.discountCouponLabel.text = self.order[@"couponTitle"];
     //运费
     float expressPrice = [self.order[@"expressPrice"] floatValue];
     self.expressPriceLabel.text = [NSString stringWithFormat:@"¥%.2f",expressPrice];

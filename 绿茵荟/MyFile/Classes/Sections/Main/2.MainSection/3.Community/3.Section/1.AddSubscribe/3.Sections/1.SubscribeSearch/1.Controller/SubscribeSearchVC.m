@@ -254,7 +254,7 @@
     searchBar.tag = 123123;
     searchBar.frame = CGRectMake(0.05*WIDTH, 14, WIDTH*0.75, 14.5);
     [self.navigationController.navigationBar addSubview:searchBar];
-    searchBar.placeholder = @"搜索美图、专题和商品";
+    searchBar.placeholder = @"搜索用户昵称";
 }
 //此view消失时还原tabBar
 - (void)viewWillDisappear: (BOOL)animated{

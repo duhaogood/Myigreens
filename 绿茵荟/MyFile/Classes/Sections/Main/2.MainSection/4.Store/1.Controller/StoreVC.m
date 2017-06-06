@@ -125,6 +125,8 @@
             NSString * content = carouselDic[@"content"];
             TextBannerVC * text = [TextBannerVC new];
             text.content = content;
+            NSString * viewUrl = carouselDic[@"viewUrl"];
+            text.viewUrl = viewUrl;
             [self.navigationController pushViewController:text animated:true];
         }else if (category == 2) {//商品
             //网络获取商品详情
@@ -494,7 +496,7 @@
                     }
                 }
                 self.tagsList_array = [NSArray arrayWithArray:arr];
-                //                NSLog(@"count3:%ld",self.tagsList_array.count);
+                                NSLog(@"count3:%ld",self.tagsList_array.count);
                 //此时加载界面
                 [self.tableView reloadData];
             }];

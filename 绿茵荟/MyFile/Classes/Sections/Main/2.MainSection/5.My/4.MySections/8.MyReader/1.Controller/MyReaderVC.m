@@ -123,7 +123,7 @@
         if (!signature || signature.length == 0) {
             signature = @"他什么也没留下";
         }
-        //            signature = @"反对撒放大镜看拉萨附近看到拉萨肌肤抵抗力撒娇疯狂的拉萨肌肤都可撒";
+//                    signature = @"反对撒放大镜看拉萨附近看到拉萨肌肤抵抗力撒娇疯狂的拉萨肌肤都可撒";
         label.text = signature;
         label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
         [cell addSubview:label];
@@ -131,6 +131,9 @@
         int c = size.width/(WIDTH-76-85) < 1 ? 1 : (size.width/(WIDTH-76-85) == 1 ? 1 : (int)size.width/(WIDTH-76-85) + 1);
         if (c > 1) {
             label.numberOfLines = 0;
+            if (c > 2) {
+                c = 2;
+            }
         }
         label.frame = CGRectMake(75, 45, WIDTH-76-85, size.height*c);
     }

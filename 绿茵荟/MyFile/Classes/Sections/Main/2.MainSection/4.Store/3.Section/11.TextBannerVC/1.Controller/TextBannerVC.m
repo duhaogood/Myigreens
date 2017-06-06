@@ -23,9 +23,7 @@
     {
         UIWebView * web = [UIWebView new];
         web.frame = CGRectMake(0, 0, WIDTH, HEIGHT);
-        if (self.content.length <= 0) {
-            [SVProgressHUD showErrorWithStatus:@"返回长度有问题" duration:1];
-        }
+        
         [web loadHTMLString:self.content baseURL:nil];
         [self.view addSubview:web];
         self.webView = web;

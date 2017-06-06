@@ -215,7 +215,7 @@
 //我的阅读者
 -(void)myReaderCallback{
     MyReaderVC * reader = [MyReaderVC new];
-    reader.title = @"我的阅读者列表";
+    reader.title = @"我的订阅者列表";
     [self.navigationController pushViewController:reader animated:true];
 }
 //设置按钮回调

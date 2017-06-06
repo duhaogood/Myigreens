@@ -586,7 +586,7 @@
             {
                 UIButton * btn = [UIButton new];
                 btn.frame = CGRectMake(WIDTH/2 - 13 - 110, view_top, 110, 39);
-                [btn setImage:[UIImage imageNamed:@"Online-Service"] forState:UIControlStateNormal];
+                [btn setImage:[UIImage imageNamed:@"Online-Service-2"] forState:UIControlStateNormal];
                 [btn addTarget:self action:@selector(onlineServiceCallback:) forControlEvents:UIControlEventTouchUpInside];
                 [bgView addSubview:btn];
                 btn.tag = orderId;
@@ -691,7 +691,7 @@
                     btn.titleLabel.font = btnFont;
                     [cell addSubview:btn];
                     btn.tag = orderId;
-                    [btn addTarget:self action:@selector(contactCustomerServiceCallback:) forControlEvents:UIControlEventTouchUpInside];
+                    [btn addTarget:self action:@selector(onlineServiceCallback:) forControlEvents:UIControlEventTouchUpInside];
                 }
                 //查看物流
                 {

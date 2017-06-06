@@ -27,6 +27,7 @@
     float goodsViewHeight;//商品详情view高度
     NSArray * productListArray;//商品规格数组
     NSMutableArray * productBtnArray;//商品规格按钮数组
+    int productIndex;//当前规格序号
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -259,7 +260,7 @@
                     [btn addTarget:self action:@selector(selectProductCallback:) forControlEvents:UIControlEventTouchUpInside];
                     
                 }
-                
+                productIndex = 0;
             }
             
             
@@ -436,6 +437,7 @@
     }
     self.goodsCountLabel.text = @"1";//数量重置为1
     self.subtractBtn.enabled = false;//减少按钮不可用
+    productIndex = (int)index;
     //重置库存
     
     NSInteger enableStore = [productListArray[index][@"enableStore"] longValue];
@@ -468,6 +470,12 @@
 -(void)addBtnCallback:(UIButton *)btn{
     NSInteger number = [self.goodsCountLabel.text intValue];
     number++;
+    NSInteger enableStore = [self.selectProductDic[@"enableStore"] longValue];
+    if (number > enableStore) {
+        [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"最大库存为:%ld",enableStore] duration:2];
+        return;
+    }
+    
     self.goodsCountLabel.text = [NSString stringWithFormat:@"%ld",number];
     //减少的按钮设置为可用
     self.subtractBtn.enabled = true;
@@ -580,7 +588,7 @@
         [SVProgressHUD showWithStatus:@"购买中…" maskType:SVProgressHUDMaskTypeClear];
 //        NSLog(@"send:%@",sendDic);
         [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//            NSLog(@"back:%@",back_dic);
+            NSLog(@"back:%@",back_dic);
             ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
             orderVC.order = back_dic[@"order"];
             orderVC.goodsList = back_dic[@"goodsList"];

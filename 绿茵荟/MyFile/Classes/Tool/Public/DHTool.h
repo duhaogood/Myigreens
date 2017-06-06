@@ -12,6 +12,7 @@
 @interface DHTool : NSObject
 @property(nonatomic,copy)NSString * store_version;//商店版本
 @property(nonatomic,strong)NSDictionary * memberDic;//用户信息
+@property(nonatomic,strong)NSDictionary * appDictionary;//程序所需要的字典
 /**
  *  获取单例工具类对象
  *

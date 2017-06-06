@@ -384,6 +384,11 @@
 -(void)addBtnCallback:(UIButton *)btn{
     NSInteger number = [self.goodsCountLabel.text intValue];
     number++;
+    NSInteger enableStore = [self.selectProductDic[@"enableStore"] longValue];
+    if (number > enableStore) {
+        [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"最大库存为:%ld",enableStore] duration:2];
+         return;
+    }
     self.goodsCountLabel.text = [NSString stringWithFormat:@"%ld",number];
     //减少的按钮设置为可用
     self.subtractBtn.enabled = true;
