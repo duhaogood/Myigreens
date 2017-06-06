@@ -106,7 +106,7 @@
         }
         //接收地址信息
         NSDictionary * receiptAddress = self.orderDictionary[@"receiptAddress"];
-        NSLog(@"地址:%@",receiptAddress);
+//        NSLog(@"地址:%@",receiptAddress);
         {
             //文字字体
             float fontSize = [MYTOOL getHeightWithIphone_six:15];

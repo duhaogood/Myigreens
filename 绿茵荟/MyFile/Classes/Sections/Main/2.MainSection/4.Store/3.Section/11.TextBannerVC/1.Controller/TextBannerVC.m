@@ -23,8 +23,12 @@
     {
         UIWebView * web = [UIWebView new];
         web.frame = CGRectMake(0, 0, WIDTH, HEIGHT);
-        
-        [web loadHTMLString:self.content baseURL:nil];
+        if (self.content) {
+            [web loadHTMLString:self.content baseURL:nil];
+        }else if(self.viewUrl){
+            NSURL *url = [[NSURL alloc] initWithString:self.viewUrl];
+            [web loadRequest:[NSURLRequest requestWithURL:url]];
+        }
         [self.view addSubview:web];
         self.webView = web;
     }

@@ -134,7 +134,7 @@
                                };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
         //
-//        NSLog(@"back:%@",back_dic[@"order"]);
+        NSLog(@"back:%@",back_dic[@"order"]);
         NSDictionary * orderDic = back_dic[@"order"];
         if (orderDic) {
             OrderInfoVC * infoVC = [OrderInfoVC new];

@@ -32,13 +32,13 @@
     NSString * interface = @"/sys/getDictInfo.intf";
     NSDictionary * send = @{@"type":@"community"};
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-        NSArray * communityList = back_dic[@"dictEntities"][@"community"];
+        NSArray * communityList = back_dic[@"dictEntities"][@"community_for_post"];
         NSMutableArray * nameArray = [NSMutableArray new];//名字数组
-        NSMutableArray * urlArray = [NSMutableArray new];//图片url数组
         for (int i = 0; i < communityList.count; i ++) {
             NSDictionary * dict = communityList[i];
             NSString * name = dict[@"label"];//名字
-            [nameArray addObject:name];
+            NSString * value = [NSString stringWithFormat:@"%d",[dict[@"value"] intValue]];
+            [nameArray addObject:@{@"name":name,@"value":value}];
         }
         type_array = nameArray;
         //加载主界面
@@ -117,7 +117,7 @@
         //btn.titleLabel.textColor = [MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1];
         [btn setTitleColor:[MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1] forState:UIControlStateNormal];
         [btn setBackgroundImage:[UIImage imageNamed:@"btn_label_nor"] forState:UIControlStateNormal];
-        [btn setTitle:type_array[i] forState:UIControlStateNormal];
+        [btn setTitle:type_array[i][@"name"] forState:UIControlStateNormal];
         [view addSubview:btn];
         [btn addTarget:self action:@selector(selectPostsTypeBack:) forControlEvents:UIControlEventTouchUpInside];
         btn.tag = 100;
@@ -229,7 +229,6 @@
     
 }
 #pragma mark - UITextViewDelegate
-
 -(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text{
     if (textView.text.length >= 140) {
         [SVProgressHUD showErrorWithStatus:@"字数太多了" duration:0.6];
@@ -288,10 +287,11 @@
         //截取图片
         float change = 1.0;
         [SVProgressHUD showWithStatus:@"%d/%d\n上传进度:%0" maskType:SVProgressHUDMaskTypeClear];
-        NSData * imageData = UIImageJPEGRepresentation([self fixOrientation:imgV.image],change);
+        UIImage * img = [self fixOrientation:imgV.image];
+        NSData * imageData = UIImageJPEGRepresentation(img,change);
         while (imageData.length > 2.0 * 1024 * 1024) {
             change -= 0.05;
-            imageData = UIImageJPEGRepresentation([self fixOrientation:imgV.image],change);
+            imageData = UIImageJPEGRepresentation(img,change);
         }
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         formatter.dateFormat            = @"yyyyMMddHHmmss";
@@ -309,8 +309,15 @@
             if (current_upload_img_index >= count_img) {
                 //帖子类别
                 NSString * posts_type = current_postsType_button.currentTitle;
-                NSString * type = [NSString stringWithFormat:@"%ld",[type_array indexOfObject:posts_type]];
-//                NSLog(@"url数组:%@",self.upload_array);
+                NSString * type = @"";
+                for (NSDictionary * dictt in type_array) {
+                    NSString * name = dictt[@"name"];
+                    NSString * value = dictt[@"value"];
+                    if ([name isEqualToString:posts_type]) {
+                        type = value;
+                        break;
+                    }
+                }
                 //发布帖子
                 NSString * interfaceName = @"/community/addPost.intf";
                 NSString * imageUrl = self.upload_array[0];

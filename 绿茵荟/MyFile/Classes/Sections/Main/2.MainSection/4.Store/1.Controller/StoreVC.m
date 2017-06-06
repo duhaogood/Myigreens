@@ -125,8 +125,6 @@
             NSString * content = carouselDic[@"content"];
             TextBannerVC * text = [TextBannerVC new];
             text.content = content;
-            NSString * viewUrl = carouselDic[@"viewUrl"];
-            text.viewUrl = viewUrl;
             [self.navigationController pushViewController:text animated:true];
         }else if (category == 2) {//商品
             //网络获取商品详情
@@ -186,6 +184,12 @@
                 [self.navigationController pushViewController:goodsB animated:true];
             }];
             
+        }else if (category == 5) {//url加载web
+            NSLog(@"carouselDic:%@",carouselDic);
+            NSString * viewUrl = carouselDic[@"viewUrl"];
+            TextBannerVC * text = [TextBannerVC new];
+            text.viewUrl = viewUrl;
+            [self.navigationController pushViewController:text animated:true];
         }
     }else{//导航设置
 //
@@ -219,7 +223,7 @@
                                         };
             [MYTOOL netWorkingWithTitle:@"获取商品"];
             [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDict andSuccess:^(NSDictionary *back_dic) {
-                NSLog(@"商品:%@",back_dic);
+//                NSLog(@"商品:%@",back_dic);
                 GoodsInfoViewController * info = [GoodsInfoViewController new];
                 info.goodsInfoDictionary = back_dic[@"goods"];
                 [self.navigationController pushViewController:info animated:true];
@@ -264,6 +268,11 @@
                 [self.navigationController pushViewController:goodsB animated:true];
             }];
             
+        }else if (category == 5) {//url加载web
+            NSString * viewUrl = carouselDic[@"viewUrl"];
+            TextBannerVC * text = [TextBannerVC new];
+            text.viewUrl = viewUrl;
+            [self.navigationController pushViewController:text animated:true];
         }
         
         

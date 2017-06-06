@@ -36,9 +36,11 @@
     UIView * current_view;//目前显示的view
     NSDictionary * circle_image_title_dictionary;//文字对应UIImageView及图标名字
     NSString * current_title_circle_img_title;//圈子中目前标题 0 - 6
+    NSString * current_circle_lower_value;//圈子中按钮获取数据的根据
     UIView * down_img_circle_view;//圈子中下册视图
     NSArray * circle_imgTitle_array;//圈子下图标标题
     NSArray * circle_imgUrl_array;//圈子下图标url
+    NSArray * circle_img_title_value_array;//圈子下图标、标题、value数组
     int pageNo;//数据分页数
 }
 - (void)viewDidLoad {
@@ -130,25 +132,23 @@
         UIScrollView * view = [UIScrollView new];
         view.frame = CGRectMake(0, 0, WIDTH, 70);
         [mainView addSubview:view];
-        view.contentSize =  CGSizeMake(WIDTH*circle_imgUrl_array.count/5.7, 0);
-        for (int i = 0; i < circle_imgUrl_array.count; i ++) {
+        view.contentSize =  CGSizeMake(WIDTH*circle_img_title_value_array.count/5.7, 0);
+        for (int i = 0; i < circle_img_title_value_array.count; i ++) {
             UIView * v = [UIView new];
-            v.frame = CGRectMake(i*view.contentSize.width/circle_imgUrl_array.count, 10, view.contentSize.width/circle_imgUrl_array.count-5, view.frame.size.height-20);
+            v.frame = CGRectMake(i*view.contentSize.width/circle_img_title_value_array.count, 10, view.contentSize.width/circle_img_title_value_array.count-5, view.frame.size.height-20);
             v.backgroundColor = [UIColor greenColor];
             // [view addSubview:v];
         }
-        //图片及文字数据
-        NSArray * image_name_array = circle_imgUrl_array;
         circle_image_title_dictionary = [NSMutableDictionary new];
         float width_image = 30;//图片高度及宽度
         float width_label = 50;//label宽度
         float height_label = 20;//label高度
         float space = (view.contentSize.width - 40 -30)/6;
-        for (int i = 0; i < circle_imgUrl_array.count; i ++) {
+        for (int i = 0; i < circle_img_title_value_array.count; i ++) {
             //图片
             UIImageView * imgV = [UIImageView new];
             imgV.frame = CGRectMake(20+i*space, 4, width_image, width_image);
-            [imgV sd_setImageWithURL:[NSURL URLWithString:image_name_array[i]] placeholderImage:[UIImage imageNamed:@"logo"]];
+            [imgV sd_setImageWithURL:[NSURL URLWithString:circle_img_title_value_array[i][@"url"]] placeholderImage:[UIImage imageNamed:@"logo"]];
             [view addSubview:imgV];
             //绑定监听
             [imgV setUserInteractionEnabled:YES];
@@ -158,12 +158,13 @@
             
             //文字
             UILabel * label = [UILabel new];
-            label.text = circle_imgTitle_array[i];
+            label.text = circle_img_title_value_array[i][@"label"];
             label.frame = CGRectMake(20+i*space, 40, width_label, height_label);
             [view addSubview:label];
             NSDictionary * dic = @{
                                    @"imgV":imgV,
-                                   @"icon":image_name_array[i]
+                                   @"icon":circle_img_title_value_array[i][@"url"],
+                                   @"value":circle_img_title_value_array[i][@"value"]
                                    };
             [circle_image_title_dictionary setValue:dic forKey:label.text];
         }
@@ -174,6 +175,8 @@
         [view addSubview:down_view];
         self.view_downOfImageView_circleView = down_view;
         current_title_circle_img_title = circle_imgTitle_array[0];
+        current_circle_lower_value = circle_img_title_value_array[0][@"value"];
+        
     }
     //中间分割线
     UIView * space_view_mid = [UIView new];
@@ -680,7 +683,7 @@
                 //下边小图标  icon_message
                 UIImageView * icon2 = [UIImageView new];
                 icon2.image = [UIImage imageNamed:@"icon_message"];
-                icon2.frame = CGRectMake((WIDTH-10-35-25 - WIDTH/2)/2+WIDTH/2, top, 30, 30);
+                icon2.frame = CGRectMake((WIDTH-10-35-25 - WIDTH/2)/2+WIDTH/2-15, top, 30, 30);
                 [cell addSubview:icon2];
                 //绑定监听
                 [icon2 setUserInteractionEnabled:YES];
@@ -692,7 +695,7 @@
                 //数字
                 UILabel * num_label2 = [UILabel new];
                 num_label2.text = commentCount;
-                num_label2.frame = CGRectMake((WIDTH-10-35-25 - WIDTH/2)/2+WIDTH/2+30, top+4, WIDTH/6-20, 20);
+                num_label2.frame = CGRectMake((WIDTH-10-35-25 - WIDTH/2)/2+WIDTH/2+30-15, top+4, WIDTH/6-20, 20);
                 num_label2.font = [UIFont systemFontOfSize:12];
                 [cell addSubview:num_label2];
                 
@@ -1020,7 +1023,7 @@
                 //下边小图标  icon_message
                 UIImageView * icon2 = [UIImageView new];
                 icon2.image = [UIImage imageNamed:@"icon_message"];
-                icon2.frame = CGRectMake(WIDTH*2/3, y_center-15, 30, 30);
+                icon2.frame = CGRectMake((WIDTH-10-35-25 - WIDTH/2)/2+WIDTH/2-15, y_center-15, 30, 30);
                 [cell addSubview:icon2];
                 //绑定监听
                 [icon2 setUserInteractionEnabled:YES];
@@ -1032,7 +1035,7 @@
                 //数字
                 UILabel * num_label2 = [UILabel new];
                 num_label2.text = commentCount;
-                num_label2.frame = CGRectMake(WIDTH*2/3+25, y_center- 8, WIDTH/6-20, 16);
+                num_label2.frame = CGRectMake((WIDTH-10-35-25 - WIDTH/2)/2+WIDTH/2+30-15, y_center- 8, WIDTH/6-20, 16);
                 num_label2.font = [UIFont systemFontOfSize:15];
                 [cell addSubview:num_label2];
             }
@@ -1041,7 +1044,7 @@
                 //下边小图标  icon_message
                 UIImageView * icon3 = [UIImageView new];
                 icon3.image = [UIImage imageNamed:@"icon_share"];
-                icon3.frame = CGRectMake(WIDTH*5/6, y_center-15, 30, 30);
+                icon3.frame = CGRectMake(WIDTH-10-35-25, y_center-15, 30, 30);
                 [cell addSubview:icon3];
                 //绑定监听
                 [icon3 setUserInteractionEnabled:YES];
@@ -1053,7 +1056,7 @@
                 //数字
                 UILabel * num_label3 = [UILabel new];
                 num_label3.text = @"分享";
-                num_label3.frame = CGRectMake(WIDTH*5/6+25, y_center- 6, 40, 12);
+                num_label3.frame = CGRectMake(WIDTH-10-25, y_center- 6, 40, 12);
                 num_label3.font = [UIFont systemFontOfSize:12];
                 [cell addSubview:num_label3];
             }
@@ -1272,8 +1275,20 @@
         [send_dic setValue:memberId forKey:@"memberId"];
     }
     if ([source isEqualToString:@"circle"]) {
-        NSInteger index = [circle_imgTitle_array indexOfObject:current_title_circle_img_title];
-        [send_dic setValue:[NSString stringWithFormat:@"%ld",index] forKey:@"type"];
+        for (NSDictionary * dictt in circle_img_title_value_array) {
+            NSString * label = dictt[@"label"];
+            if ([current_title_circle_img_title isEqualToString:label]) {
+                NSString * value = dictt[@"value"];
+                if (value == nil || value.length == 0) {
+                    
+                }else{
+                    [send_dic setValue:value forKey:@"type"];
+                }
+                break;
+            }
+        }
+//        NSInteger index = [circle_imgTitle_array indexOfObject:current_title_circle_img_title];
+//        [send_dic setValue:[NSString stringWithFormat:@"%ld",index] forKey:@"type"];
     }
 //    NSLog(@"send:%@",send_dic);
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:send_dic andSuccess:^(NSDictionary * back_dic){
@@ -1396,6 +1411,11 @@
             [self.navigationController pushViewController:goodsB animated:true];
         }];
         
+    }else if (category == 5) {//url加载web
+        NSString * viewUrl = carouselDic[@"viewUrl"];
+        TextBannerVC * text = [TextBannerVC new];
+        text.viewUrl = viewUrl;
+        [self.navigationController pushViewController:text animated:true];
     }
     
     
@@ -1422,6 +1442,7 @@
     NSString * interface = @"/sys/getDictInfo.intf";
     NSDictionary * send = @{@"type":@"community"};
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+//        NSLog(@"back:%@",back_dic);
         NSArray * communityList = back_dic[@"dictEntities"][@"community"];
         NSMutableArray * nameArray = [NSMutableArray new];//名字数组
         NSMutableArray * urlArray = [NSMutableArray new];//图片url数组
@@ -1434,6 +1455,7 @@
         }
         circle_imgTitle_array = nameArray;
         circle_imgUrl_array = urlArray;
+        circle_img_title_value_array = communityList;
     }];
 }
 -(void)viewWillAppear:(BOOL)animated{
