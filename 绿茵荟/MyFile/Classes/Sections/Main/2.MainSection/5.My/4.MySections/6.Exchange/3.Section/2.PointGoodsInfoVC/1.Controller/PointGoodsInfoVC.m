@@ -404,14 +404,23 @@
             self.webView.userInteractionEnabled = false;
         }];
     }else{
-//        NSLog(@"%@",self.selectProductDic);
+        NSLog(@"%@",self.goodsInfo);
         int goodsCount = [self.goodsCountLabel.text intValue];
         NSInteger enableStore = [self.selectProductDic[@"enableStore"] longValue];
         if (goodsCount > enableStore) {
             [SVProgressHUD showErrorWithStatus:@"可换数量有限哦" duration:2];
             return;
         }
-        
+        //数量
+        int count = [self.goodsCountLabel.text intValue];
+        //需要积分
+        NSInteger point_all = count * [self.goodsInfo[@"point"] longValue];
+        //我的积分
+        NSInteger point_mine = [MYTOOL.memberDic[@"integral"] longValue];
+        if (point_all > point_mine) {
+            [SVProgressHUD showErrorWithStatus:@"您的积分不足" duration:2];
+            return;
+        }
         NSString * interfaceName = @"/shop/order/confirmOrder.intf";
         NSMutableDictionary * sendDic = [NSMutableDictionary new];
         [sendDic setValue:MEMBERID forKey:@"memberId"];

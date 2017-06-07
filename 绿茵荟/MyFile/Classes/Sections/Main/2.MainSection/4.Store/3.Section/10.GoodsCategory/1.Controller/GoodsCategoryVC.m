@@ -396,6 +396,13 @@
 }
 //购物车按钮回调
 -(void)shoppingCartBtn_callBack{
+    if (![MYTOOL isLogin]) {
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        loginVC.delegate = self;
+        [self.navigationController pushViewController:loginVC animated:true];
+        return;
+    }
     ShoppingCartVC * shop = [ShoppingCartVC new];
     shop.title = @"我的购物车";
     [self.navigationController pushViewController:shop animated:true];

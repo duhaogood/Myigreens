@@ -705,6 +705,31 @@
                     btn.tag = orderId;
                     [btn addTarget:self action:@selector(showExpressCallback:) forControlEvents:UIControlEventTouchUpInside];
                 }
+            }else if(orderStatus == 5){//已完成
+                //再来一单
+                {
+                    UIButton * btn = [UIButton new];
+                    btn.frame = CGRectMake(WIDTH-14-91-91-5, top, 91, 31);
+                    [btn setBackgroundImage:blackImage forState:UIControlStateNormal];
+                    [btn setTitle:@"再来一单" forState:UIControlStateNormal];
+                    [btn setTitleColor:blackColor forState:UIControlStateNormal];
+                    btn.titleLabel.font = btnFont;
+                    [cell addSubview:btn];
+                    btn.tag = orderId;
+                    [btn addTarget:self action:@selector(buyAgainCallback:) forControlEvents:UIControlEventTouchUpInside];
+                }
+                //确认收货
+                {
+                    UIButton * btn = [UIButton new];
+                    btn.frame = CGRectMake(WIDTH-14-91, top, 91, 31);
+                    [btn setBackgroundImage:blackImage forState:UIControlStateNormal];
+                    [btn setTitle:@"删除订单" forState:UIControlStateNormal];
+                    [btn setTitleColor:blackColor forState:UIControlStateNormal];
+                    btn.titleLabel.font = btnFont;
+                    [cell addSubview:btn];
+                    btn.tag = orderId;
+                    [btn addTarget:self action:@selector(deleteOrderCallback:) forControlEvents:UIControlEventTouchUpInside];
+                }
             }else if(orderStatus == 6){//已取消
                 //确认收货
                 {
@@ -756,9 +781,26 @@
     }
 }
 #pragma mark - 按钮事件
+//再来一单事件
+-(void)buyAgainCallback:(UIButton *)btn{
+    NSString * interface = @"/shop/order/buyAgain.intf";
+    NSDictionary * send = @{
+                            @"orderId":@(btn.tag)
+                            };
+    [MYTOOL netWorkingWithTitle:@"购买中…"];
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        ShoppingCartVC * shop = [ShoppingCartVC new];
+        shop.title = @"购物车";
+        [self.navigationController pushViewController:shop animated:true];
+    }];
+}
 //查看物流事件
 -(void)showExpressCallback:(UIButton *)btn{
+    NSString * expressName = self.orderDictionary[@"expressName"];
+    NSString * expressNo = self.orderDictionary[@"expressNo"];
     ShowExpress * show = [ShowExpress new];
+    show.expressName = expressName;
+    show.logisicCode = expressNo;
     show.title = @"物流信息";
     [self.navigationController pushViewController:show animated:true];
 }
@@ -800,17 +842,23 @@
 }
 //删除订单事件
 -(void)deleteOrderCallback:(UIButton *)btn{
-    NSLog(@"删除订单-orderId:%ld",btn.tag);
-    NSString * interface = @"/shop/order/delOrder.intf";
-    [MYTOOL netWorkingWithTitle:@"订单删除…"];
-    NSDictionary * sendDic = @{
-                               @"orderId":[NSString stringWithFormat:@"%ld",btn.tag]
-                               };
-    [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        [self.delegate updateViewAllState];
-        [self.navigationController popViewControllerAnimated:true];
-        [SVProgressHUD showSuccessWithStatus:@"删除成功" duration:1];
+    [MYTOOL showAlertWithViewController:self andTitle:@"确定删除此订单吗?" andSureTile:@"删除" andSureBlock:^{
+        NSLog(@"删除订单-orderId:%ld",btn.tag);
+        NSString * interface = @"/shop/order/delOrder.intf";
+        [MYTOOL netWorkingWithTitle:@"订单删除…"];
+        NSDictionary * sendDic = @{
+                                   @"orderId":[NSString stringWithFormat:@"%ld",btn.tag]
+                                   };
+        [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+            [self.delegate updateViewAllState];
+            [self.navigationController popViewControllerAnimated:true];
+            [SVProgressHUD showSuccessWithStatus:@"删除成功" duration:1];
+        }];
+    } andCacel:^{
+        
     }];
+    
+    
 }
 //确认收货事件
 -(void)confirmReceiveCallback:(UIButton *)btn{
@@ -829,19 +877,21 @@
     
     
 }
-//在线客服按钮事件
+//联系客服按钮事件
 -(void)onlineServiceCallback:(UIButton *)btn{
     NSInteger orderId = btn.tag;
     ContactCustomerVC * customer = [ContactCustomerVC new];
-    customer.title = @"我的客服";
+    customer.title = @"联系客服";
     customer.orderId = orderId;
     [self.navigationController pushViewController:customer animated:true];
 }
 //电话客服按钮事件
 -(void)telServiceCallback:(UIButton *)btn{
-    [SVProgressHUD showSuccessWithStatus:@"电话客服" duration:0.5];
-    NSInteger orderId = btn.tag;
-    
+    NSString * hotLine = self.orderDictionary[@"hotLine"];
+    NSMutableString * str=[[NSMutableString alloc] initWithFormat:@"tel:%@",hotLine];
+    UIWebView * callWebview = [[UIWebView alloc] init];
+    [callWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:str]]];
+    [self.view addSubview:callWebview];
 }
 
 

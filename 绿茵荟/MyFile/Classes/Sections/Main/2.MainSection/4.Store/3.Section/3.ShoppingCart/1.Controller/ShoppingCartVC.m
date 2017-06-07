@@ -16,15 +16,18 @@
 @property(nonatomic,strong)UILabel * allPriceLabel;//总价label
 @property(nonatomic,strong)UILabel * allCountLabel;//总个数label
 @property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+@property(nonatomic,strong)UIButton * payBtn;//结算按钮
 @end
 
 @implementation ShoppingCartVC
-
+{
+    long long lastClickTime;//最后一次点击数量改变按钮
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     //加载主界面
     [self loadMainView];
-    
+    lastClickTime = 0;
 }
 //加载主界面
 -(void)loadMainView{
@@ -172,6 +175,7 @@
             [btn addTarget:self action:@selector(payCallback) forControlEvents:UIControlEventTouchUpInside];
             btn.frame = CGRectMake(WIDTH-119-10, 5.5, 119, 39);
             [downView addSubview:btn];
+            self.payBtn = btn;
             btn.titleLabel.font = [UIFont systemFontOfSize:15];
             if (WIDTH <= 320) {
                 btn.titleLabel.font = [UIFont systemFontOfSize:13];
@@ -409,6 +413,12 @@
 #pragma mark - 用户点击事件
 //减少商品数量
 -(void)subtractBtnCallback:(UIButton *)btn{
+    NSTimeInterval nowtime = [[NSDate date] timeIntervalSince1970]*1000;
+    long long theTime = [[NSNumber numberWithDouble:nowtime] longLongValue];
+    if (theTime - lastClickTime <= 300) {
+        return;
+    }
+    lastClickTime = theTime;
     NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithDictionary:self.goodsOfCart_array[btn.tag]];
     NSInteger quantity = [dic[@"quantity"] longValue];
     quantity --;
@@ -419,6 +429,12 @@
 }
 //增加商品数量
 -(void)addBtnCallback:(UIButton *)btn{
+    NSTimeInterval nowtime = [[NSDate date] timeIntervalSince1970]*1000;
+    long long theTime = [[NSNumber numberWithDouble:nowtime] longLongValue];
+    if (theTime - lastClickTime <= 300) {
+        return;
+    }
+    lastClickTime = theTime;
     NSMutableDictionary * dic = [NSMutableDictionary dictionaryWithDictionary:self.goodsOfCart_array[btn.tag]];
     NSInteger quantity = [dic[@"quantity"] longValue];
     quantity ++;
@@ -431,7 +447,7 @@
 -(void)updateGoodsCartDataWithGoodsDictionary:(NSDictionary *)goodsDic{
     NSString * interfaceName = @"/shop/cart/getGoods.intf";
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:goodsDic andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
+        NSLog(@"back:%@",back_dic);
         [self getGoodsOfCartData];
     }];
     /*
@@ -545,7 +561,7 @@
 //    NSLog(@"send:%@",sendDic);
     [SVProgressHUD showWithStatus:@"结算中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
+        NSLog(@"back:%@",back_dic);
         ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
         orderVC.order = back_dic[@"order"];
         orderVC.goodsList = back_dic[@"goodsList"];
@@ -606,8 +622,15 @@
                                @"memberId":MEMBERID
                                };
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"购物车:%@",back_dic);
+        NSLog(@"购物车:%@",back_dic);
         NSArray * array = back_dic[@"cartList"];
+        if (array == nil || array.count == 0) {
+            self.noDateView.hidden = false;
+            self.payBtn.enabled = false;
+        }else{
+            self.noDateView.hidden = true;
+            self.payBtn.enabled = true;
+        }
         for (NSDictionary * dic in array) {
             NSMutableDictionary * dict = [NSMutableDictionary new];
             for (NSString * key in dic.allKeys) {

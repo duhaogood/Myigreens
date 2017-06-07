@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface ShowExpress : UIViewController
+@property(nonatomic,copy)NSString * logisicCode;//快递单号
+@property(nonatomic,copy)NSString * expressName;//快递名称
 
 @end

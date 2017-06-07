@@ -11,8 +11,8 @@
 @interface ShowExpress ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)NSArray * expressArray;//快递信息
-@property(nonatomic,copy)NSString * logisicCode;//快递单号
 @property(nonatomic,copy)NSString * shipperCode;//快递编号
+@property(nonatomic,copy)NSString * nameOfExpress;//名字
 @property(nonatomic,copy)NSString * expressStatic;//状态
 @end
 
@@ -196,16 +196,8 @@
                     }
                     //名称
                     {
-                        NSString * name = @"";
-                        for (NSDictionary * expressDic in expressName_code_array) {
-                            NSString * code = expressDic[@"expressCode"];
-                            if ([code isEqualToString:self.shipperCode]) {
-                                name = expressDic[@"expressName"];
-                                break;
-                            }
-                        }
                         UILabel * label = [UILabel new];
-                        label.text = name;
+                        label.text = self.nameOfExpress;
                         label.font = font;
                         label.textColor = MYCOLOR_181_181_181;
                         CGSize size = [MYTOOL getSizeWithLabel:label];
@@ -288,20 +280,37 @@
 }
 //重新加载物流信息
 -(void)getExpressInfo{
+    [MYTOOL netWorkingWithTitle:@"获取中"];
+    NSString * shipperCode = @"";//快递公司编号
     NSString * interface = @"/shop/order/expressInfo.intf";
-    NSString * shipperCode = @"ZTO";//快递公司编号
-    NSString * logisticCode = @"437034157280";//快递号
+    //加载plist
+    NSString * path = [[NSBundle mainBundle] pathForResource:@"expressCode" ofType:@"plist"];
+    NSArray * array = [NSArray arrayWithContentsOfFile:path];
+    for (NSDictionary * name_code in array) {
+        NSString * name = name_code[@"name"];
+        if ([name isEqualToString:self.expressName]) {
+            NSString * code = name_code[@"code"];
+            shipperCode = code;
+            break;
+        }
+        if ([self.expressName rangeOfString:name].location != NSNotFound) {
+            NSString * code = name_code[@"code"];
+            shipperCode = code;
+            break;
+        }
+    }
+    NSString * logisticCode = self.logisicCode;//快递号
     NSDictionary * sendDic = @{
                                @"shipperCode":shipperCode,
                                @"logisticCode":logisticCode
                                };
-    [MYTOOL netWorkingWithTitle:@"获取中"];
+    
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
         NSDictionary * expressInfo = back_dic[@"expressList"];
         self.expressStatic = expressInfo[@"expressStatic"];
         self.logisicCode = expressInfo[@"logisicCode"];
         self.shipperCode = expressInfo[@"shipperCode"];
+        self.nameOfExpress = expressInfo[@"expressName"];
         NSArray * arr = expressInfo[@"tracesList"];
         NSMutableArray * array = [NSMutableArray new];
         for (int i = 0; i < arr.count; i ++) {

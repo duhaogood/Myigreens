@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0446696A1EE7A48A0082D8BC /* expressCode.plist in Resources */ = {isa = PBXBuildFile; fileRef = 044669691EE7A48A0082D8BC /* expressCode.plist */; };
+		044669751EE7F9730082D8BC /* MySubscribeListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 044669741EE7F9730082D8BC /* MySubscribeListVC.m */; };
+		044669781EE7FAF50082D8BC /* SubsribeMineList.m in Sources */ = {isa = PBXBuildFile; fileRef = 044669771EE7FAF50082D8BC /* SubsribeMineList.m */; };
 		04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAF71EE4F5D900990D28 /* LoginViewController.m */; };
 		04F4EC7F1EE4F5D900990D28 /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAFC1EE4F5D900990D28 /* MainVC.m */; };
 		04F4EC801EE4F5D900990D28 /* SpecialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EB031EE4F5D900990D28 /* SpecialVC.m */; };
@@ -265,6 +268,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		044669691EE7A48A0082D8BC /* expressCode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = expressCode.plist; sourceTree = "<group>"; };
+		0446696C1EE7F8CB0082D8BC /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
+		0446696E1EE7F8CB0082D8BC /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
+		044669711EE7F8CB0082D8BC /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
+		044669731EE7F9730082D8BC /* MySubscribeListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MySubscribeListVC.h; sourceTree = "<group>"; };
+		044669741EE7F9730082D8BC /* MySubscribeListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MySubscribeListVC.m; sourceTree = "<group>"; };
+		044669761EE7FAF50082D8BC /* SubsribeMineList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubsribeMineList.h; sourceTree = "<group>"; };
+		044669771EE7FAF50082D8BC /* SubsribeMineList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubsribeMineList.m; sourceTree = "<group>"; };
 		04F4EAE71EE4F5D900990D28 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		04F4EAE91EE4F5D900990D28 /* Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comments.h; sourceTree = "<group>"; };
 		04F4EAEB1EE4F5D900990D28 /* PrefixHeader_notification.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader_notification.pch; sourceTree = "<group>"; };
@@ -1001,6 +1012,52 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0446696B1EE7F8CB0082D8BC /* 2.Sections */ = {
+			isa = PBXGroup;
+			children = (
+				0446696C1EE7F8CB0082D8BC /* 0.Comments.h */,
+				0446696D1EE7F8CB0082D8BC /* 1.SubscribeList */,
+				044669701EE7F8CB0082D8BC /* 2.SubscriberList */,
+			);
+			path = 2.Sections;
+			sourceTree = "<group>";
+		};
+		0446696D1EE7F8CB0082D8BC /* 1.SubscribeList */ = {
+			isa = PBXGroup;
+			children = (
+				0446696E1EE7F8CB0082D8BC /* 0.Comments.h */,
+				0446696F1EE7F8CB0082D8BC /* 1.Controller */,
+			);
+			path = 1.SubscribeList;
+			sourceTree = "<group>";
+		};
+		0446696F1EE7F8CB0082D8BC /* 1.Controller */ = {
+			isa = PBXGroup;
+			children = (
+				044669731EE7F9730082D8BC /* MySubscribeListVC.h */,
+				044669741EE7F9730082D8BC /* MySubscribeListVC.m */,
+			);
+			path = 1.Controller;
+			sourceTree = "<group>";
+		};
+		044669701EE7F8CB0082D8BC /* 2.SubscriberList */ = {
+			isa = PBXGroup;
+			children = (
+				044669711EE7F8CB0082D8BC /* 0.Comments.h */,
+				044669721EE7F8CB0082D8BC /* 1.Controller */,
+			);
+			path = 2.SubscriberList;
+			sourceTree = "<group>";
+		};
+		044669721EE7F8CB0082D8BC /* 1.Controller */ = {
+			isa = PBXGroup;
+			children = (
+				044669761EE7FAF50082D8BC /* SubsribeMineList.h */,
+				044669771EE7FAF50082D8BC /* SubsribeMineList.m */,
+			);
+			path = 1.Controller;
+			sourceTree = "<group>";
+		};
 		04F4EAE61EE4F5D900990D28 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1407,6 +1464,7 @@
 			children = (
 				04F4EB4D1EE4F5D900990D28 /* 0.Comments.h */,
 				04F4EB4E1EE4F5D900990D28 /* 1.Controller */,
+				0446696B1EE7F8CB0082D8BC /* 2.Sections */,
 			);
 			path = 4.SubscribeInfo;
 			sourceTree = "<group>";
@@ -2675,6 +2733,7 @@
 				78C2399D1ED2FB9A000CD40E /* city_code.plist */,
 				78C2399E1ED2FB9A000CD40E /* city_code_3.plist */,
 				78C2399F1ED2FB9A000CD40E /* country.plist */,
+				044669691EE7A48A0082D8BC /* expressCode.plist */,
 			);
 			path = plist;
 			sourceTree = "<group>";
@@ -3617,6 +3676,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0446696A1EE7A48A0082D8BC /* expressCode.plist in Resources */,
 				78C23BBE1ED2FB9A000CD40E /* AlipaySDK.bundle in Resources */,
 				78C23B961ED2FB9A000CD40E /* LaunchImg.png in Resources */,
 				78C237C21ED2FA80000CD40E /* LaunchScreen.storyboard in Resources */,
@@ -3673,6 +3733,7 @@
 				78C23BA11ED2FB9A000CD40E /* AFSecurityPolicy.m in Sources */,
 				04F4EC9F1EE4F5D900990D28 /* ConfirmOrderVC.m in Sources */,
 				04F4EC7F1EE4F5D900990D28 /* MainVC.m in Sources */,
+				044669751EE7F9730082D8BC /* MySubscribeListVC.m in Sources */,
 				78C23BE11ED2FB9A000CD40E /* UIImage+WebP.m in Sources */,
 				78C23BA71ED2FB9A000CD40E /* FMDatabasePool.m in Sources */,
 				04F4EC951EE4F5D900990D28 /* StoreVC.m in Sources */,
@@ -3759,6 +3820,7 @@
 				04F4EC881EE4F5D900990D28 /* Cell_menu_icon_Flowers.m in Sources */,
 				04F4EC851EE4F5D900990D28 /* Cell_menu_icon_brush.m in Sources */,
 				04F4ECB91EE4F5D900990D28 /* MyMessageSectionsViewController.m in Sources */,
+				044669781EE7FAF50082D8BC /* SubsribeMineList.m in Sources */,
 				04F4EC9C1EE4F5D900990D28 /* SelectBonusVC.m in Sources */,
 				04F4ECAB1EE4F5D900990D28 /* PersonalMaterialViewController.m in Sources */,
 				04F4EC9D1EE4F5D900990D28 /* GoodsInfoViewController.m in Sources */,

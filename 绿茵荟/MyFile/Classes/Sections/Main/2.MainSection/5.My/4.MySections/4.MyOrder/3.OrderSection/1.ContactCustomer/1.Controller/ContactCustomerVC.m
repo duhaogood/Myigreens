@@ -76,7 +76,8 @@
             self.contentTF = tf;
             tf.frame = CGRectMake(19, 10, WIDTH-20-88-38, 18);
             [view addSubview:tf];
-            tf.placeholder = @"点击留言";
+            tf.font = [UIFont systemFontOfSize:15];
+            tf.placeholder = @"请在此处留言,客服会在第一时间回复您";
         }
         //发送按钮-btn_sent_line-78-38
         {

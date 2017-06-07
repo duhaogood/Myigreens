@@ -12,6 +12,7 @@
 #import "SelectPayTypeVC.h"
 #import "OrderInfoVC.h"
 #import "ShowExpress.h"
+#import "ShoppingCartVC.h"
 @interface MyOrderVC ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)NSArray * orderArray;//所有订单信息
 @property(nonatomic,strong)NSMutableArray * timerArray;//定时器
@@ -197,25 +198,8 @@
     //订单状态
     int sta = [orderDic[@"orderStatus"] intValue];
     {
-        NSString * status = @"待付款";
-        if (sta != 1) {
-            switch (sta) {
-                case 2:
-                    status = @"待发货";
-                    break;
-                case 3:
-                    status = @"待收货";
-                    break;
-                case 6:
-                    status = @"已取消";
-                    break;
-                default:
-                    printf("订单状态：%d",sta);
-                    break;
-            }
-        }
         UILabel * label = [UILabel new];
-        label.text = status;
+        label.text = orderDic[@"statusName"];
         label.font = [UIFont systemFontOfSize:16];
         label.textColor = [MYTOOL RGBWithRed:113 green:157 blue:52 alpha:1];
         CGSize size = [MYTOOL getSizeWithLabel:label];
@@ -537,6 +521,31 @@
                 btn.tag = orderId;
                 [btn addTarget:self action:@selector(showExpressCallback:) forControlEvents:UIControlEventTouchUpInside];
             }
+        }else if(orderStatus == 5){//已完成
+            //再来一单
+            {
+                UIButton * btn = [UIButton new];
+                btn.frame = CGRectMake(WIDTH-14-91-91-5, top, 91, 31);
+                [btn setBackgroundImage:blackImage forState:UIControlStateNormal];
+                [btn setTitle:@"再来一单" forState:UIControlStateNormal];
+                [btn setTitleColor:blackColor forState:UIControlStateNormal];
+                btn.titleLabel.font = btnFont;
+                [cell addSubview:btn];
+                btn.tag = orderId;
+                [btn addTarget:self action:@selector(buyAgainCallback:) forControlEvents:UIControlEventTouchUpInside];
+            }
+            //确认收货
+            {
+                UIButton * btn = [UIButton new];
+                btn.frame = CGRectMake(WIDTH-14-91, top, 91, 31);
+                [btn setBackgroundImage:blackImage forState:UIControlStateNormal];
+                [btn setTitle:@"删除订单" forState:UIControlStateNormal];
+                [btn setTitleColor:blackColor forState:UIControlStateNormal];
+                btn.titleLabel.font = btnFont;
+                [cell addSubview:btn];
+                btn.tag = orderId;
+                [btn addTarget:self action:@selector(deleteOrderCallback:) forControlEvents:UIControlEventTouchUpInside];
+            }
         }else if(orderStatus == 6){//已取消
             //确认收货
             {
@@ -556,11 +565,38 @@
     
     return cell;
 }
+//再来一单事件
+-(void)buyAgainCallback:(UIButton *)btn{
+    NSString * interface = @"/shop/order/buyAgain.intf";
+    NSDictionary * send = @{
+                            @"orderId":@(btn.tag)
+                            };
+    [MYTOOL netWorkingWithTitle:@"购买中…"];
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        ShoppingCartVC * shop = [ShoppingCartVC new];
+        shop.title = @"购物车";
+        [self.navigationController pushViewController:shop animated:true];
+    }];
+}
 //查看物流事件
 -(void)showExpressCallback:(UIButton *)btn{
-    ShowExpress * show = [ShowExpress new];
-    show.title = @"物流信息";
-    [self.navigationController pushViewController:show animated:true];
+    [MYTOOL netWorkingWithTitle:@"获取物流"];
+    NSString * interface = @"/shop/order/getOrderInfo.intf";
+    NSDictionary * sendDic = @{
+                               @"orderId":@(btn.tag)
+                               };
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+        NSDictionary * orderDic = back_dic[@"order"];
+        
+        NSString * expressName = orderDic[@"expressName"];
+        NSString * expressNo = orderDic[@"expressNo"];
+        ShowExpress * show = [ShowExpress new];
+        show.expressName = expressName;
+        show.logisicCode = expressNo;
+        show.title = @"物流信息";
+        [self.navigationController pushViewController:show animated:true];
+    }];
+    
 }
 //提醒发货事件
 -(void)remindDispatchGoodsCallback:(UIButton *)btn{
@@ -577,7 +613,7 @@
 //联系客服事件
 -(void)contactCustomerServiceCallback:(UIButton *)btn{
     ContactCustomerVC * contactVC = [ContactCustomerVC new];
-    contactVC.title = @"在线客服";
+    contactVC.title = @"联系客服";
     contactVC.orderId = btn.tag;
     [self.navigationController pushViewController:contactVC animated:true];
 }
@@ -607,16 +643,21 @@
 }
 //删除订单事件
 -(void)deleteOrderCallback:(UIButton *)btn{
-    NSLog(@"删除订单-orderId:%ld",btn.tag);
-    NSString * interface = @"/shop/order/delOrder.intf";
-    [MYTOOL netWorkingWithTitle:@"订单删除…"];
-    NSDictionary * sendDic = @{
-                               @"orderId":[NSString stringWithFormat:@"%ld",btn.tag]
-                               };
-    [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        [SVProgressHUD showSuccessWithStatus:@"删除成功" duration:1];
-        [self updateViewAllState];
+    
+    [MYTOOL showAlertWithViewController:self andTitle:@"确定删除此订单吗?" andSureTile:@"删除" andSureBlock:^{
+        NSString * interface = @"/shop/order/delOrder.intf";
+        [MYTOOL netWorkingWithTitle:@"订单删除…"];
+        NSDictionary * sendDic = @{
+                                   @"orderId":[NSString stringWithFormat:@"%ld",btn.tag]
+                                   };
+        [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+            [SVProgressHUD showSuccessWithStatus:@"删除成功" duration:1];
+            [self updateViewAllState];
+        }];
+    } andCacel:^{
+        
     }];
+    
 }
 //确认收货事件
 -(void)confirmReceiveCallback:(UIButton *)btn{

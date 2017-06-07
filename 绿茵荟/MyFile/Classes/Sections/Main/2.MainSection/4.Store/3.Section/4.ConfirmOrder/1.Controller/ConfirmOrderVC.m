@@ -607,7 +607,12 @@
     [sendDiction setValue:MEMBERID forKey:@"memberId"];//用户id
     /*以后删除*/
     [sendDiction setValue:@"1" forKey:@"shippingId"];
-    [sendDiction setValue:@(self.integral) forKey:@"exchange"];
+    if (self.integral) {
+        [sendDiction setValue:@"true" forKey:@"exchange"];
+    }else{
+        [sendDiction setValue:@"false" forKey:@"exchange"];
+    }
+    
     //购物车号
     NSString * cartIds = self.order[@"cartIds"];
     if (cartIds && cartIds.length > 0) {//购物车
@@ -640,10 +645,10 @@
     if (addressId) {
         [sendDiction setValue:addressId forKey:@"addressId"];
     }
-//    NSLog(@"send:%@",sendDiction);
+    NSLog(@"send:%@",sendDiction);
     [SVProgressHUD showWithStatus:@"创建订单中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDiction andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"创建订单:%@",back_dic);
+        NSLog(@"创建订单:%@",back_dic);
         
         [SVProgressHUD showWithStatus:@"加载订单…" maskType:SVProgressHUDMaskTypeClear];
         NSString * interface = @"/shop/order/getOrderInfo.intf";
@@ -729,9 +734,10 @@
 }
 //选择优惠券
 -(void)selectDiscountCouponCallback{
-    NSString * interface = @"/shop/goods/getUserBonus.intf";
+    NSString * interface = @"/shop/goods/getUseBonus.intf";
     NSDictionary * send = @{
-                            @"memberId":MEMBERID
+                            @"memberId":MEMBERID,
+                            @"orderPrice":self.order[@"orderPrice"]
                             };
     [MYTOOL netWorkingWithTitle:@"获取可用优惠券"];
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
@@ -866,7 +872,11 @@
         [sendDic setValue:productId forKey:@"productId"];//productId	产品id	数字	否
     }
     [sendDic setValue:@(self.integral) forKey:@"integral"];//是否积分商品
-    [sendDic setValue:self.order[@"couponId"] forKey:@"couponId"];
+    if ([self.order[@"couponId"] longValue]) {
+        [sendDic setValue:self.order[@"couponId"] forKey:@"couponId"];
+    }
+    
+    
     /*
      expressId	快递Id	数字	否
      couponId	优惠券Id	数字	否

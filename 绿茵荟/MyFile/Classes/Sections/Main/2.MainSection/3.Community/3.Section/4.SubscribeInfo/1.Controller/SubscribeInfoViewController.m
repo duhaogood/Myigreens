@@ -7,7 +7,8 @@
 //
 
 #import "SubscribeInfoViewController.h"
-
+#import "MySubscribeListVC.h"
+#import "SubsribeMineList.h"
 @interface SubscribeInfoViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)UILabel * bySubscribeLabel;//订阅者label
@@ -88,6 +89,10 @@
         [user_icon sd_setImageWithURL:[NSURL URLWithString:self.member_dic[@"headUrl"][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"logo"]];
         user_icon.layer.masksToBounds = true;
         user_icon.layer.cornerRadius = 40;
+        [user_icon setUserInteractionEnabled:YES];
+        UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
+        tapGesture2.numberOfTapsRequired=1;
+        [user_icon addGestureRecognizer:tapGesture2];
         [back_view addSubview:user_icon];
         top = back_imgV.frame.size.height + 30+5;
     }
@@ -162,6 +167,12 @@
             CGSize size = [MYTOOL getSizeWithString:string andFont:label.font];
             label.frame = CGRectMake(WIDTH/2-size.width-10, top, size.width, 16);
             [back_view addSubview:label];
+            
+            UIButton * btn = [UIButton new];
+            btn.frame = label.frame;
+            [back_view addSubview:btn];
+            [btn addTarget:self action:@selector(showSubsribeList) forControlEvents:UIControlEventTouchUpInside];
+            
         }
         //被订阅数bySubscribeCount
         {
@@ -173,6 +184,11 @@
             label.frame = CGRectMake(WIDTH/2+10, top, WIDTH/2, 16);
             [back_view addSubview:label];
             self.bySubscribeLabel = label;
+            
+            UIButton * btn = [UIButton new];
+            btn.frame = label.frame;
+            [back_view addSubview:btn];
+            [btn addTarget:self action:@selector(showSubsriberList) forControlEvents:UIControlEventTouchUpInside];
         }
         top += 26-5;
     }
@@ -215,6 +231,20 @@
     
 }
 #pragma mark - 用户点击事件
+//查看订阅
+-(void)showSubsribeList{
+    MySubscribeListVC * my = [MySubscribeListVC new];
+    my.title = @"订阅列表";
+    my.byMemberId = self.member_dic[@"memberId"];
+    [self.navigationController pushViewController:my animated:true];
+}
+//查看订阅者
+-(void)showSubsriberList{
+    SubsribeMineList * mine = [SubsribeMineList new];
+    mine.title = @"订阅者列表";
+    mine.byMemberId = self.member_dic[@"memberId"];
+    [self.navigationController pushViewController:mine animated:true];
+}
 //订阅
 -(void)subscribe_callBack:(UIButton *)btn{
     NSString * interface_name = @"/community/modifySubscribe.intf";
@@ -387,7 +417,52 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-
+//缩放图片
+-(void)showZoomImageView:(UITapGestureRecognizer *)tap{
+    if (![(UIImageView *)tap.view image]) {
+        return;
+    }
+    NSString * normalUrl = self.member_dic[@"headUrl"][@"normalUrl"];
+    if (normalUrl == nil || normalUrl.length == 0) {
+//        [SVProgressHUD showErrorWithStatus:@"此用户未设置头像" duration:2];
+//        return;
+    }
+    UIView *bgView = [[UIView alloc] init];
+    
+    bgView.frame = [UIScreen mainScreen].bounds;
+    
+    bgView.backgroundColor = [UIColor blackColor];
+    
+    [[[UIApplication sharedApplication] keyWindow] addSubview:bgView];
+    
+    UITapGestureRecognizer *tapBgView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapBgView:)];
+    
+    [bgView addGestureRecognizer:tapBgView];
+    //必不可少的一步，如果直接把点击获取的imageView拿来玩的话，返回的时候，原图片就完蛋了
+    
+    UIImageView *tempImageView = (UIImageView*)tap.view;
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:tempImageView.frame];
+    imageView.image = tempImageView.image;
+    [bgView addSubview:imageView];
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        CGRect frame = imageView.frame;
+        frame.size.width = bgView.frame.size.width;
+        frame.size.height = frame.size.width * (imageView.image.size.height / imageView.image.size.width);
+        frame.origin.x = 0;
+        frame.origin.y = (bgView.frame.size.height - frame.size.height) * 0.5;
+        imageView.frame = frame;
+    } completion:^(BOOL finished) {
+        if (normalUrl && normalUrl.length > 0) {
+            [MYTOOL setImageIncludePrograssOfImageView:imageView withUrlString:normalUrl];
+        }
+    }];
+    
+}
+//再次点击取消全屏预览
+-(void)tapBgView:(UITapGestureRecognizer *)tapBgRecognizer{
+    [tapBgRecognizer.view removeFromSuperview];
+}
 
 #pragma mark - tabbar显示与隐藏
 //此view出现时隐藏tabBar
