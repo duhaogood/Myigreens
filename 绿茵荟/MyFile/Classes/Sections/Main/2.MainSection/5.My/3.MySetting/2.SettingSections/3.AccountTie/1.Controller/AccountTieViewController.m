@@ -39,6 +39,7 @@
     }
     //文字 & switch按钮
     NSArray * title_array = @[@"新浪微博",@"微信",@"QQ"];
+    NSArray * btn_state = @[@"weiboStatus",@"wechatStatus",@"qqStatus"];
     self.title_swich_dictionary = [NSMutableDictionary new];
     for (int i = 0; i < title_array.count; i ++) {
         //文字
@@ -49,12 +50,11 @@
         //按钮
         UISwitch * btn = [UISwitch new];
         btn.frame = CGRectMake(WIDTH - 70, height/6 + height / 3 * i - 15.5, 53, 31);
-        btn.on = false;
         [btn addTarget:self action:@selector(swichBtn_callBack:) forControlEvents:UIControlEventValueChanged];
+        btn.on = [self.member_dic[btn_state[i]] boolValue];
         [back_view addSubview:btn];
         [self.title_swich_dictionary setObject:btn forKey:title_array[i]];
     }
-    
     
 }
 //swich开关回调
@@ -66,13 +66,13 @@
             if (btn.on) {
                 [self startTieWithTitle:key];
             }else{
-                [self cancelTieWithTitle:key];
+                [self cancelTieWithTitle:key andButton:btn];
             }
             return;
         }
     }
 }
-//第三方绑定
+//第三方绑定入口
 -(void)startTieWithTitle:(NSString *)title{
     //@"新浪微博",@"微信",@"QQ"
     if ([title isEqualToString:@"新浪微博"]) {
@@ -82,19 +82,56 @@
     }else {
         [self getAuthWithUserInfoFromQQ];
     }
+}
+//开始第三方绑定
+-(void)bindTirdAPPWithTitle:(NSDictionary *)info{
     NSString * interface = @"/member/bindThirdApp.intf";
+    
+    NSMutableDictionary * send = [NSMutableDictionary new];
+    [send setValue:MEMBERID forKey:@"memberId"];
+    [send setValue:@"ios" forKey:@"terminal"];
+    for (NSString * key in info.allKeys) {
+        [send setValue:info[key] forKey:key];
+    }
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+//        NSLog(@"back:%@",back_dic);
+        [self updateMemberInfo];
+    }];
+}
+//更新我的信息
+-(void)updateMemberInfo{
+    //获取我的信息
+    NSString * interfaceName = @"/member/getMember.intf";
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
+        self.member_dic = back_dic[@"member"];
+        DHTOOL.memberDic = self.member_dic;
+    }];
 }
 //取消绑定
--(void)cancelTieWithTitle:(NSString *)title{
+-(void)cancelTieWithTitle:(NSString *)title andButton:(UISwitch *)btn{
     //@"新浪微博",@"微信",@"QQ"
+    //wechat 微信 ,qq QQ ,weibo 微博
     NSString * interface = @"/member/cancelBind.intf";
-    
+    NSString * key = @"";
+    if ([title isEqualToString:@"新浪微博"]) {
+        key = @"weibo";
+    }else if ([title isEqualToString:@"微信"]) {
+        key = @"wechat";
+    }else{
+        key = @"qq";
+    }
     NSDictionary * send = @{
                             @"memberId":MEMBERID,
-                            @"app":@"",
-                            @"terminal":@"ios"
+                            @"app":key
                             };
-    
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        if ([back_dic[@"code"] boolValue]) {
+            [self updateMemberInfo];
+        }else{
+            btn.on = true;;
+        }
+    }];
     
 }
 //微博授权
@@ -108,17 +145,27 @@
             
             // 授权信息
             NSLog(@"Sina uid: %@", resp.uid);
-            NSLog(@"Sina accessToken: %@", resp.accessToken);
-            NSLog(@"Sina refreshToken: %@", resp.refreshToken);
-            NSLog(@"Sina expiration: %@", resp.expiration);
+            NSDictionary * info = @{
+                                    @"app":@"weibo",
+                                    @"openId":resp.uid
+                                    };
+            [self bindTirdAPPWithTitle:info];
             
-            // 用户信息
-            NSLog(@"Sina name: %@", resp.name);
-            NSLog(@"Sina iconurl: %@", resp.iconurl);
-            NSLog(@"Sina gender: %@", resp.unionGender);
             
-            // 第三方平台SDK源数据
-            NSLog(@"Sina originalResponse: %@", resp.originalResponse);
+            
+            
+            
+//            NSLog(@"Sina accessToken: %@", resp.accessToken);
+//            NSLog(@"Sina refreshToken: %@", resp.refreshToken);
+//            NSLog(@"Sina expiration: %@", resp.expiration);
+//            
+//            // 用户信息
+//            NSLog(@"Sina name: %@", resp.name);
+//            NSLog(@"Sina iconurl: %@", resp.iconurl);
+//            NSLog(@"Sina gender: %@", resp.unionGender);
+//            
+//            // 第三方平台SDK源数据
+//            NSLog(@"Sina originalResponse: %@", resp.originalResponse);
         }
     }];
 }
@@ -134,16 +181,21 @@
             // 授权信息
             NSLog(@"QQ uid: %@", resp.uid);
             NSLog(@"QQ openid: %@", resp.openid);
-            NSLog(@"QQ accessToken: %@", resp.accessToken);
-            NSLog(@"QQ expiration: %@", resp.expiration);
-            
-            // 用户信息
-            NSLog(@"QQ name: %@", resp.name);
-            NSLog(@"QQ iconurl: %@", resp.iconurl);
-            NSLog(@"QQ gender: %@", resp.unionGender);
-            
-            // 第三方平台SDK源数据
-            NSLog(@"QQ originalResponse: %@", resp.originalResponse);
+            NSDictionary * info = @{
+                                    @"app":@"qq",
+                                    @"openId":resp.openid
+                                    };
+            [self bindTirdAPPWithTitle:info];
+//            NSLog(@"QQ accessToken: %@", resp.accessToken);
+//            NSLog(@"QQ expiration: %@", resp.expiration);
+//            
+//            // 用户信息
+//            NSLog(@"QQ name: %@", resp.name);
+//            NSLog(@"QQ iconurl: %@", resp.iconurl);
+//            NSLog(@"QQ gender: %@", resp.unionGender);
+//            
+//            // 第三方平台SDK源数据
+//            NSLog(@"QQ originalResponse: %@", resp.originalResponse);
         }
     }];
 }
@@ -155,24 +207,33 @@
             btn.on = false;
         } else {
             UMSocialUserInfoResponse *resp = result;
+            NSDictionary * info = @{
+                                    @"app":@"wechat",
+                                    @"openId":resp.openid,
+                                    @"unionId":resp.uid
+                                    };
+            [self bindTirdAPPWithTitle:info];
+            
             
             // 授权信息
             NSLog(@"Wechat uid: %@", resp.uid);
             NSLog(@"Wechat openid: %@", resp.openid);
-            NSLog(@"Wechat accessToken: %@", resp.accessToken);
-            NSLog(@"Wechat refreshToken: %@", resp.refreshToken);
-            NSLog(@"Wechat expiration: %@", resp.expiration);
             
-            // 用户信息
-            NSLog(@"Wechat name: %@", resp.name);
-            NSLog(@"Wechat iconurl: %@", resp.iconurl);
-            NSLog(@"Wechat gender: %@", resp.unionGender);
-            
-            // 第三方平台SDK源数据
-            NSLog(@"Wechat originalResponse: %@", resp.originalResponse);
+            //            NSLog(@"Wechat accessToken: %@", resp.accessToken);
+//            NSLog(@"Wechat refreshToken: %@", resp.refreshToken);
+//            NSLog(@"Wechat expiration: %@", resp.expiration);
+//            
+//            // 用户信息
+//            NSLog(@"Wechat name: %@", resp.name);
+//            NSLog(@"Wechat iconurl: %@", resp.iconurl);
+//            NSLog(@"Wechat gender: %@", resp.unionGender);
+//            
+//            // 第三方平台SDK源数据
+//            NSLog(@"Wechat originalResponse: %@", resp.originalResponse);
         }
     }];
 }
+
 #pragma mark - 重新网络获取个人信息数据刷新页面
 -(void)getUserInfoAgagin{
     //获取我的信息

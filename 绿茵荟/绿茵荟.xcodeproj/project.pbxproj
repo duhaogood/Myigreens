@@ -10,6 +10,10 @@
 		0446696A1EE7A48A0082D8BC /* expressCode.plist in Resources */ = {isa = PBXBuildFile; fileRef = 044669691EE7A48A0082D8BC /* expressCode.plist */; };
 		044669751EE7F9730082D8BC /* MySubscribeListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 044669741EE7F9730082D8BC /* MySubscribeListVC.m */; };
 		044669781EE7FAF50082D8BC /* SubsribeMineList.m in Sources */ = {isa = PBXBuildFile; fileRef = 044669771EE7FAF50082D8BC /* SubsribeMineList.m */; };
+		0446697D1EE83BC10082D8BC /* jcore-ios-1.1.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0446697A1EE83BC10082D8BC /* jcore-ios-1.1.3.a */; };
+		0446697E1EE83BC10082D8BC /* jpush-ios-3.0.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0446697B1EE83BC10082D8BC /* jpush-ios-3.0.5.a */; };
+		044669801EE83C0F0082D8BC /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0446697F1EE83C0F0082D8BC /* UserNotifications.framework */; };
+		044669821EE83C1F0082D8BC /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 044669811EE83C1F0082D8BC /* libresolv.tbd */; };
 		04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAF71EE4F5D900990D28 /* LoginViewController.m */; };
 		04F4EC7F1EE4F5D900990D28 /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAFC1EE4F5D900990D28 /* MainVC.m */; };
 		04F4EC801EE4F5D900990D28 /* SpecialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EB031EE4F5D900990D28 /* SpecialVC.m */; };
@@ -276,6 +280,12 @@
 		044669741EE7F9730082D8BC /* MySubscribeListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MySubscribeListVC.m; sourceTree = "<group>"; };
 		044669761EE7FAF50082D8BC /* SubsribeMineList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubsribeMineList.h; sourceTree = "<group>"; };
 		044669771EE7FAF50082D8BC /* SubsribeMineList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SubsribeMineList.m; sourceTree = "<group>"; };
+		0446697A1EE83BC10082D8BC /* jcore-ios-1.1.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "jcore-ios-1.1.3.a"; sourceTree = "<group>"; };
+		0446697B1EE83BC10082D8BC /* jpush-ios-3.0.5.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "jpush-ios-3.0.5.a"; sourceTree = "<group>"; };
+		0446697C1EE83BC10082D8BC /* JPUSHService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JPUSHService.h; sourceTree = "<group>"; };
+		0446697F1EE83C0F0082D8BC /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		044669811EE83C1F0082D8BC /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		044669831EE83C6F0082D8BC /* 绿茵荟.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "绿茵荟.entitlements"; sourceTree = "<group>"; };
 		04F4EAE71EE4F5D900990D28 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		04F4EAE91EE4F5D900990D28 /* Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comments.h; sourceTree = "<group>"; };
 		04F4EAEB1EE4F5D900990D28 /* PrefixHeader_notification.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader_notification.pch; sourceTree = "<group>"; };
@@ -928,6 +938,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				044669821EE83C1F0082D8BC /* libresolv.tbd in Frameworks */,
+				044669801EE83C0F0082D8BC /* UserNotifications.framework in Frameworks */,
 				78C23C311ED30002000CD40E /* libsqlite3.0.tbd in Frameworks */,
 				78C23C1D1ED2FDFC000CD40E /* libc++.tbd in Frameworks */,
 				78C23C1F1ED2FE2B000CD40E /* libz.tbd in Frameworks */,
@@ -973,10 +985,12 @@
 				78C23C051ED2FB9B000CD40E /* libSocialTencentWeibo.a in Frameworks */,
 				78C23BFC1ED2FB9B000CD40E /* libSocialLine.a in Frameworks */,
 				78C23C091ED2FB9B000CD40E /* TwitterCore.framework in Frameworks */,
+				0446697E1EE83BC10082D8BC /* jpush-ios-3.0.5.a in Frameworks */,
 				78C23BE81ED2FB9A000CD40E /* libSocialAlipayShare.a in Frameworks */,
 				78C23C141ED2FB9B000CD40E /* UMSocialCore.framework in Frameworks */,
 				78C23BF01ED2FB9A000CD40E /* FBSDKCoreKit.framework in Frameworks */,
 				78C23BFD1ED2FB9B000CD40E /* libSocialLinkedin.a in Frameworks */,
+				0446697D1EE83BC10082D8BC /* jcore-ios-1.1.3.a in Frameworks */,
 				78C23BC11ED2FB9A000CD40E /* libssl.a in Frameworks */,
 				78C23C171ED2FB9B000CD40E /* libUMSocialCloudShare.a in Frameworks */,
 				78C23C041ED2FB9B000CD40E /* libSocialSMS.a in Frameworks */,
@@ -1056,6 +1070,16 @@
 				044669771EE7FAF50082D8BC /* SubsribeMineList.m */,
 			);
 			path = 1.Controller;
+			sourceTree = "<group>";
+		};
+		044669791EE83BC10082D8BC /* JPush */ = {
+			isa = PBXGroup;
+			children = (
+				0446697A1EE83BC10082D8BC /* jcore-ios-1.1.3.a */,
+				0446697B1EE83BC10082D8BC /* jpush-ios-3.0.5.a */,
+				0446697C1EE83BC10082D8BC /* JPUSHService.h */,
+			);
+			path = JPush;
 			sourceTree = "<group>";
 		};
 		04F4EAE61EE4F5D900990D28 /* Classes */ = {
@@ -2646,6 +2670,7 @@
 		78C237B11ED2FA7F000CD40E /* 绿茵荟 */ = {
 			isa = PBXGroup;
 			children = (
+				044669831EE83C6F0082D8BC /* 绿茵荟.entitlements */,
 				78C237B51ED2FA7F000CD40E /* AppDelegate.h */,
 				78C237B61ED2FA7F000CD40E /* AppDelegate.m */,
 				78C237BE1ED2FA80000CD40E /* Assets.xcassets */,
@@ -2742,6 +2767,7 @@
 			isa = PBXGroup;
 			children = (
 				78C239A11ED2FB9A000CD40E /* 0.Comments.h */,
+				044669791EE83BC10082D8BC /* JPush */,
 				78C239A21ED2FB9A000CD40E /* AFNetworking_3.0 */,
 				78C239B01ED2FB9A000CD40E /* FMDB */,
 				78C239BC1ED2FB9A000CD40E /* MJRefresh */,
@@ -3552,6 +3578,8 @@
 		78C23C1B1ED2FDFC000CD40E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				044669811EE83C1F0082D8BC /* libresolv.tbd */,
+				0446697F1EE83C0F0082D8BC /* UserNotifications.framework */,
 				78C23C301ED30002000CD40E /* libsqlite3.0.tbd */,
 				78C23C2E1ED2FEF3000CD40E /* CFNetwork.framework */,
 				78C23C2C1ED2FEA5000CD40E /* CoreMotion.framework */,
@@ -3636,6 +3664,14 @@
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 6GP3UUECW6;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					78C237C71ED2FA80000CD40E = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -4019,6 +4055,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "绿茵荟/绿茵荟.entitlements";
 				DEVELOPMENT_TEAM = 6GP3UUECW6;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -4033,7 +4070,10 @@
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/UMSocialUI",
 				);
 				GCC_PREFIX_HEADER = "/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Classes/PrefixHeaders/PrefixHeader.pch";
-				HEADER_SEARCH_PATHS = "/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Vender/Pay/AliPay";
+				HEADER_SEARCH_PATHS = (
+					"/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Vender/Pay/AliPay",
+					"/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Vender/JPush",
+				);
 				INFOPLIST_FILE = "绿茵荟/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -4071,6 +4111,7 @@
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/SocialLibraries/YiXin",
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/SocialLibraries/YouDao",
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/UMSocialSDKPlugin",
+					"$(PROJECT_DIR)/MyFile/Vender/JPush",
 				);
 				OTHER_LDFLAGS = (
 					"-all_load",
@@ -4085,6 +4126,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "绿茵荟/绿茵荟.entitlements";
 				DEVELOPMENT_TEAM = 6GP3UUECW6;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -4099,7 +4141,10 @@
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/UMSocialUI",
 				);
 				GCC_PREFIX_HEADER = "/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Classes/PrefixHeaders/PrefixHeader.pch";
-				HEADER_SEARCH_PATHS = "/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Vender/Pay/AliPay";
+				HEADER_SEARCH_PATHS = (
+					"/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Vender/Pay/AliPay",
+					"/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Vender/JPush",
+				);
 				INFOPLIST_FILE = "绿茵荟/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -4137,6 +4182,7 @@
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/SocialLibraries/YiXin",
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/SocialLibraries/YouDao",
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/UMSocialSDKPlugin",
+					"$(PROJECT_DIR)/MyFile/Vender/JPush",
 				);
 				OTHER_LDFLAGS = (
 					"-all_load",

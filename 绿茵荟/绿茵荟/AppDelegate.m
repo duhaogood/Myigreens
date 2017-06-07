@@ -12,9 +12,21 @@
 #import <AlipaySDK/AlipaySDK.h>
 #import "WXApi.h"
 #import <UMSocialCore/UMSocialCore.h>
+#import "JPUSHService.h"
+#import <AdSupport/AdSupport.h>
+
+// iOS10注册APNs所需头 件
+#ifdef NSFoundationVersionNumber_iOS_9_x_Max 
+#import <UserNotifications/UserNotifications.h>
+#endif
 
 #define USHARE_DEMO_APPKEY @"591c60d2f5ade451b100046b"
-@interface AppDelegate ()
+
+static NSString *appKey = @"19286ff90c8abb86842087a2";
+static NSString *channel = @"62b8468f1f54251e179cf0fa";
+static BOOL isProduction = NO;
+
+@interface AppDelegate ()<JPUSHRegisterDelegate>
 
 @end
 
@@ -55,7 +67,35 @@
     
     [self configUSharePlatforms];
     
+    //极光推送注册
+    JPUSHRegisterEntity * entity = [[JPUSHRegisterEntity alloc] init];
+    entity.types = JPAuthorizationOptionAlert|JPAuthorizationOptionBadge|JPAuthorizationOptionSound;
+    if ([[UIDevice currentDevice].systemVersion floatValue] >= 8.0) {
+        // 可以添加 定义categories
+        // NSSet<UNNotificationCategory *> *categories for iOS10 or later
+        // NSSet<UIUserNotificationCategory *> *categories for iOS8 and iOS9
+    }
+    [JPUSHService registerForRemoteNotificationConfig:entity delegate:self];
+    [JPUSHService setupWithOption:launchOptions appKey:appKey
+                          channel:channel apsForProduction:isProduction];
+    if (launchOptions) {
+        NSDictionary * remoteNotification = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+        //这个判断是在程序没有运行的情况下收到通知，点击通知跳转页面
+        if (remoteNotification) {
+            NSLog(@"推送消息==== %@",remoteNotification);
+            [self goToMssageViewControllerWith:remoteNotification];
+        }
+    }
     return YES;
+}
+-(void)goToMssageViewControllerWith:(NSDictionary *)remoteNotification{
+    NSLog(@"notification:%@",remoteNotification);
+    [SVProgressHUD showSuccessWithStatus:@"推送" duration:5];
+}
+- (void)application:(UIApplication *)application
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+    /// Required - 注册 DeviceToken
+    [JPUSHService registerDeviceToken:deviceToken];
 }
 /**
  是不是第一次进入app
@@ -274,5 +314,34 @@
     /* 设置新浪的appKey和appSecret */
     [[UMSocialManager defaultManager] setPlaform:UMSocialPlatformType_Sina appKey:@"1539877462"  appSecret:@"f0b045862b7e857439e600c28f689c23" redirectURL:@""];
     
+}
+#pragma mark- JPUSHRegisterDelegate
+// iOS 10 Support
+- (void)jpushNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(NSInteger))completionHandler {
+    // Required
+    NSDictionary * userInfo = notification.request.content.userInfo;
+    if([notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]
+        ]) {
+        [JPUSHService handleRemoteNotification:userInfo];
+    }
+    completionHandler(UNNotificationPresentationOptionAlert); // 需要执 这个 法,选择 是否提醒 户,有Badge、Sound、Alert三种类型可以选择设置
+}
+// iOS 10 Support
+- (void)jpushNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)())completionHandler {
+    // Required
+    NSDictionary * userInfo = response.notification.request.content.userInfo;
+    if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
+        [JPUSHService handleRemoteNotification:userInfo];
+    }
+    completionHandler(); // 系统要求执 这个 法
+}
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+    // Required, iOS 7 Support
+    [JPUSHService handleRemoteNotification:userInfo];
+    completionHandler(UIBackgroundFetchResultNewData);
+}
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    // Required,For systems with less than or equal to iOS6
+    [JPUSHService handleRemoteNotification:userInfo];
 }
 @end

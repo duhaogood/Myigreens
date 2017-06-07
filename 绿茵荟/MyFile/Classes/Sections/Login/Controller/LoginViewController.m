@@ -7,7 +7,7 @@
 //
 
 #import "LoginViewController.h"
-
+#import <UMSocialCore/UMSocialCore.h>
 @interface LoginViewController ()<UITextFieldDelegate>
 @property(nonatomic,strong)UIButton * loginBtn;
 @property(nonatomic,strong)UIButton * registerBtn;
@@ -16,6 +16,7 @@
 @property(nonatomic,strong)UIButton * nextBtn;//登录按钮
 @property(nonatomic,strong)UITextField * tel_tf;//手机号文本
 @property(nonatomic,strong)UITextField * code_tf;//验证码文本
+@property(nonatomic,strong)UIView * thirdView;//第三方登录view
 @end
 
 @implementation LoginViewController
@@ -132,19 +133,159 @@
         nextBtn.enabled = false;
         [nextBtn addTarget:self action:@selector(login) forControlEvents:UIControlEventTouchUpInside];
     }
-#warning 第三方登录
     
+    //第三方
+    {
+        //背景view
+        UIView * view = [UIView new];
+        view.frame = CGRectMake(0, HEIGHT - 160, WIDTH, 160);
+//        view.backgroundColor = [UIColor greenColor];
+        [self.view addSubview:view];
+        self.thirdView = view;
+        view.hidden = false;
+        
+        top = 0;
+        //快速登录
+        {
+            //文字
+            CGSize size;
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"快速登录";
+                label.font = [UIFont systemFontOfSize:12];
+                label.textColor = [MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1];
+                size = [MYTOOL getSizeWithLabel:label];
+                label.frame = CGRectMake(WIDTH/2-size.width/2, 0, size.width, size.height);
+                [view addSubview:label];
+            }
+            float left_width = WIDTH/2 - size.width/2;
+            //分割线-左
+            {
+                UIView * space = [UIView new];
+                space.frame = CGRectMake(left_width/3 - 15, size.height/2-0.5, left_width*2/3.0, 1);
+                space.backgroundColor = MYCOLOR_181_181_181;
+                [view addSubview:space];
+            }
+            //分割线-右
+            {
+                UIView * space = [UIView new];
+                space.frame = CGRectMake(WIDTH/2 + size.width/2 + 15, size.height/2-0.5, left_width*2/3.0, 1);
+                space.backgroundColor = MYCOLOR_181_181_181;
+                [view addSubview:space];
+            }
+        }
+        //三个按钮
+        {
+            float width = 60;
+            float space = (WIDTH - width*3)/6;
+            top = 30;
+            //微信-weixinlogin
+            {
+                UIButton * btn = [UIButton new];
+                [btn setImage:[UIImage imageNamed:@"weixinlogin"] forState:UIControlStateNormal];
+                [btn addTarget:self action:@selector(getAuthWithUserInfoFromWechat) forControlEvents:UIControlEventTouchUpInside];
+                btn.frame = CGRectMake(space * 2 , top, width, width);
+                [view addSubview:btn];
+            }
+            //QQ-qqlogin
+            {
+                UIButton * btn = [UIButton new];
+                [btn setImage:[UIImage imageNamed:@"qqlogin"] forState:UIControlStateNormal];
+                [btn addTarget:self action:@selector(getAuthWithUserInfoFromQQ) forControlEvents:UIControlEventTouchUpInside];
+                btn.frame = CGRectMake(space * 3 + width, top, width, width);
+                [view addSubview:btn];
+            }
+            //微博-sinalogin
+            {
+                UIButton * btn = [UIButton new];
+                [btn setImage:[UIImage imageNamed:@"sinalogin"] forState:UIControlStateNormal];
+                [btn addTarget:self action:@selector(getAuthWithUserInfoFromSina) forControlEvents:UIControlEventTouchUpInside];
+                btn.frame = CGRectMake(space * 4 + width*2, top, width, width);
+                [view addSubview:btn];
+            }
+        }
+        
+        
+        
+    }
     
     
     
 }
-
-
-
-
-
-
+//第三方登录
+-(void)thirtLoginWithInfo:(NSDictionary *)info{
+    NSString * interface = @"/member/thirdLogin.intf";
+    NSMutableDictionary * send = [NSMutableDictionary new];
+    [send setValue:@"ios" forKey:@"terminal"];
+    for (NSString * key in info.allKeys) {
+        [send setValue:info[key] forKey:key];
+    }
+    [MYTOOL netWorkingWithTitle:@"登录中"];
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        bool success = [back_dic[@"code"] boolValue];
+        NSString * msg = back_dic[@"msg"];
+        NSString * memberId = back_dic[@"memberId"];
+        if (success) {
+            //把登录状态写进程序
+            [MYTOOL setProjectPropertyWithKey:@"isLogin" andValue:@"1"];
+            [MYTOOL setProjectPropertyWithKey:@"memberId" andValue:memberId];
+            
+            //跳转
+            [(AppDelegate *)[UIApplication sharedApplication].delegate window].rootViewController = [MainVC new];
+            
+            
+            [SVProgressHUD showSuccessWithStatus:msg duration:1];
+        }
+    }];
+    
+}
 #pragma mark - 按钮回调
+//微博授权
+- (void)getAuthWithUserInfoFromSina{
+    [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_Sina currentViewController:nil completion:^(id result, NSError *error) {
+        if (error) {
+            
+        } else {
+            UMSocialUserInfoResponse *resp = result;
+            NSDictionary * info = @{
+                                    @"app":@"weibo",
+                                    @"openId":resp.uid
+                                    };
+            [self thirtLoginWithInfo:info];
+        }
+    }];
+}
+//qq授权
+- (void)getAuthWithUserInfoFromQQ{
+    [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_QQ currentViewController:nil completion:^(id result, NSError *error) {
+        if (error) {
+            
+        } else {
+            UMSocialUserInfoResponse *resp = result;
+            NSDictionary * info = @{
+                                    @"app":@"qq",
+                                    @"openId":resp.openid
+                                    };
+            [self thirtLoginWithInfo:info];
+        }
+    }];
+}
+//微信授权
+- (void)getAuthWithUserInfoFromWechat{
+    [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_WechatSession currentViewController:nil completion:^(id result, NSError *error) {
+        if (error) {
+            
+        } else {
+            UMSocialUserInfoResponse *resp = result;
+            NSDictionary * info = @{
+                                    @"app":@"wechat",
+                                    @"openId":resp.openid,
+                                    @"unionId":resp.uid
+                                    };
+            [self thirtLoginWithInfo:info];
+        }
+    }];
+}
 //获取验证码
 -(void)getCode_back{
     [MYTOOL hideKeyboard];
@@ -222,13 +363,14 @@
     [_registerBtn setTitleColor:[MYTOOL RGBWithRed:34 green:31 blue:32 alpha:1] forState:UIControlStateNormal];
     [_loginBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_loginBtn setBackgroundImage:[UIImage imageNamed:@"btn_login_pre"] forState:UIControlStateNormal];
-    
+    self.thirdView.hidden = false;
     
 }
 -(void)registerBtn_callback:(UIButton *)btn{
     if ([btn isEqual:self.currentBtn]) {
         return;
     }
+    self.thirdView.hidden = true;
     self.currentBtn = btn;
     [_loginBtn setBackgroundImage:[UIImage imageNamed:@"btn_login_nor"] forState:UIControlStateNormal];
     [_loginBtn setTitleColor:[MYTOOL RGBWithRed:34 green:31 blue:32 alpha:1] forState:UIControlStateNormal];
