@@ -384,9 +384,16 @@
 -(void)addBtnCallback:(UIButton *)btn{
     NSInteger number = [self.goodsCountLabel.text intValue];
     number++;
+    //库存
     NSInteger enableStore = [self.selectProductDic[@"enableStore"] longValue];
     if (number > enableStore) {
         [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"最大库存为:%ld",enableStore] duration:2];
+         return;
+    }
+    //最大可换
+    NSInteger exchangeMaxCount = [self.goodsInfo[@"exchangeMaxCount"] longValue];
+    if (number > exchangeMaxCount) {
+        [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"最大兑换数量为%ld",exchangeMaxCount] duration:2];
          return;
     }
     self.goodsCountLabel.text = [NSString stringWithFormat:@"%ld",number];
@@ -404,7 +411,12 @@
             self.webView.userInteractionEnabled = false;
         }];
     }else{
-        NSLog(@"%@",self.goodsInfo);
+        NSInteger number = [self.goodsCountLabel.text intValue];
+        NSInteger exchangeMaxCount = [self.goodsInfo[@"exchangeMaxCount"] longValue];
+        if (number > exchangeMaxCount) {
+            [SVProgressHUD showErrorWithStatus:[NSString stringWithFormat:@"最大兑换数量为%ld",exchangeMaxCount] duration:2];
+            return;
+        }
         int goodsCount = [self.goodsCountLabel.text intValue];
         NSInteger enableStore = [self.selectProductDic[@"enableStore"] longValue];
         if (goodsCount > enableStore) {

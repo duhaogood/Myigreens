@@ -140,32 +140,17 @@
         if (error) {
             UISwitch * btn =  self.title_swich_dictionary[@"新浪微博"];
             btn.on = false;
+            NSString * msg = error.userInfo[@"message"];
+            if ([msg isEqualToString:@"Operation is cancel"]) {
+                msg = @"取消绑定";
+            }
         } else {
             UMSocialUserInfoResponse *resp = result;
-            
-            // 授权信息
-            NSLog(@"Sina uid: %@", resp.uid);
             NSDictionary * info = @{
                                     @"app":@"weibo",
                                     @"openId":resp.uid
                                     };
             [self bindTirdAPPWithTitle:info];
-            
-            
-            
-            
-            
-//            NSLog(@"Sina accessToken: %@", resp.accessToken);
-//            NSLog(@"Sina refreshToken: %@", resp.refreshToken);
-//            NSLog(@"Sina expiration: %@", resp.expiration);
-//            
-//            // 用户信息
-//            NSLog(@"Sina name: %@", resp.name);
-//            NSLog(@"Sina iconurl: %@", resp.iconurl);
-//            NSLog(@"Sina gender: %@", resp.unionGender);
-//            
-//            // 第三方平台SDK源数据
-//            NSLog(@"Sina originalResponse: %@", resp.originalResponse);
         }
     }];
 }
@@ -175,6 +160,11 @@
         if (error) {
             UISwitch * btn =  self.title_swich_dictionary[@"QQ"];
             btn.on = false;
+            NSString * msg = error.userInfo[@"message"];
+            if ([msg isEqualToString:@"Operation is cancel"]) {
+                msg = @"取消绑定";
+            }
+            [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {
             UMSocialUserInfoResponse *resp = result;
             
@@ -205,6 +195,11 @@
         if (error) {
             UISwitch * btn =  self.title_swich_dictionary[@"微信"];
             btn.on = false;
+            NSString * msg = error.userInfo[@"message"];
+            if ([msg isEqualToString:@"Operation is cancel"]) {
+                msg = @"取消绑定";
+            }
+            [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {
             UMSocialUserInfoResponse *resp = result;
             NSDictionary * info = @{

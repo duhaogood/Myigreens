@@ -82,20 +82,29 @@ static BOOL isProduction = NO;
         NSDictionary * remoteNotification = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
         //这个判断是在程序没有运行的情况下收到通知，点击通知跳转页面
         if (remoteNotification) {
-            NSLog(@"推送消息==== %@",remoteNotification);
-            [self goToMssageViewControllerWith:remoteNotification];
+//            NSLog(@"推送消息==== %@",remoteNotification);
+//            [self goToMssageViewControllerWith:remoteNotification];
         }
     }
+    UIApplication *app = [UIApplication sharedApplication];
+    
+    // 应用程序右上角数字
+    app.applicationIconBadgeNumber = 0;
     return YES;
 }
 -(void)goToMssageViewControllerWith:(NSDictionary *)remoteNotification{
     NSLog(@"notification:%@",remoteNotification);
-    [SVProgressHUD showSuccessWithStatus:@"推送" duration:5];
+    NSMutableString * string = [NSMutableString new];
+    for (NSString * key in remoteNotification.allKeys) {
+        [string appendString:[NSString stringWithFormat:@"%@:%@\n",key,remoteNotification[key]]];
+    }
+    [SVProgressHUD showSuccessWithStatus:string duration:10];
 }
 - (void)application:(UIApplication *)application
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     /// Required - 注册 DeviceToken
     [JPUSHService registerDeviceToken:deviceToken];
+    
 }
 /**
  是不是第一次进入app
@@ -124,7 +133,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    
+    [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_APP_BECOME_ACTIVE object:nil userInfo:nil];
 }
 
 
@@ -280,11 +289,11 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
                 //                NSLog(@"用户取消支付");
                 
                 //...支付取消相应的处理
-                [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
-                MainVC * main = (MainVC *)self.window.rootViewController;
-                [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                main.selectedIndex = 3;
-                [SVProgressHUD showErrorWithStatus:@"支付取消\n请从我的订单查看" duration:2];
+                [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_CANCEL object:nil];
+//                MainVC * main = (MainVC *)self.window.rootViewController;
+//                [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
+//                main.selectedIndex = 3;
+//                [SVProgressHUD showErrorWithStatus:@"支付取消\n请从我的订单查看" duration:2];
                 break;
             }
             default: {
@@ -333,12 +342,24 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     if([response.notification.request.trigger isKindOfClass:[UNPushNotificationTrigger class]]) {
         [JPUSHService handleRemoteNotification:userInfo];
     }
+    [self goToMssageViewControllerWith:userInfo];
     completionHandler(); // 系统要求执 这个 法
+    
 }
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     // Required, iOS 7 Support
     [JPUSHService handleRemoteNotification:userInfo];
     completionHandler(UIBackgroundFetchResultNewData);
+    if (application.applicationState == UIApplicationStateActive) {
+        //这里写APP正在运行时，推送过来消息的处理
+        [self goToMssageViewControllerWith:userInfo];
+    } else if (application.applicationState == UIApplicationStateInactive ) {
+        //APP在后台运行，推送过来消息的处理
+        [self goToMssageViewControllerWith:userInfo];
+    } else if (application.applicationState == UIApplicationStateBackground) {
+        //APP没有运行，推送过来消息的处理
+        [self goToMssageViewControllerWith:userInfo];
+    }
 }
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     // Required,For systems with less than or equal to iOS6

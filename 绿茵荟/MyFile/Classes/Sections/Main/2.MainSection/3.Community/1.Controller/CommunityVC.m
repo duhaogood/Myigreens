@@ -533,7 +533,7 @@
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSDictionary * data_dic = self.data_array[indexPath.row];
-//    NSLog(@"%ld-----%@",indexPath.row,data_dic);
+    NSLog(@"%ld-----%@",indexPath.row,data_dic);
 
     NSString * releaseTime = data_dic[@"releaseTime"];//距离当前的发布时间
     NSString * content = data_dic[@"content"];//内容
@@ -769,7 +769,7 @@
         //简介
         {
             UILabel * tv = [UILabel new];
-            tv.text = content;
+            tv.text = signature;
             tv.font = [UIFont systemFontOfSize:15];
             tv.textColor = [UIColor whiteColor];
             tv.frame = CGRectMake(10, 105, WIDTH - 20, 20);

@@ -9,6 +9,7 @@
 #import "MyIssueVC.h"
 #import "SubmitPostViewController.h"
 #import "MyIssueTableView.h"
+#import "SubscribeInfoViewController.h"
 @interface MyIssueVC ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UIView * progress_view;//进度条
 @property(nonatomic,strong)MyIssueTableView * tableView;
@@ -52,6 +53,10 @@
             [bg_view addSubview:user_icon];
             user_icon.layer.masksToBounds = true;
             user_icon.layer.cornerRadius = user_icon.frame.size.width/2;
+            [user_icon setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickImgOfUser:)];
+            tapGesture.numberOfTapsRequired=1;
+            [user_icon addGestureRecognizer:tapGesture];
         }
         //名字
         {
@@ -135,7 +140,13 @@
 }
 
 
-
+//用户图片点击事件
+-(void)clickImgOfUser:(UITapGestureRecognizer *)tap{
+    SubscribeInfoViewController * subscribeInfo = [SubscribeInfoViewController new];
+    subscribeInfo.member_dic = DHTOOL.memberDic;
+    [self.navigationController pushViewController:subscribeInfo animated:true];
+    
+}
 //发布新帖子按钮事件
 -(void)submitPostBtnBack{
     SubmitPostViewController * postVC = [SubmitPostViewController new];

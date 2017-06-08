@@ -1097,8 +1097,8 @@
 			isa = PBXGroup;
 			children = (
 				04F4EAE91EE4F5D900990D28 /* Comments.h */,
-				04F4EAEA1EE4F5D900990D28 /* Notification */,
 				04F4EAEC1EE4F5D900990D28 /* PrefixHeader.pch */,
+				04F4EAEA1EE4F5D900990D28 /* Notification */,
 				04F4EAED1EE4F5D900990D28 /* Property */,
 				04F4EAEF1EE4F5D900990D28 /* Url */,
 			);

@@ -13,7 +13,7 @@
 -(instancetype)initWithFrame:(CGRect)frame{
     if (self = [super initWithFrame:frame]) {
         self.placeholderLabel = [UILabel new];
-        self.placeholderLabel.frame = CGRectMake(0, frame.size.height/4-10, frame.size.width, 20);
+        self.placeholderLabel.frame = CGRectMake(0, 5, frame.size.width, 20);
         [self addSubview:self.placeholderLabel];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(textDidChange) name:UITextViewTextDidChangeNotification object:self]; //通知:监听文字的改变
     }

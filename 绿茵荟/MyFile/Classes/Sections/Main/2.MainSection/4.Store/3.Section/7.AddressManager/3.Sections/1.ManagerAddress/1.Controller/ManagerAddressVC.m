@@ -11,7 +11,7 @@
 #import "EditAddressVC.h"
 @interface ManagerAddressVC ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
-
+@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
 @end
 
 @implementation ManagerAddressVC
@@ -37,6 +37,26 @@
     self.tableView = tableView;
     tableView.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
     tableView.rowHeight = 146;
+    //覆盖一个没有数据时显示的view
+    //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+    {
+        UIView * view = [UIView new];
+        view.frame = tableView.bounds;
+        self.noDateView = view;
+        view.hidden = true;
+        [tableView addSubview:view];
+        view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+        //没有数据提示
+        {
+            UILabel * label = [UILabel new];
+            label.text = @"暂无地址数据";
+            label.textAlignment = NSTextAlignmentCenter;
+            label.textColor = MYCOLOR_46_42_42;
+            label.font = [UIFont systemFontOfSize:15];
+            label.frame = CGRectMake(0, 10, WIDTH, 20);
+            [view addSubview:label];
+        }
+    }
     //解决tableView露白
     self.automaticallyAdjustsScrollViewInsets = false;
     //不显示分割线
@@ -298,8 +318,9 @@
         //        NSLog(@"back:%@",back_dic);
         NSMutableArray * array = back_dic[@"addressList"];
         if (!array || array.count == 0) {
-            [SVProgressHUD showErrorWithStatus:@"暂无地址\n请添加地址" duration:2];
+            self.noDateView.hidden = false;
         }else{
+            self.noDateView.hidden = true;
             self.addressArray = array;
             [self.tableView reloadData];
         }

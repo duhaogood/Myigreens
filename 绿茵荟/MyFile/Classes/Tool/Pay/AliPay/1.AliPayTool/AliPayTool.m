@@ -46,7 +46,10 @@
     // NOTE: 商品数据
     order.biz_content = [BizContent new];
     NSString * body = goodsDictionary[@"goodsList"][0][@"goodsName"];
-    NSString * subject = goodsDictionary[@"goodsList"][0][@"productName"];
+    NSString * subject = goodsDictionary[@"goodsList"][0][@"goodsName"];
+    if ([goodsDictionary[@"goodsList"] count] > 1) {
+        subject = [NSString stringWithFormat:@"%@……等",subject];
+    }
 //    NSLog(@"body:%@",body);
 //    NSLog(@"subject:%@",subject);
 //    NSLog(@"orderId:%ld",orderId);

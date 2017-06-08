@@ -289,8 +289,8 @@
         [SVProgressHUD showWithStatus:@"%d/%d\n上传进度:%0" maskType:SVProgressHUDMaskTypeClear];
         UIImage * img = [self fixOrientation:imgV.image];
         NSData * imageData = UIImageJPEGRepresentation(img,change);
-        while (imageData.length > 2.0 * 1024 * 1024) {
-            change -= 0.05;
+        while (imageData.length > 1.0 * 1024 * 1024) {
+            change -= 0.1;
             imageData = UIImageJPEGRepresentation(img,change);
         }
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];

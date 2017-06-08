@@ -22,7 +22,7 @@
     
     {
         UIWebView * web = [UIWebView new];
-        web.frame = CGRectMake(0, 0, WIDTH, HEIGHT);
+        web.frame = CGRectMake(0, 0, WIDTH, HEIGHT-64);
         if (self.content) {
             [web loadHTMLString:self.content baseURL:nil];
         }else if(self.viewUrl){
@@ -33,13 +33,7 @@
         self.webView = web;
     }
     //返回按钮
-    {
-        UIButton * backBtn = [UIButton new];
-        [backBtn setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
-        backBtn.frame = CGRectMake(10, 30, 30, 30);
-        [self.view addSubview:backBtn];
-        [backBtn addTarget:self action:@selector(popUpViewController) forControlEvents:UIControlEventTouchUpInside];
-    }
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
 }
 
 //返回
@@ -48,11 +42,9 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     [MYTOOL hiddenTabBar];
-    [self.navigationController setNavigationBarHidden:true animated:true];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [MYTOOL showTabBar];
-    [self.navigationController setNavigationBarHidden:false animated:true];
 }
 
 

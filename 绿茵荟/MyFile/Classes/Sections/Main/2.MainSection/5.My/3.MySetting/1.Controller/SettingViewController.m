@@ -17,6 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.member_dic = DHTOOL.memberDic;
     //加载界面数据
     {
@@ -164,7 +165,13 @@
                 switch_btn.frame = CGRectMake(WIDTH - 81, tableView.rowHeight/2-15.5, 51, 31);
 //                NSLog(@"[%.2f,%.2f]",switch_btn.frame.size.width,switch_btn.frame.size.height);
                 [cell addSubview:switch_btn];
-                switch_btn.on = [self.member_dic[@"pushStatus"] boolValue];
+                bool flag = false;//是否开启
+                if ([[UIApplication sharedApplication] currentUserNotificationSettings].types  == UIUserNotificationTypeNone) {//关闭了
+                    flag = false;
+                }else{
+                    flag = true;
+                }
+                switch_btn.on = flag;
                 [switch_btn addTarget:self action:@selector(post_btn_callBack:) forControlEvents:UIControlEventValueChanged];
             }
         }
@@ -274,28 +281,56 @@
 }
 //开启关闭推送
 -(void)post_btn_callBack:(UISwitch *)switch_btn{
-    self.push_state = switch_btn.on;
-    
+    NSURL * url = [NSURL URLWithString:UIApplicationOpenSettingsURLString];
+    if([[UIApplication sharedApplication] canOpenURL:url]) {
+        NSURL *url =[NSURL URLWithString:UIApplicationOpenSettingsURLString];
+        [[UIApplication sharedApplication] openURL:url];
+    }
+}
+//更新推送状态
+-(void)updatePushState{
     NSString * interfaceName = @"/member/updateMember.intf";
-    
+    bool flag = false;//是否开启
+    if ([[UIApplication sharedApplication] currentUserNotificationSettings].types  == UIUserNotificationTypeNone) {//关闭了
+        flag = false;
+    }else{
+        flag = true;
+    }
     NSDictionary * sendDic = @{
-                               @"pushStatus":switch_btn.on ? @"1" :@"0",
+                               @"pushStatus":flag ? @"1" :@"0",
                                @"memberId":MEMBERID
                                };
-#warning 打开不了
-//    NSLog(@"send:%@",sendDic);
+    
     [SVProgressHUD showWithStatus:@"更新中" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        //更新成功,刷新用户信息
-        //获取我的信息
-        NSString * interfaceName = @"/member/getMember.intf";
-        NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
-        [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
-            self.member_dic = back_dic[@"member"];
-            [self.tableView reloadData];
-            [SVProgressHUD showSuccessWithStatus:@"更新成功" duration:0.5];
-        }];
+        //更新成功
+        for (NSString * key in back_dic.allKeys) {
+            NSLog(@"%@:%@",key,back_dic[key]);
+        }
     }];
+}
+//获取最新推送状态
+-(void)getNewPushState{
+    //获取用户中心的存档
+    bool pushState = [[DHTOOL getProjectPropertyWithKey:@"push_state"] boolValue];
+    //获取现在的推送状态
+    bool currentPushState = false;
+    if ([[UIApplication sharedApplication] currentUserNotificationSettings].types  == UIUserNotificationTypeNone) {//关闭了
+        currentPushState = false;
+    }else{
+        currentPushState = true;
+    }
+    //如果不相同
+    if (currentPushState != pushState) {
+        //存入用户中心
+        [DHTOOL setProjectPropertyWithKey:@"push_state" andValue:currentPushState ? @"1" : @"0"];
+        //告知服务器
+        [self updatePushState];
+    }
+    
+    //刷新按钮状态
+    [self.tableView reloadData];
+    
 }
 //退出登录按钮
 -(void)exitLogin{
@@ -321,9 +356,12 @@
 #pragma mark - view隐藏和显示
 -(void)viewWillAppear:(BOOL)animated{
     [MYTOOL hiddenTabBar];
-    [self.tableView reloadData];
+    [self getNewPushState];
+    [MYCENTER_NOTIFICATION addObserver:self selector:@selector(getNewPushState) name:NOTIFICATION_APP_BECOME_ACTIVE object:nil];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [MYTOOL showTabBar];
+    [MYCENTER_NOTIFICATION removeObserver:self name:NOTIFICATION_APP_BECOME_ACTIVE object:nil];
 }
+
 @end

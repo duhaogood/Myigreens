@@ -353,6 +353,7 @@
         }
         //优惠券
         {
+            CGSize size;
             //左侧提示
             {
                 UILabel * label = [UILabel new];
@@ -360,15 +361,23 @@
                 label.textColor = MYCOLOR_46_42_42;
                 label.text = @"优惠券";
                 view_top += 8;
-                CGSize size = [MYTOOL getSizeWithLabel:label];
+                size = [MYTOOL getSizeWithLabel:label];
                 label.frame = CGRectMake(14, view_top, size.width, size.height);
                 [view addSubview:label];
-                view_top += size.height;
             }
             //右侧显示
             {
-                
+                NSString * text = self.orderDictionary[@"bonusTitle"];
+                UILabel * label = [UILabel new];
+                label.text = text;
+                label.font = [UIFont systemFontOfSize:15];
+                label.textColor = [MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1];
+                label.frame = CGRectMake(WIDTH/2-20, view_top + size.height/2 - 8, WIDTH/2, 14);
+                [view addSubview:label];
+                label.textAlignment = NSTextAlignmentRight;
             }
+            
+            view_top += size.height;
         }
         //分割线
         {

@@ -96,7 +96,8 @@
     NSString * code = self.code_tf.text;
     NSDictionary * send_dic = @{
                                 @"mobileNo":self.tel_tf.text,
-                                @"captcha":code
+                                @"captcha":code,
+                                @"memberId":MEMBERID
                                 };
     [MYNETWORKING getWithInterfaceName:@"/sys/checkCaptcha.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
 //        NSLog(@"back:%@",back_dic);

@@ -29,6 +29,7 @@
 @property(nonatomic,strong)UILabel * pointLabel;//积分label
 @property(nonatomic,strong)UILabel * totalPriceLabel;//总价label
 @property(nonatomic,strong)UILabel * totalPriceLabel2;//合计总价label
+@property(nonatomic,strong)UILabel * priceStateLabel;//总价提示label
 @property(nonatomic,assign)SelectPayTypeVC * selectPayVC;//选择支付方式
 
 @property(nonatomic,strong)UIView * middle_goods_view;//中间view
@@ -210,7 +211,7 @@
                 }
                 //可用张数
                 {
-                    NSString * text = self.order[@"couponTitle"];
+                    NSString * text = self.order[@"bonusTitle"];
                     UILabel * label = [UILabel new];
                     label.text = text;
                     label.font = [UIFont systemFontOfSize:15];
@@ -525,6 +526,7 @@
         {
             UILabel * label = [UILabel new];
             label.text = @"合计:";
+            self.priceStateLabel = label;
             label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
             label.frame = CGRectMake(allPriceLabel.frame.origin.x-45, 18.5, 50, 15);
             label.font = [UIFont systemFontOfSize:15];
@@ -605,8 +607,7 @@
     }
     [sendDiction setValue:@"0" forKey:@"paymentId"];
     [sendDiction setValue:MEMBERID forKey:@"memberId"];//用户id
-    /*以后删除*/
-    [sendDiction setValue:@"1" forKey:@"shippingId"];
+    
     if (self.integral) {
         [sendDiction setValue:@"true" forKey:@"exchange"];
     }else{
@@ -645,10 +646,14 @@
     if (addressId) {
         [sendDiction setValue:addressId forKey:@"addressId"];
     }
-    NSLog(@"send:%@",sendDiction);
+    //优惠券id
+    if ([self.order[@"couponId"] longValue]) {
+        [sendDiction setValue:self.order[@"couponId"] forKey:@"bonusId"];
+    }
+//    NSLog(@"send:%@",sendDiction);
     [SVProgressHUD showWithStatus:@"创建订单中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDiction andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"创建订单:%@",back_dic);
+//        NSLog(@"创建订单:%@",back_dic);
         
         [SVProgressHUD showWithStatus:@"加载订单…" maskType:SVProgressHUDMaskTypeClear];
         NSString * interface = @"/shop/order/getOrderInfo.intf";
@@ -785,7 +790,7 @@
     NSString * interfaceName = @"/shop/order/confirmOrder.intf";
     NSMutableDictionary * sendDic = [self getSendDictionaryToConfirmOrder];
     if(bonusDict[@"bonusId"]){
-        [sendDic setValue:bonusDict[@"bonusId"] forKey:@"couponId"];
+        [sendDic setValue:bonusDict[@"bonusId"] forKey:@"bonusId"];
     }
         NSLog(@"send:%@",sendDic);
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
@@ -817,7 +822,7 @@
 //重新加载下侧价格
 -(void)reloadPrice{
     //优惠券标题更新
-    self.discountCouponLabel.text = self.order[@"couponTitle"];
+    self.discountCouponLabel.text = self.order[@"bonusTitle"];
     //运费
     float expressPrice = [self.order[@"expressPrice"] floatValue];
     self.expressPriceLabel.text = [NSString stringWithFormat:@"¥%.2f",expressPrice];
@@ -840,6 +845,14 @@
     self.totalPriceLabel2.text = [NSString stringWithFormat:@"¥%.2f",totalPrice];
     if ((int)totalPrice == totalPrice) {
         self.totalPriceLabel2.text = [NSString stringWithFormat:@"¥%d",(int)totalPrice];
+    }
+    //调整位置
+    {
+        //价格
+        CGSize size = [MYTOOL getSizeWithString:self.totalPriceLabel2.text andFont:self.totalPriceLabel2.font];
+        self.totalPriceLabel2.frame = CGRectMake(WIDTH-14-115-30-size.width, 16, size.width, 18);
+        //总价提示
+        self.priceStateLabel.frame = CGRectMake(self.totalPriceLabel2.frame.origin.x-45, 18.5, 50, 15);
     }
     if ([self.order[@"integral"] boolValue] && self.pointLabel) {
         //积分
@@ -872,8 +885,8 @@
         [sendDic setValue:productId forKey:@"productId"];//productId	产品id	数字	否
     }
     [sendDic setValue:@(self.integral) forKey:@"integral"];//是否积分商品
-    if ([self.order[@"couponId"] longValue]) {
-        [sendDic setValue:self.order[@"couponId"] forKey:@"couponId"];
+    if ([self.order[@"bonusId"] longValue]) {
+        [sendDic setValue:self.order[@"bonusId"] forKey:@"bonusId"];
     }
     
     
@@ -943,6 +956,7 @@
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
     [MYCENTER_NOTIFICATION addObserver:self selector:@selector(paySuccess) name:NOTIFICATION_PAY_SUCCESS object:nil];
+    [MYCENTER_NOTIFICATION addObserver:self selector:@selector(payCancel) name:NOTIFICATION_PAY_SUCCESS object:nil];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [MYTOOL showTabBar];
@@ -950,8 +964,15 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     [MYCENTER_NOTIFICATION removeObserver:self name:NOTIFICATION_PAY_SUCCESS object:nil];
+    [MYCENTER_NOTIFICATION removeObserver:self name:NOTIFICATION_PAY_CANCEL object:nil];
+    
 }
 -(void)paySuccess{
     [self.selectPayVC removeFromSuperViewController:nil];
+    [self.navigationController popToRootViewControllerAnimated:true];
+}
+-(void)payCancel{
+    [self.selectPayVC removeFromSuperViewController:nil];
+    [self.navigationController popToRootViewControllerAnimated:true];
 }
 @end

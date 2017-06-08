@@ -285,6 +285,15 @@
 
 //保存
 -(void)saveAddress{
+    NSString * mobile = [self.key_views[@"mobile"] text];
+    //正则表达式匹配11位手机号码
+    NSString *regex = @"^((13[0-9])|(15[^4,\\D])|(18[0,0-9]))\\d{8}$";
+    NSPredicate * pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+    BOOL isMatch = [pred evaluateWithObject:mobile];
+    if (!isMatch) {
+        [SVProgressHUD showErrorWithStatus:@"手机号码不符合规范" duration:2];
+        return;
+    }
     for (NSString * key in self.key_views.allKeys) {
         id tf = self.key_views[key];
         NSString * string = [tf text];

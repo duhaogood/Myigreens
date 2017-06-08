@@ -182,7 +182,7 @@
             //微信-weixinlogin
             {
                 UIButton * btn = [UIButton new];
-                [btn setImage:[UIImage imageNamed:@"weixinlogin"] forState:UIControlStateNormal];
+                [btn setImage:[UIImage imageNamed:@"login_icon_wechat"] forState:UIControlStateNormal];
                 [btn addTarget:self action:@selector(getAuthWithUserInfoFromWechat) forControlEvents:UIControlEventTouchUpInside];
                 btn.frame = CGRectMake(space * 2 , top, width, width);
                 [view addSubview:btn];
@@ -190,7 +190,7 @@
             //QQ-qqlogin
             {
                 UIButton * btn = [UIButton new];
-                [btn setImage:[UIImage imageNamed:@"qqlogin"] forState:UIControlStateNormal];
+                [btn setImage:[UIImage imageNamed:@"login_icon_qq"] forState:UIControlStateNormal];
                 [btn addTarget:self action:@selector(getAuthWithUserInfoFromQQ) forControlEvents:UIControlEventTouchUpInside];
                 btn.frame = CGRectMake(space * 3 + width, top, width, width);
                 [view addSubview:btn];
@@ -198,7 +198,7 @@
             //微博-sinalogin
             {
                 UIButton * btn = [UIButton new];
-                [btn setImage:[UIImage imageNamed:@"sinalogin"] forState:UIControlStateNormal];
+                [btn setImage:[UIImage imageNamed:@"login_icon_weibo"] forState:UIControlStateNormal];
                 [btn addTarget:self action:@selector(getAuthWithUserInfoFromSina) forControlEvents:UIControlEventTouchUpInside];
                 btn.frame = CGRectMake(space * 4 + width*2, top, width, width);
                 [view addSubview:btn];
@@ -244,7 +244,11 @@
 - (void)getAuthWithUserInfoFromSina{
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_Sina currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
-            
+            NSString * msg = error.userInfo[@"message"];
+            if ([msg isEqualToString:@"Operation is cancel"]) {
+                msg = @"取消登录";
+            }
+            [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {
             UMSocialUserInfoResponse *resp = result;
             NSDictionary * info = @{
@@ -259,7 +263,11 @@
 - (void)getAuthWithUserInfoFromQQ{
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_QQ currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
-            
+            NSString * msg = error.userInfo[@"message"];
+            if ([msg isEqualToString:@"Operation is cancel"]) {
+                msg = @"取消登录";
+            }
+            [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {
             UMSocialUserInfoResponse *resp = result;
             NSDictionary * info = @{
@@ -274,7 +282,11 @@
 - (void)getAuthWithUserInfoFromWechat{
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_WechatSession currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
-            
+            NSString * msg = error.userInfo[@"message"];
+            if ([msg isEqualToString:@"Operation is cancel"]) {
+                msg = @"取消登录";
+            }
+            [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {
             UMSocialUserInfoResponse *resp = result;
             NSDictionary * info = @{

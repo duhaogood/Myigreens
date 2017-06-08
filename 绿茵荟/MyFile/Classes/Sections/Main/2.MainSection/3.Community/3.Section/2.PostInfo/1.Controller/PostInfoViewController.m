@@ -9,6 +9,7 @@
 #import "PostInfoViewController.h"
 #import "SharedManagerVC.h"
 #import "CommunityVC.h"
+#import "SubscribeInfoViewController.h"
 @interface PostInfoViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,assign)UILabel * num_label;//预览图片显示第几张
@@ -55,7 +56,7 @@
         userImgView.layer.masksToBounds = true;
         userImgView.layer.cornerRadius = 20.5;
         [userImgView setUserInteractionEnabled:YES];
-        UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView_user_icon:)];
+        UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickImgOfUser:)];
         tapGesture2.numberOfTapsRequired=1;
         [userImgView addGestureRecognizer:tapGesture2];
     }
@@ -507,6 +508,26 @@
 - (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return UITableViewCellEditingStyleDelete;
+}
+//用户图片点击事件
+-(void)clickImgOfUser:(UITapGestureRecognizer *)tap{
+    bool isLogin = [MYTOOL isLogin];
+    if (!isLogin) {
+        [SVProgressHUD showErrorWithStatus:@"未登录无法查看" duration:2];
+        return;
+    }
+    NSString * byMemberId = self.post_dic[@"member"][@"memberId"];
+    NSDictionary * send_dic = @{
+                                @"memberId":MEMBERID,
+                                @"byMemberId":byMemberId
+                                };
+    [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
+    [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
+        SubscribeInfoViewController * subscribeInfo = [SubscribeInfoViewController new];
+        subscribeInfo.member_dic = back_dic[@"member"];
+        [self.navigationController pushViewController:subscribeInfo animated:true];
+    }];
+    
 }
 //进入编辑模式，按下出现的编辑按钮后,进行删除操作
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath

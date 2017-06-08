@@ -32,7 +32,7 @@
     [self.view addSubview:tableView];
     tableView.rowHeight = 75/667.0*HEIGHT;
     //不显示分割线
-//    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView = tableView;
     self.automaticallyAdjustsScrollViewInsets = false;
 }
@@ -40,29 +40,88 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:true];
     NSDictionary * customerDic = self.myCustomerServiceList[indexPath.row];
-    NSInteger orderId = [customerDic[@"orderId"] longValue];
-    ContactCustomerVC * customer = [ContactCustomerVC new];
-    customer.orderId = orderId;
-    customer.title = @"我的客服";
-    [self.navigationController pushViewController:customer animated:true];
+    
+//    NSLog(@"dic:%@",self.myCustomerServiceList[indexPath.row]);
+    //如果消息未读，置为已读
+    NSString * interface = @"/member/readMyCustomerServiceList.intf";
+    NSObject * obj = customerDic[@"orderId"];
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:@{@"orderId":obj} andSuccess:^(NSDictionary *back_dic) {
+        //重新刷新界面
+        [self getCustomerServiceList];
+        //进入聊天模式
+        NSInteger orderId = [customerDic[@"orderId"] longValue];
+        ContactCustomerVC * customer = [ContactCustomerVC new];
+        customer.orderId = orderId;
+        customer.title = @"我的客服";
+        [self.navigationController pushViewController:customer animated:true];
+    }];
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return self.myCustomerServiceList.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     UITableViewCell * cell = [UITableViewCell new];
-    NSDictionary * customerDic = self.myCustomerServiceList[indexPath.row];
-    NSInteger orderId = [customerDic[@"orderId"] longValue];
-    //订单号
+    NSDictionary * dict = self.myCustomerServiceList[indexPath.row];
+    //头像
+    UIImageView * user_icon = [UIImageView new];
     {
-        UILabel * label = [UILabel new];
-        label.text = [NSString stringWithFormat:@"订单号:%ld",orderId];
-        label.textColor = MYCOLOR_46_42_42;
-        label.font = [UIFont systemFontOfSize:18];
-        [cell addSubview:label];
-        label.frame = CGRectMake(14, 75/667.0*HEIGHT/2-10, WIDTH/2, 20);
+        
+        user_icon.frame = [MYTOOL getRectWithIphone_six_X:14 andY:12 andWidth:34 andHeight:34];
+        user_icon.layer.masksToBounds = true;
+        user_icon.layer.cornerRadius = user_icon.frame.size.width/2;
+        [cell addSubview:user_icon];
+        user_icon.image = [UIImage imageNamed:@"logo"];
+        //是否已读
+        {
+            bool readType = [dict[@"unRead"] intValue] > 0;
+            if (readType) {
+                UIView * view = [UIView new];
+                view.backgroundColor = [UIColor redColor];
+                view.frame = CGRectMake(5, user_icon.frame.origin.y+user_icon.frame.size.height/2-2, 4, 4);
+                view.layer.masksToBounds = true;
+                view.layer.cornerRadius = 2;
+                [cell addSubview:view];
+            }
+        }
     }
-    
+    //名字
+    NSString * name = @"绿茵荟客服";
+    UILabel * name_label = [UILabel new];
+    {
+        name_label.font = [UIFont systemFontOfSize:15];
+        name_label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
+        CGSize size = [MYTOOL getSizeWithString:name andFont:[UIFont systemFontOfSize:15]];
+        name_label.frame = CGRectMake(56/375.0*WIDTH, user_icon.frame.origin.y + user_icon.frame.size.height/2-size.height/2, size.width, 16);
+        name_label.text = name;
+        [cell addSubview:name_label];
+    }
+    //时间
+    NSString * time = dict[@"createtime"];
+    {
+        UILabel * time_label = [UILabel new];
+        time_label.font = [UIFont systemFontOfSize:12];
+        time_label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
+        CGSize size = [MYTOOL getSizeWithString:time andFont:time_label.font];
+        time_label.frame = CGRectMake(WIDTH - size.width - 10, name_label.frame.origin.y+name_label.frame.size.height-12, size.width, 12);
+        time_label.text = time;
+        [cell addSubview:time_label];
+    }
+    //消息内容
+    {
+        UILabel * content_label = [UILabel new];
+        content_label.font = [UIFont systemFontOfSize:14];
+        content_label.text = dict[@"content"];;
+        content_label.textColor = [MYTOOL RGBWithRed:112 green:112 blue:112 alpha:1];
+        content_label.frame = [MYTOOL getRectWithIphone_six_X:56 andY:48 andWidth:270 andHeight:15];
+        [cell addSubview:content_label];
+    }
+    //分割线
+    {
+        UIView * space_view = [UIView new];
+        space_view.backgroundColor = [MYTOOL RGBWithRed:201 green:201 blue:201 alpha:1];
+        space_view.frame = CGRectMake(10, tableView.rowHeight - 2, WIDTH-20, 1);
+        [cell addSubview:space_view];
+    }
     /*
      orderId	订单Id	数字
      content	咨询或回复内容	字符串
@@ -79,25 +138,9 @@
                             };
     [MYTOOL netWorkingWithTitle:@"获取客服列表"];
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"back:%@",back_dic);
+//        NSLog(@"back:%@",back_dic);
         NSArray * array = back_dic[@"myCustomerServiceList"];
         self.myCustomerServiceList = array;
-        
-        
-        self.myCustomerServiceList = @[
-                                       @{
-                                           @"orderId":@(126),
-                                           @"createtime":@"123321123",
-                                           @"unRead":@(2),
-                                           @"content":@"哈哈"
-                                           },
-                                       @{
-                                           @"orderId":@(125),
-                                           @"createtime":@"123321123",
-                                           @"unRead":@(2),
-                                           @"content":@"哈哈"
-                                           }
-                                       ];
         /*
          orderId	订单Id	数字
          content	咨询或回复内容	字符串

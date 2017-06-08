@@ -25,6 +25,10 @@
                               };
     NSString * price = goodsDictionary[@"totalPrice"];
     price = [NSString stringWithFormat:@"%.2f",price.doubleValue*100];
+    NSString * subject = goodsDictionary[@"goodsList"][0][@"goodsName"];
+    if ([goodsDictionary[@"goodsList"] count] > 1) {
+        subject = [NSString stringWithFormat:@"%@……等",subject];
+    }
     NSDictionary * orderDic = @{
                                 @"enable":@"1",
                                 @"id":@"df2b38795ccd40cea71c2e859aec7e5c",
@@ -37,8 +41,8 @@
                                 @"time":@"1436766784625",
                                 @"users_id":@"a38d4da064054e99840efdd91280ee35",
                                 @"way":@"2",
-                                @"productName":goodsDictionary[@"goodsList"][0][@"goodsName"],
-                                @"productDescription":goodsDictionary[@"goodsList"][0][@"productName"]};
+                                @"productName":subject,
+                                @"productDescription":subject};
     
     //下单成功，调用微信支付
     [[lhSharePay sharePay]wxPayWithPayDic:payDic OrderDic:orderDic];
