@@ -10,11 +10,14 @@
 #import "PostInfoViewController.h"
 @interface MyMessageSectionsViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
-@property(nonatomic,strong)NSArray * receiveCommentArray;//收到的评论数组
+@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+@property(nonatomic,strong)NSMutableArray * receiveCommentArray;//收到的评论数组
 @end
 
 @implementation MyMessageSectionsViewController
-
+{
+    int pageNo;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -36,6 +39,43 @@
         [self.view addSubview:tableView];
         tableView.rowHeight = 106/667.0*HEIGHT;
         self.automaticallyAdjustsScrollViewInsets = false;
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            pageNo = 1;
+            [self reloadViewData];
+            // 结束刷新
+            [tableView.mj_header endRefreshing];
+        }];
+        
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        tableView.mj_header.automaticallyChangeAlpha = YES;
+        
+        // 上拉刷新
+        tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            pageNo ++;
+            [self reloadViewData];
+            [tableView.mj_footer endRefreshing];
+        }];
+        //覆盖一个没有数据时显示的view
+        //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+        {
+            UIView * view = [UIView new];
+            view.frame = tableView.bounds;
+            self.noDateView = view;
+            view.hidden = true;
+            [tableView addSubview:view];
+            view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+            //没有数据提示
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"暂无评论数据";
+                label.textAlignment = NSTextAlignmentCenter;
+                label.textColor = MYCOLOR_46_42_42;
+                label.font = [UIFont systemFontOfSize:15];
+                label.frame = CGRectMake(0, 10, WIDTH, 20);
+                [view addSubview:label];
+            }
+        }
     }
     
     
@@ -180,6 +220,13 @@
 //        answer_btn.backgroundColor = [UIColor redColor];
         
     }
+    //分割线
+    {
+        UIView * space = [UIView new];
+        space.frame = CGRectMake(14, tableView.rowHeight - 1, WIDTH - 28, 1);
+        space.backgroundColor = MYCOLOR_181_181_181;
+        [cell addSubview:space];
+    }
     return cell;
 }
 //回复按钮回调
@@ -223,9 +270,32 @@
 -(void)reloadViewData{
     NSString * interfaceName = @"/member/receivedComments.intf";
     [SVProgressHUD showWithStatus:@"加载中…" maskType:SVProgressHUDMaskTypeClear];
-    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID} andSuccess:^(NSDictionary *back_dic) {
-        self.receiveCommentArray = back_dic[@"commentList"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID,@"pageNo":@(pageNo)} andSuccess:^(NSDictionary *back_dic) {
+        NSArray * arr = back_dic[@"commentList"];
+        if (pageNo > 1) {
+            if (arr.count > 0) {
+                [self.receiveCommentArray addObjectsFromArray:arr];
+            }else{
+                pageNo --;
+                [SVProgressHUD showErrorWithStatus:@"到底了" duration:1];
+            }
+        }else{
+            self.receiveCommentArray = [NSMutableArray arrayWithArray:arr];
+        }
+        if (arr.count > 0) {
+            self.noDateView.hidden = true;
+        }else{
+            self.noDateView.hidden = false;
+        }
         [self.tableView reloadData];
+    } andFailure:^(NSError *error_failure) {
+        if (pageNo == 1) {
+            [self.receiveCommentArray removeAllObjects];
+            self.noDateView.hidden = false;
+            [self.tableView reloadData];
+        }else{
+            pageNo --;
+        }
     }];
     
     
@@ -234,6 +304,7 @@
 //此view出现时隐藏tabBar
 - (void)viewWillAppear: (BOOL)animated{
     [MYTOOL hiddenTabBar];
+    pageNo = 1;
     [self reloadViewData];
 }
 //此view消失时还原tabBar

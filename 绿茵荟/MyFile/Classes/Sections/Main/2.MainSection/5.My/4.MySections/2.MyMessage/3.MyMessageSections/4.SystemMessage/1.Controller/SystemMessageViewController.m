@@ -10,11 +10,14 @@
 
 @interface SystemMessageViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
-@property(nonatomic,strong)NSArray * systemMessageArray;//收到的赞数组
+@property(nonatomic,strong)NSMutableArray * systemMessageArray;//收到的赞数组
+@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
 @end
 
 @implementation SystemMessageViewController
-
+{
+    int pageNo;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     //加载主界面
@@ -35,6 +38,42 @@
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView = tableView;
     self.automaticallyAdjustsScrollViewInsets = false;
+    tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        pageNo = 1;
+        [self reloadViewData];
+        // 结束刷新
+        [tableView.mj_header endRefreshing];
+    }];
+    
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    tableView.mj_header.automaticallyChangeAlpha = YES;
+    
+    // 上拉刷新
+    tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        pageNo ++;
+        [self reloadViewData];
+        [tableView.mj_footer endRefreshing];
+    }];
+    //覆盖一个没有数据时显示的view
+    //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+    {
+        UIView * view = [UIView new];
+        view.frame = tableView.bounds;
+        self.noDateView = view;
+        view.hidden = true;
+        [tableView addSubview:view];
+        view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+        //没有数据提示
+        {
+            UILabel * label = [UILabel new];
+            label.text = @"暂无系统消息";
+            label.textAlignment = NSTextAlignmentCenter;
+            label.textColor = MYCOLOR_46_42_42;
+            label.font = [UIFont systemFontOfSize:15];
+            label.frame = CGRectMake(0, 10, WIDTH, 20);
+            [view addSubview:label];
+        }
+    }
 }
 
 #pragma mark - UITableViewDataSource,UITableViewDelegate
@@ -143,15 +182,39 @@
 -(void)reloadViewData{
     NSString * interfaceName = @"/member/systemMessage.intf";
     [SVProgressHUD showWithStatus:@"加载中…" maskType:SVProgressHUDMaskTypeClear];
-    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID} andSuccess:^(NSDictionary *back_dic) {
-        self.systemMessageArray = back_dic[@"systemMessageList"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID,@"pageNo":@(pageNo)} andSuccess:^(NSDictionary *back_dic) {
+        NSArray * arr = back_dic[@"systemMessageList"];
+        if (pageNo > 1) {
+            if (arr.count > 0) {
+                [self.systemMessageArray addObjectsFromArray:arr];
+            }else{
+                pageNo --;
+                [SVProgressHUD showErrorWithStatus:@"到底了" duration:1];
+            }
+        }else{
+            self.systemMessageArray = [NSMutableArray arrayWithArray:arr];
+        }
+        if (arr.count > 0) {
+            self.noDateView.hidden = true;
+        }else{
+            self.noDateView.hidden = false;
+        }
         [self.tableView reloadData];
+    } andFailure:^(NSError *error_failure) {
+        if (pageNo == 1) {
+            [self.systemMessageArray removeAllObjects];
+            self.noDateView.hidden = false;
+            [self.tableView reloadData];
+        }else{
+            pageNo --;
+        }
     }];
 }
 #pragma mark - tabbar显示与隐藏
 //此view出现时隐藏tabBar
 - (void)viewWillAppear: (BOOL)animated{
     [MYTOOL hiddenTabBar];
+    pageNo = 1;
     [self reloadViewData];
 }
 //此view消失时还原tabBar

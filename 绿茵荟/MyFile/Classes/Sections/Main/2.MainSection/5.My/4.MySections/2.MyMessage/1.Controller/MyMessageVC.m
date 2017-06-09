@@ -15,7 +15,6 @@
 @end
 
 @implementation MyMessageVC
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     //加载主界面

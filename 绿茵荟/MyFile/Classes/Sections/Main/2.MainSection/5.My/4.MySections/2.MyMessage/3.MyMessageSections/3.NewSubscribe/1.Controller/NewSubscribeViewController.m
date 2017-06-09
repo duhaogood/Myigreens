@@ -8,13 +8,18 @@
 
 #import "NewSubscribeViewController.h"
 #import "PostInfoViewController.h"
+#import "SubscribeInfoViewController.h"
+
 @interface NewSubscribeViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
-@property(nonatomic,strong)NSArray * subscribeArray;//收到的赞数组
+@property(nonatomic,strong)NSMutableArray * subscribeArray;//收到的赞数组
+@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
 @end
 
 @implementation NewSubscribeViewController
-
+{
+    int pageNo;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -35,24 +40,98 @@
         tableView.dataSource = self;
         tableView.delegate = self;
         [self.view addSubview:tableView];
-        tableView.rowHeight = 106/667.0*HEIGHT;
+        //不显示分割线
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        tableView.rowHeight = 76/667.0*HEIGHT;
         self.tableView = tableView;
         self.automaticallyAdjustsScrollViewInsets = false;
+        tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            pageNo = 1;
+            [self reloadViewData];
+            // 结束刷新
+            [tableView.mj_header endRefreshing];
+        }];
+        
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        tableView.mj_header.automaticallyChangeAlpha = YES;
+        
+        // 上拉刷新
+        tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            pageNo ++;
+            [self reloadViewData];
+            [tableView.mj_footer endRefreshing];
+        }];
+        //覆盖一个没有数据时显示的view
+        //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+        {
+            UIView * view = [UIView new];
+            view.frame = tableView.bounds;
+            self.noDateView = view;
+            view.hidden = true;
+            [tableView addSubview:view];
+            view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+            //没有数据提示
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"暂无订阅信息";
+                label.textAlignment = NSTextAlignmentCenter;
+                label.textColor = MYCOLOR_46_42_42;
+                label.font = [UIFont systemFontOfSize:15];
+                label.frame = CGRectMake(0, 10, WIDTH, 20);
+                [view addSubview:label];
+            }
+        }
     }
-    
 }
 
 #pragma mark - UITableViewDelegate,UITableViewDataSource
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:true];
+    
+    NSDictionary * subscribeDic = self.subscribeArray[indexPath.row];
+    //消息状态置为已读
+    bool flag = [subscribeDic[@"readType"] boolValue];
+    if (!flag) {
+        //将未读信息设成已读
+        NSInteger flowId = [subscribeDic[@"flowId"] longValue];
+        NSString * interfaceName = @"/member/readMessage.intf";
+        NSDictionary * sendDic = @{
+                                   @"flowId":[NSString stringWithFormat:@"%ld",flowId]
+                                   };
+        [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+            [self reloadViewData];
+            
+            NSString * byMemberId = subscribeDic[@"byMemberId"];
+            NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+            NSDictionary * send_dic = @{
+                                        @"memberId":memberId,
+                                        @"byMemberId":byMemberId
+                                        };
+            [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
+            [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
+                SubscribeInfoViewController * subscribeInfo = [SubscribeInfoViewController new];
+                subscribeInfo.member_dic = back_dic[@"member"];
+                [self.navigationController pushViewController:subscribeInfo animated:true];
+            }];
+            
+            
+            
+        }];
+    }
+    
+    
+    
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return self.subscribeArray.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSDictionary * dict = self.subscribeArray[indexPath.row];
     UITableViewCell * cell = [UITableViewCell new];
-#warning 有问题
     //头像
+    UIImageView * user_icon = [UIImageView new];
     {
-        UIImageView * user_icon = [UIImageView new];
+        
         user_icon.frame = [MYTOOL getRectWithIphone_six_X:14 andY:12 andWidth:34 andHeight:34];
         user_icon.layer.masksToBounds = true;
         user_icon.layer.cornerRadius = user_icon.frame.size.width/2;
@@ -63,10 +142,21 @@
         }else{
             user_icon.image = [UIImage imageNamed:@"logo"];
         }
+        //是否已读
+        {
+            bool readType = [dict[@"readType"] boolValue];
+            if (!readType) {
+                UIView * view = [UIView new];
+                view.backgroundColor = [UIColor redColor];
+                view.frame = CGRectMake(5, user_icon.frame.origin.y+user_icon.frame.size.height/2-2, 4, 4);
+                view.layer.masksToBounds = true;
+                view.layer.cornerRadius = 2;
+                [cell addSubview:view];
+            }
+        }
     }
-    
     //名字
-    NSString * name = dict[@"nickName"];
+    NSString * name = dict[@"title"];
     if (name == nil || name.length == 0) {
         name = @"匿名用户";
     }
@@ -75,41 +165,38 @@
         name_label.font = [UIFont systemFontOfSize:15];
         name_label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
         CGSize size = [MYTOOL getSizeWithString:name andFont:[UIFont systemFontOfSize:15]];
-        name_label.frame = CGRectMake(56/375.0*WIDTH, 28/667.0*HEIGHT-8, size.width, 16);
+        name_label.frame = CGRectMake(56/375.0*WIDTH, user_icon.frame.origin.y + user_icon.frame.size.height/2-size.height/2, size.width, 16);
         name_label.text = name;
         [cell addSubview:name_label];
     }
-    //是否订阅按钮
+    //时间
+    NSString * time = dict[@"releaseTime"];
     {
-        UIButton * sub_btn = [UIButton new];
-        sub_btn.frame = CGRectMake(WIDTH-73, tableView.rowHeight/2-15.5, 63, 31);
-        [sub_btn setBackgroundImage:[UIImage imageNamed:@"btn_follow_nor"] forState:UIControlStateNormal];
-        
-        [sub_btn setTitle:@"订阅" forState:UIControlStateNormal];
-        [sub_btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [cell addSubview:sub_btn];
-        sub_btn.titleLabel.font = [UIFont systemFontOfSize:15];
-        [sub_btn addTarget:self action:@selector(sub_btn_callback:) forControlEvents:UIControlEventTouchUpInside];
-        if (indexPath.row%2 == 1) {
-            [sub_btn setBackgroundImage:[UIImage imageNamed:@"btn_green"] forState:UIControlStateNormal];
-            [sub_btn setTitle:@"已订阅" forState:UIControlStateNormal];
-            [sub_btn setTitleColor:[MYTOOL RGBWithRed:113 green:157 blue:52 alpha:1] forState:UIControlStateNormal];
-        }
+        UILabel * time_label = [UILabel new];
+        time_label.font = [UIFont systemFontOfSize:12];
+        time_label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
+        CGSize size = [MYTOOL getSizeWithString:time andFont:time_label.font];
+        time_label.frame = CGRectMake(WIDTH - size.width - 10, name_label.frame.origin.y+name_label.frame.size.height-12, size.width, 12);
+        time_label.text = time;
+        [cell addSubview:time_label];
     }
-    //个人签名
+    //消息内容
     {
         UILabel * content_label = [UILabel new];
         content_label.font = [UIFont systemFontOfSize:15/667.0*HEIGHT];
-        content_label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
-        content_label.frame = [MYTOOL getRectWithIphone_six_X:57 andY:49 andWidth:300 andHeight:15];
-        content_label.text = @"TA什么也没有留下";
+        content_label.text = dict[@"comment"];;
+        content_label.textColor = [MYTOOL RGBWithRed:112 green:112 blue:112 alpha:1];
+        content_label.frame = [MYTOOL getRectWithIphone_six_X:56 andY:48 andWidth:270 andHeight:15];
         [cell addSubview:content_label];
     }
+    //分割线
+    {
+        UIView * space_view = [UIView new];
+        space_view.backgroundColor = [MYTOOL RGBWithRed:201 green:201 blue:201 alpha:1];
+        space_view.frame = CGRectMake(10, tableView.rowHeight - 2, WIDTH-20, 2);
+        [cell addSubview:space_view];
+    }
     return cell;
-}
-//订阅按钮回调
--(void)sub_btn_callback:(UIButton *)btn{
-    [SVProgressHUD showSuccessWithStatus:btn.currentTitle duration:1];
 }
 
 //返回上个界面
@@ -120,15 +207,39 @@
 -(void)reloadViewData{
     NSString * interfaceName = @"/member/newSubscriptions.intf";
     [SVProgressHUD showWithStatus:@"加载中…" maskType:SVProgressHUDMaskTypeClear];
-    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID} andSuccess:^(NSDictionary *back_dic) {
-        self.subscribeArray = back_dic[@"subscriptionsList"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID,@"pageNo":@(pageNo)} andSuccess:^(NSDictionary *back_dic) {
+        NSArray * arr = back_dic[@"subscriptionsList"];
+        if (pageNo > 1) {
+            if (arr.count > 0) {
+                [self.subscribeArray addObjectsFromArray:arr];
+            }else{
+                pageNo --;
+                [SVProgressHUD showErrorWithStatus:@"到底了" duration:1];
+            }
+        }else{
+            self.subscribeArray = [NSMutableArray arrayWithArray:arr];
+        }
+        if (arr.count > 0) {
+            self.noDateView.hidden = true;
+        }else{
+            self.noDateView.hidden = false;
+        }
         [self.tableView reloadData];
+    } andFailure:^(NSError *error_failure) {
+        if (pageNo == 1) {
+            [self.subscribeArray removeAllObjects];
+            self.noDateView.hidden = false;
+            [self.tableView reloadData];
+        }else{
+            pageNo --;
+        }
     }];
 }
 #pragma mark - tabbar显示与隐藏
 //此view出现时隐藏tabBar
 - (void)viewWillAppear: (BOOL)animated{
     [MYTOOL hiddenTabBar];
+    pageNo = 1;
     [self reloadViewData];
 }
 //此view消失时还原tabBar

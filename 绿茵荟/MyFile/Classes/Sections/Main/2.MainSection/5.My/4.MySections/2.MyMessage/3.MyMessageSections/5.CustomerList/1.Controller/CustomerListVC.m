@@ -11,6 +11,7 @@
 @interface CustomerListVC ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)NSArray * myCustomerServiceList;//客服列表数组
+@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
 @end
 
 @implementation CustomerListVC
@@ -35,6 +36,26 @@
     tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView = tableView;
     self.automaticallyAdjustsScrollViewInsets = false;
+    //覆盖一个没有数据时显示的view
+    //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+    {
+        UIView * view = [UIView new];
+        view.frame = tableView.bounds;
+        self.noDateView = view;
+        view.hidden = true;
+        [tableView addSubview:view];
+        view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+        //没有数据提示
+        {
+            UILabel * label = [UILabel new];
+            label.text = @"暂无客服消息";
+            label.textAlignment = NSTextAlignmentCenter;
+            label.textColor = MYCOLOR_46_42_42;
+            label.font = [UIFont systemFontOfSize:15];
+            label.frame = CGRectMake(0, 10, WIDTH, 20);
+            [view addSubview:label];
+        }
+    }
 }
 #pragma mark - UITableViewDataSource,UITableViewDelegate
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -147,6 +168,11 @@
          createtime	订单咨询或回复时间	字符串
          unRead	未读信息条数	数字
          */
+        if (array.count > 0) {
+            self.noDateView.hidden = true;
+        }else{
+            self.noDateView.hidden = false;
+        }
         [self.tableView reloadData];
     }];
 }
