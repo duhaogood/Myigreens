@@ -94,7 +94,7 @@
         [send setValue:info[key] forKey:key];
     }
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
+        NSLog(@"back:%@",back_dic);
         [self updateMemberInfo];
     }];
 }

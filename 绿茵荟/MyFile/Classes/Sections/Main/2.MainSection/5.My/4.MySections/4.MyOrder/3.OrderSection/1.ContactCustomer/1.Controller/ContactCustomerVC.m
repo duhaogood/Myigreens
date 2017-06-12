@@ -102,6 +102,10 @@
 
 //发送消息
 -(void)sendMessage:(NSString *)msg{
+    if (msg == nil || msg.length == 0) {
+        [SVProgressHUD showErrorWithStatus:@"请先输入消息" duration:2];
+        return;
+    }
     NSString * interface = @"/shop/order/createOrderAsk.intf";
     NSDictionary * sendDic = @{
                                @"orderId":[NSString stringWithFormat:@"%ld",self.orderId],

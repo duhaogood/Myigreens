@@ -130,7 +130,7 @@
         }
         spaceView.frame = CGRectMake(0, 70 + 240.0*row-10, WIDTH, 10);
     }else if (showType == 3) {//中间的新鲜热卖
-        NSLog(@"bannerList:%@",dictionary[@"bannerList"]);
+//        NSLog(@"bannerList:%@",dictionary[@"bannerList"]);
         //图片序号
         {
             UILabel * leftLabel = [UILabel new];
@@ -175,6 +175,41 @@
         spaceView.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
         [cell addSubview:spaceView];
         spaceView.frame = CGRectMake(0, 332-10, WIDTH, 10);
+    }else if(showType == 2){
+        float height = WIDTH/950.0*440;
+        NSArray * bannerList = dictionary[@"bannerList"];
+        NSLog(@"banner:%@",bannerList);
+        float img_width = (WIDTH - 30)/2.0;
+        //横向滚动
+        UIScrollView * scroll = [UIScrollView new];
+        scroll.frame = CGRectMake(0, 50, WIDTH, height - 50 - 10);
+//        scroll.backgroundColor = [UIColor greenColor];
+        [cell addSubview:scroll];
+        float left = 10;
+        //添加图片
+        for (int i = 0; i < bannerList.count ; i ++) {
+            NSDictionary * imgDic = bannerList[i];
+            NSString * bannerUrl = imgDic[@"bannerUrl"];//图片链接
+            NSInteger bannerId = [imgDic[@"bannerId"] longValue];//tag
+            NSLog(@"id:%ld",bannerId);
+            UIImageView * icon = [UIImageView new];
+            icon.frame = CGRectMake(10 + (10+img_width)*i, 0, img_width, height - 50 - 10);
+            icon.tag = bannerId;
+            [icon sd_setImageWithURL:[NSURL URLWithString:bannerUrl]];
+            [scroll addSubview:icon];
+            left += (10+img_width)*i;
+            //添加点击事件
+            [icon setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:delegate action:@selector(clickImgOfGoodsGroup:)];
+            tapGesture.numberOfTapsRequired=1;
+            [icon addGestureRecognizer:tapGesture];
+        }
+        
+        //分割线
+        UIView * spaceView = [UIView new];
+        spaceView.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
+        [cell addSubview:spaceView];
+        spaceView.frame = CGRectMake(0, height-10, WIDTH, 10);
     }
     
     return (StorePageTableViewCell *)cell;

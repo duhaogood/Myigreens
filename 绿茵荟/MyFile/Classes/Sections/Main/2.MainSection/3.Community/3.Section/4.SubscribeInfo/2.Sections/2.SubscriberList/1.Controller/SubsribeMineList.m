@@ -64,6 +64,7 @@
 #pragma mark - UITableViewDataSource,UITableViewDelegate
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:true];
+    NSDictionary * memberDic = self.member_array[indexPath.row];
     bool isLogin = [MYTOOL isLogin];
     if (!isLogin) {
         [SVProgressHUD showErrorWithStatus:@"未登录无法查看" duration:2];
@@ -72,7 +73,7 @@
     NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
     NSDictionary * send_dic = @{
                                 @"memberId":memberId,
-                                @"byMemberId":self.byMemberId
+                                @"byMemberId":memberDic[@"memberId"]
                                 };
     [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
@@ -190,8 +191,8 @@
     NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
     if (memberId) {
         [send_dic setValue:memberId forKey:@"memberId"];//
-        [send_dic setValue:memberId forKey:@"byMemberId"];//byMemberId
     }
+    [send_dic setValue:self.byMemberId forKey:@"byMemberId"];//byMemberId
     [send_dic setValue:@"2" forKey:@"type"];//
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:send_dic andSuccess:^(NSDictionary * back_dic){
         bool flag = [back_dic[@"code"] boolValue];

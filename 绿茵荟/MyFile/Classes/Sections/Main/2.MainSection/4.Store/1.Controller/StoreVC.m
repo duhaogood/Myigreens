@@ -288,7 +288,7 @@
     int count = 1;
     for (NSDictionary * dic in self.tagsList_array) {
         NSInteger showType = [dic[@"showType"] longValue];//展示类型
-        if (showType == 1 || showType == 3) {
+        if (showType == 1 || showType == 3 || showType == 2) {
             count ++;
         }
     }
@@ -299,6 +299,23 @@
     if (indexPath.row == 0) {
         return 267;
     }else{
+        NSDictionary * dictt = self.tagsList_array[indexPath.row-1];
+        int showType = [dictt[@"showType"] intValue];
+        if (showType == 1) {
+            NSArray * arr = dictt[@"goodsList"];
+            NSInteger row = arr.count/2;
+            if (arr.count > row * 2) {
+                row ++;
+            }
+            return 70 + 240.0*row;
+        }else if(showType == 2){
+            return WIDTH/950.0*440;
+        }else{
+            return 332;
+        }
+        
+        
+        
         NSArray * arr = self.tagsList_array[indexPath.row-1][@"goodsList"];
         if (arr) {
             NSInteger row = arr.count/2;
@@ -318,15 +335,23 @@
         return [[StorePageTableViewCell alloc] cellWithDictionary:self.tagsList_array[indexPath.row - 1] andDelegate:self];
     }
 }
-
 #pragma mark - 按钮回调
+//点击商品组图片事件
+-(void)clickImgOfGoodsGroup:(UITapGestureRecognizer *)tap{
+    NSInteger bannerId = tap.view.tag;
+    NSLog(@"bannerId:%ld",bannerId);
+    
+    
+    
+    
+}
 //商品分类图片点击事件
 -(void)clickImgOfGoodsCategory:(UITapGestureRecognizer *)tap{
     NSInteger goodsCategory = tap.view.tag;
 //    NSLog(@"点击goodsCategory:%ld",goodsCategory);
     NSString * interface = @"/shop/goods/getGoodsCat.intf";
     NSDictionary * send = @{
-                            @"goodsCatId":[NSString stringWithFormat:@"%ld",goodsCategory]
+                            @"goodsCatId":[NSString stringWithFormat:@"%ld",(long)goodsCategory]
                             };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
 //        NSLog(@"back:%@",back_dic);
@@ -384,7 +409,7 @@
                         cityId = @"320300";
                     }
                     NSDictionary * sendDict = @{
-                                                @"goodsId":[NSString stringWithFormat:@"%ld",goodsId],
+                                                @"goodsId":[NSString stringWithFormat:@"%ld",(long)goodsId],
                                                 @"cityId":cityId
                                                 };
                     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDict andSuccess:^(NSDictionary *back_dic) {
@@ -455,6 +480,7 @@
 //                        NSLog(@"分类数据:%@",self.goodsCategory_array);
             [self.storeNetWorking getViewData:^(NSDictionary * backDict3) {//获取商品组数据
                 //self.tagsList_array
+//                NSLog(@"back:%@",backDict3);
                 NSArray * back_arr = backDict3[@"tagsList"];
                 NSMutableArray * arr = [NSMutableArray new];
                 for (NSDictionary * arr_dic in back_arr) {
@@ -467,8 +493,16 @@
                 }
                 for (NSDictionary * arr_dic in back_arr) {
                     NSInteger showType = [arr_dic[@"showType"] longValue];
+                    NSArray * bannerList = arr_dic[@"bannerList"];
+                    if (showType == 2 && bannerList && bannerList.count > 0) {//商品组
+                        [arr addObject:arr_dic];
+                        break;
+                    }
+                }
+                for (NSDictionary * arr_dic in back_arr) {
+                    NSInteger showType = [arr_dic[@"showType"] longValue];
                     NSArray * goodsList = arr_dic[@"goodsList"];
-                    if (showType == 1 && goodsList && goodsList.count > 0) {//下面的商品组
+                    if (showType == 1 && goodsList && goodsList.count > 0) {//下面的商品标签
                         [arr addObject:arr_dic];
                     }
                 }
@@ -500,6 +534,14 @@
                     NSInteger showType = [arr_dic[@"showType"] longValue];
                     NSArray * bannerList = arr_dic[@"bannerList"];
                     if (showType == 3 && bannerList && bannerList.count > 0) {//中间的新鲜热卖
+                        [arr addObject:arr_dic];
+                        break;
+                    }
+                }
+                for (NSDictionary * arr_dic in back_arr) {
+                    NSInteger showType = [arr_dic[@"showType"] longValue];
+                    NSArray * bannerList = arr_dic[@"bannerList"];
+                    if (showType == 2 && bannerList && bannerList.count > 0) {//商品组
                         [arr addObject:arr_dic];
                         break;
                     }

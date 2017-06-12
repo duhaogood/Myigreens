@@ -29,5 +29,6 @@
 -(void)clickAllBtn_callBack:(UIButton * )btn;
 //商品图片点击事件
 -(void)clickImgOfGoods:(UITapGestureRecognizer *)tap;
-
+//点击商品组图片事件
+-(void)clickImgOfGoodsGroup:(UITapGestureRecognizer *)tap;
 @end
