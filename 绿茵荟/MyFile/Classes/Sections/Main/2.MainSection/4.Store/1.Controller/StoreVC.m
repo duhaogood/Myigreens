@@ -313,19 +313,6 @@
         }else{
             return 332;
         }
-        
-        
-        
-        NSArray * arr = self.tagsList_array[indexPath.row-1][@"goodsList"];
-        if (arr) {
-            NSInteger row = arr.count/2;
-            if (arr.count > row * 2) {
-                row ++;
-            }
-            return 70 + 240.0*row;
-        }else{
-            return 332;
-        }
     }
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -340,6 +327,18 @@
 -(void)clickImgOfGoodsGroup:(UITapGestureRecognizer *)tap{
     NSInteger bannerId = tap.view.tag;
     NSLog(@"bannerId:%ld",bannerId);
+    NSDictionary * send = @{@"bannerId":@(bannerId)};
+    NSString * interface = @"/shop/goods/getGoodsContent.intf";
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic1) {
+        NSLog(@"back1:%@",back_dic1);
+        NSString * interface2 = @"/shop/goods/getGoodList.intf";
+        [MYNETWORKING getWithInterfaceName:interface2 andDictionary:send andSuccess:^(NSDictionary *back_dic2) {
+            NSLog(@"back2:%@",back_dic2);
+            
+            
+        }];
+        
+    }];
     
     
     

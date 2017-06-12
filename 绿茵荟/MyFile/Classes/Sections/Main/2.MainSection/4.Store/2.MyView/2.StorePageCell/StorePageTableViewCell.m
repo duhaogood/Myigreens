@@ -178,7 +178,7 @@
     }else if(showType == 2){
         float height = WIDTH/950.0*440;
         NSArray * bannerList = dictionary[@"bannerList"];
-        NSLog(@"banner:%@",bannerList);
+//        NSLog(@"banner:%@",bannerList);
         float img_width = (WIDTH - 30)/2.0;
         //横向滚动
         UIScrollView * scroll = [UIScrollView new];
@@ -191,7 +191,7 @@
             NSDictionary * imgDic = bannerList[i];
             NSString * bannerUrl = imgDic[@"bannerUrl"];//图片链接
             NSInteger bannerId = [imgDic[@"bannerId"] longValue];//tag
-            NSLog(@"id:%ld",bannerId);
+//            NSLog(@"id:%ld",bannerId);
             UIImageView * icon = [UIImageView new];
             icon.frame = CGRectMake(10 + (10+img_width)*i, 0, img_width, height - 50 - 10);
             icon.tag = bannerId;
