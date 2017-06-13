@@ -124,6 +124,7 @@
         if (category == 1) {//富文本
             NSString * content = carouselDic[@"content"];
             TextBannerVC * text = [TextBannerVC new];
+            text.title = carouselDic[@"bannerTitle"];
             text.content = content;
             [self.navigationController pushViewController:text animated:true];
         }else if (category == 2) {//商品
@@ -142,6 +143,7 @@
 //                NSLog(@"商品:%@",back_dic);
                 GoodsInfoViewController * info = [GoodsInfoViewController new];
                 info.goodsInfoDictionary = back_dic[@"goods"];
+                info.title = carouselDic[@"bannerTitle"];
                 [self.navigationController pushViewController:info animated:true];
             }];
         }else if (category == 3) {//帖子
@@ -185,10 +187,10 @@
             }];
             
         }else if (category == 5) {//url加载web
-            NSLog(@"carouselDic:%@",carouselDic);
             NSString * viewUrl = carouselDic[@"viewUrl"];
             TextBannerVC * text = [TextBannerVC new];
             text.viewUrl = viewUrl;
+            text.title = carouselDic[@"bannerTitle"];
             [self.navigationController pushViewController:text animated:true];
         }
     }else{//导航设置
@@ -326,14 +328,14 @@
 //点击商品组图片事件
 -(void)clickImgOfGoodsGroup:(UITapGestureRecognizer *)tap{
     NSInteger bannerId = tap.view.tag;
-    NSLog(@"bannerId:%ld",bannerId);
+//    NSLog(@"bannerId:%ld",bannerId);
     NSDictionary * send = @{@"bannerId":@(bannerId)};
     NSString * interface = @"/shop/goods/getGoodsContent.intf";
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic1) {
-        NSLog(@"back1:%@",back_dic1);
+//        NSLog(@"back1:%@",back_dic1);
         NSString * interface2 = @"/shop/goods/getGoodList.intf";
         [MYNETWORKING getWithInterfaceName:interface2 andDictionary:send andSuccess:^(NSDictionary *back_dic2) {
-            NSLog(@"back2:%@",back_dic2);
+//            NSLog(@"back2:%@",back_dic2);
             
             
         }];
@@ -553,7 +555,7 @@
                     }
                 }
                 self.tagsList_array = [NSArray arrayWithArray:arr];
-                                NSLog(@"count3:%ld",self.tagsList_array.count);
+//                                NSLog(@"count3:%ld",self.tagsList_array.count);
                 //此时加载界面
                 [self.tableView reloadData];
             }];

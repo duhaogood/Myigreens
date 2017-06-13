@@ -224,7 +224,7 @@
         }else{
             self.receiveCommentArray = [NSMutableArray arrayWithArray:arr];
         }
-        if (arr.count > 0) {
+        if (self.receiveCommentArray.count > 0) {
             self.noDateView.hidden = true;
         }else{
             self.noDateView.hidden = false;

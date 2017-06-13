@@ -296,7 +296,7 @@
 //举报帖子入口
 -(void)reportBtnCallBack{
     
-    NSLog(@"帖子:%@",self.post_dic);
+//    NSLog(@"帖子:%@",self.post_dic);
     int myMemberId = [MEMBERID intValue];
     NSInteger memberId = [self.post_dic[@"member"][@"memberId"] longValue];
     if (myMemberId == memberId) {//自己帖子，删除
@@ -380,11 +380,16 @@
         userIcon.image = [UIImage imageNamed:@"logo"];
         userIcon.layer.masksToBounds = true;
         userIcon.layer.cornerRadius = 20;
+        userIcon.tag = [reviewDic[@"memberId"] longValue];
         NSString * headUrl = reviewDic[@"headUrl"];
         if (headUrl && headUrl.length) {
             [userIcon sd_setImageWithURL:[NSURL URLWithString:headUrl]];
         }
         [cell addSubview:userIcon];
+        [userIcon setUserInteractionEnabled:YES];
+        UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickCommentUser:)];
+        tapGesture2.numberOfTapsRequired=1;
+        [userIcon addGestureRecognizer:tapGesture2];
     }
     //名字
     float left = 0;
@@ -509,6 +514,26 @@
 {
     return UITableViewCellEditingStyleDelete;
 }
+//点击评论用户头像
+-(void)clickCommentUser:(UITapGestureRecognizer *)tap{
+    bool isLogin = [MYTOOL isLogin];
+    if (!isLogin) {
+        [SVProgressHUD showErrorWithStatus:@"未登录无法查看" duration:2];
+        return;
+    }
+    NSObject * byMemberId = @(tap.view.tag);
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    NSDictionary * send_dic = @{
+                                @"memberId":memberId,
+                                @"byMemberId":byMemberId
+                                };
+    [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
+    [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
+        SubscribeInfoViewController * subscribeInfo = [SubscribeInfoViewController new];
+        subscribeInfo.member_dic = back_dic[@"member"];
+        [self.navigationController pushViewController:subscribeInfo animated:true];
+    }];
+}
 //用户图片点击事件
 -(void)clickImgOfUser:(UITapGestureRecognizer *)tap{
     bool isLogin = [MYTOOL isLogin];
@@ -599,7 +624,7 @@
         [self.navigationController pushViewController:loginVC animated:true];
         return ;
     }
-    NSLog(@"帖子:%@",self.post_dic);
+//    NSLog(@"帖子:%@",self.post_dic);
     NSDictionary * comment = self.review_array[tap.view.tag];
 //    NSLog(@"comment:%@",comment);
     NSInteger postCommentId = [self.review_array[tap.view.tag][@"postCommentId"] longValue];
@@ -971,7 +996,6 @@
                                @"pageNo":[NSString stringWithFormat:@"%d",review_pageNo]
                                };
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
         NSArray * arr = back_dic[@"postCommentList"];
         if (review_pageNo > 1) {
             if (arr == nil || arr.count == 0) {

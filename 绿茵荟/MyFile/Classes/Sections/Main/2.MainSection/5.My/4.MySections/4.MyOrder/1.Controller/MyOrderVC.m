@@ -334,6 +334,9 @@
                 if (price == (int)price) {
                     label.text = [NSString stringWithFormat:@"￥%d",(int)price];
                 }
+//                if ([goodsDic[@"point"] floatValue] > 0) {
+//                    label.text = [NSString stringWithFormat:@"%@积分 + %@",goodsDic[@"point"],label.text];
+//                }
                 CGSize size = [MYTOOL getSizeWithLabel:label];
                 label.frame = CGRectMake(100, 90, size.width, size.height);
                 [bgView addSubview:label];
@@ -388,6 +391,10 @@
             if (totalPrice == (int)totalPrice) {
                 label.text = [NSString stringWithFormat:@"￥%d",(int)totalPrice];
             }
+//            int totalPoint = [orderDic[@"totalPoint"] intValue];
+//            if (totalPoint > 0) {
+//                label.text = [NSString stringWithFormat:@"%d积分 + %@",totalPoint,label.text];
+//            }
             CGSize size = [MYTOOL getSizeWithLabel:label];
             left -= size.width;
             label.frame = CGRectMake(left, top-size.height, size.width, size.height);

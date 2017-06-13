@@ -117,6 +117,19 @@
             
             
         }];
+    }else{
+        NSString * byMemberId = subscribeDic[@"byMemberId"];
+        NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+        NSDictionary * send_dic = @{
+                                    @"memberId":memberId,
+                                    @"byMemberId":byMemberId
+                                    };
+        [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
+        [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
+            SubscribeInfoViewController * subscribeInfo = [SubscribeInfoViewController new];
+            subscribeInfo.member_dic = back_dic[@"member"];
+            [self.navigationController pushViewController:subscribeInfo animated:true];
+        }];
     }
     
     
@@ -219,7 +232,7 @@
         }else{
             self.subscribeArray = [NSMutableArray arrayWithArray:arr];
         }
-        if (arr.count > 0) {
+        if (self.subscribeArray.count > 0) {
             self.noDateView.hidden = true;
         }else{
             self.noDateView.hidden = false;

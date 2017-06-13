@@ -133,17 +133,12 @@
         view.frame = CGRectMake(0, 0, WIDTH, 70);
         [mainView addSubview:view];
         view.contentSize =  CGSizeMake(WIDTH*circle_img_title_value_array.count/5.7, 0);
-        for (int i = 0; i < circle_img_title_value_array.count; i ++) {
-            UIView * v = [UIView new];
-            v.frame = CGRectMake(i*view.contentSize.width/circle_img_title_value_array.count, 10, view.contentSize.width/circle_img_title_value_array.count-5, view.frame.size.height-20);
-            v.backgroundColor = [UIColor greenColor];
-            // [view addSubview:v];
-        }
+        
         circle_image_title_dictionary = [NSMutableDictionary new];
         float width_image = 30;//图片高度及宽度
         float width_label = 50;//label宽度
         float height_label = 20;//label高度
-        float space = (view.contentSize.width - 40 -30)/6;
+        float space = (view.contentSize.width - 40 -30)/(circle_img_title_value_array.count-1);
         for (int i = 0; i < circle_img_title_value_array.count; i ++) {
             //图片
             UIImageView * imgV = [UIImageView new];
@@ -293,14 +288,6 @@
 }
 //右按钮
 -(void)topOfNavigationBar{
-    if (![MYTOOL isLogin]) {
-        //跳转至登录页
-        LoginViewController * loginVC = [LoginViewController new];
-        loginVC.delegate = self;
-        loginVC.donotUpdate = self.donotUpdate;
-        [self.navigationController pushViewController:loginVC animated:true];
-        return;
-    }
     NSString * interfaceName = @"/community/getTop10.intf";
     [SVProgressHUD showWithStatus:@"获取top10…" maskType:SVProgressHUDMaskTypeClear];
     NSMutableDictionary * send_dic = [NSMutableDictionary new];
@@ -439,6 +426,7 @@
 #pragma mark - 上拉、下拉刷新
 -(void)headerRefresh{
     pageNo = 1;
+    [self getCircleTypeArray];
     [self loadDefaultData];
 }
 -(void)footerRefresh{

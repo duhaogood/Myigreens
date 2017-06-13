@@ -215,7 +215,8 @@
         answer_btn.frame = [MYTOOL getRectWithIphone_six_X:333 andY:64 andWidth:32 andHeight:16];
         [answer_btn setTitleColor:[MYTOOL RGBWithRed:114 green:158 blue:52 alpha:1] forState:UIControlStateNormal];
         [cell addSubview:answer_btn];
-        answer_btn.tag = [dict[@"postId"] longValue];
+#warning 待增加字段
+        answer_btn.tag = [dict[@"postCommentId"] longValue];
         [answer_btn addTarget:self action:@selector(answer_callback:) forControlEvents:UIControlEventTouchUpInside];
 //        answer_btn.backgroundColor = [UIColor redColor];
         
@@ -238,6 +239,10 @@
         
         [SVProgressHUD showWithStatus:@"回复中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
         NSString * msg = alert.textFields.firstObject.text;
+        if (msg.length == 0) {
+            [SVProgressHUD showErrorWithStatus:@"请输入内容" duration:2];
+            return;
+        }
         //拼接上传参数
         NSMutableDictionary * send_dic = [NSMutableDictionary new];
         [send_dic setValue:msg forKey:@"comment"];
@@ -282,7 +287,7 @@
         }else{
             self.receiveCommentArray = [NSMutableArray arrayWithArray:arr];
         }
-        if (arr.count > 0) {
+        if (self.receiveCommentArray.count > 0) {
             self.noDateView.hidden = true;
         }else{
             self.noDateView.hidden = false;

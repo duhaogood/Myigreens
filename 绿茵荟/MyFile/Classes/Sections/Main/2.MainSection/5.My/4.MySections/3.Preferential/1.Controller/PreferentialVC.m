@@ -56,7 +56,7 @@
 }
 //去商城转转事件
 -(void)gotoStore{
-    NSLog(@"走起");
+//    NSLog(@"走起");
     AppDelegate * app = (AppDelegate *)[UIApplication sharedApplication].delegate;
     MainVC * main = [MainVC new];
     app.window.rootViewController = main;

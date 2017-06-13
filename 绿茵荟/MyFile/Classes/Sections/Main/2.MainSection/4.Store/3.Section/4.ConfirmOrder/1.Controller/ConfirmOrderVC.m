@@ -785,16 +785,16 @@
 }
 //选择优惠券回调
 -(void)changeBonusWithDictionary:(NSDictionary *)bonusDict{
-    NSLog(@"bonusDict:%@",bonusDict);
+//    NSLog(@"bonusDict:%@",bonusDict);
     [SVProgressHUD showWithStatus:@"更新中…" maskType:SVProgressHUDMaskTypeClear];
     NSString * interfaceName = @"/shop/order/confirmOrder.intf";
     NSMutableDictionary * sendDic = [self getSendDictionaryToConfirmOrder];
     if(bonusDict[@"bonusId"]){
         [sendDic setValue:bonusDict[@"bonusId"] forKey:@"bonusId"];
     }
-        NSLog(@"send:%@",sendDic);
+//        NSLog(@"send:%@",sendDic);
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-                NSLog(@"back:%@",back_dic);
+//                NSLog(@"back:%@",back_dic);
         self.goodsList = back_dic[@"goodsList"];
         self.order = back_dic[@"order"];
         self.receiptAddress = back_dic[@"receiptAddress"];

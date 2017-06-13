@@ -447,7 +447,7 @@
 -(void)updateGoodsCartDataWithGoodsDictionary:(NSDictionary *)goodsDic{
     NSString * interfaceName = @"/shop/cart/getGoods.intf";
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:goodsDic andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"back:%@",back_dic);
+//        NSLog(@"back:%@",back_dic);
         [self getGoodsOfCartData];
     }];
     /*
@@ -561,7 +561,7 @@
 //    NSLog(@"send:%@",sendDic);
     [SVProgressHUD showWithStatus:@"结算中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"back:%@",back_dic);
+//        NSLog(@"back:%@",back_dic);
         ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
         orderVC.order = back_dic[@"order"];
         orderVC.goodsList = back_dic[@"goodsList"];
@@ -622,7 +622,7 @@
                                @"memberId":MEMBERID
                                };
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"购物车:%@",back_dic);
+//        NSLog(@"购物车:%@",back_dic);
         NSArray * array = back_dic[@"cartList"];
         if (array == nil || array.count == 0) {
             self.noDateView.hidden = false;

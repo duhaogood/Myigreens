@@ -13,7 +13,9 @@
 @end
 
 @implementation AccountTieViewController
-
+{
+    NSString * currentTitle;//要操作的类型
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.member_dic = DHTOOL.memberDic;
@@ -110,6 +112,7 @@
 }
 //取消绑定
 -(void)cancelTieWithTitle:(NSString *)title andButton:(UISwitch *)btn{
+    
     //@"新浪微博",@"微信",@"QQ"
     //wechat 微信 ,qq QQ ,weibo 微博
     NSString * interface = @"/member/cancelBind.intf";
@@ -127,7 +130,8 @@
                             };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
         if ([back_dic[@"code"] boolValue]) {
-            [self updateMemberInfo];
+            [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%@取消成功",title] duration:1];
+//            [self updateMemberInfo];
         }else{
             btn.on = true;;
         }
@@ -259,6 +263,7 @@
 #pragma mark - view隐藏和显示
 -(void)viewWillAppear:(BOOL)animated{
     [MYTOOL hiddenTabBar];
+    [self getUserInfoAgagin];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [MYTOOL showTabBar];

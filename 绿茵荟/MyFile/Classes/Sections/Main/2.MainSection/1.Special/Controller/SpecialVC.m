@@ -18,7 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
-//    NSLog(@"[%.0f]",self.view.frame.size.height);
+    NSLog(@"[%.0f]",self.view.frame.size.height);
     
     self.data_array = [NSMutableArray new];
     for(int i = 0;i < 5;i++){

@@ -53,7 +53,7 @@
         //每日精选  -- 文字
         UILabel * title_label = [UILabel new];
         title_label.text = @"每日精选";
-        title_label.textColor = [UIColor greenColor];
+        title_label.textColor = [MYTOOL RGBWithRed:116 green:158 blue:59 alpha:1];
         title_label.frame = CGRectMake(WIDTH/2-60, top + 13, 120, 40);
         title_label.textAlignment = NSTextAlignmentCenter;
         [headerView addSubview:title_label];

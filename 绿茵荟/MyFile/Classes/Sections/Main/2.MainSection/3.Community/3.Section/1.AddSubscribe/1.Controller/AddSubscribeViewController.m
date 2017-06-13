@@ -263,6 +263,11 @@
                                         @"memberId":memberId,
                                         @"byMemberId":byMemberId
                                         };
+            if ([memberId intValue] == [byMemberId intValue]) {
+                [SVProgressHUD showErrorWithStatus:@"就不要对自己操作啦" duration:2];
+                return;
+            }
+            
 //            NSLog(@"send:%@",send_dic);
             [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
                 pageNo = 1;

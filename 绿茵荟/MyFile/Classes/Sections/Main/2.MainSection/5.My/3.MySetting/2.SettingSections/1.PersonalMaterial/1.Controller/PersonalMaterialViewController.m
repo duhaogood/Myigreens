@@ -11,7 +11,7 @@
 #import "PersonalSignViewController.h"
 #import "SettingViewController.h"
 
-@interface PersonalMaterialViewController ()<UIPickerViewDelegate,UIPickerViewDataSource,UITableViewDataSource,UITableViewDelegate,UIScrollViewDelegate>
+@interface PersonalMaterialViewController ()<UIPickerViewDelegate,UIPickerViewDataSource,UITableViewDataSource,UITableViewDelegate,UIScrollViewDelegate,UINavigationControllerDelegate>
 @property(nonatomic,strong)UITableView * tableView;//主tableView
 @property(nonatomic,strong)UIImageView * userImgView;//用户头像框
 @property(nonatomic,strong)UIPickerView * picker;//用户选择pickerView

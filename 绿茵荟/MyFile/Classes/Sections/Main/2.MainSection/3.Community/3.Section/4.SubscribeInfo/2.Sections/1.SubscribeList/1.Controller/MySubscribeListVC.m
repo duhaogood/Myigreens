@@ -142,7 +142,7 @@
         btn.frame = CGRectMake(WIDTH-63-14, 25, 63, 30);
         btn.tag = [self.member_array[indexPath.row][@"memberId"] longValue];
         [btn addTarget:self action:@selector(subscribeOrNot:) forControlEvents:UIControlEventTouchUpInside];
-        [cell addSubview:btn];
+//        [cell addSubview:btn];
         btn.titleLabel.font = [UIFont systemFontOfSize:15];
         [btn setBackgroundImage:[UIImage imageNamed:@"btn_info_follow_pre"] forState:UIControlStateNormal];
         [btn setTitle:@"已订阅" forState:UIControlStateNormal];

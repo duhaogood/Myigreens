@@ -14,7 +14,7 @@
 #import <UMSocialCore/UMSocialCore.h>
 #import "JPUSHService.h"
 #import <AdSupport/AdSupport.h>
-
+#import "MyOrderVC.h"
 // iOS10注册APNs所需头 件
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max 
 #import <UserNotifications/UserNotifications.h>
@@ -159,10 +159,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
                 //            NSLog(@"result = %@",resultDic);
                 int resultStatus = [resultDic[@"resultStatus"] intValue];
                 if (resultStatus == 9000) {
-                    [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
-                    MainVC * main = (MainVC *)self.window.rootViewController;
-                    [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                    main.selectedIndex = 3;
+                    [self paySuccess];
                 }
             }];
             
@@ -189,6 +186,18 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
         [self receiveWebRequestWithUrl:url];
     }
     return result;
+    
+}
+//支付成功后
+-(void)paySuccess{
+    [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
+    MainVC * main = (MainVC *)self.window.rootViewController;
+    main.selectedIndex = 3;
+    
+    UINavigationController * nc = main.childViewControllers[3];
+    [nc popToRootViewControllerAnimated:true];
+    MyOrderVC * order = [MyOrderVC new];
+    [nc pushViewController:order animated:true];
     
 }
 #pragma mark - 第三方的跳转
@@ -228,10 +237,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
                 NSLog(@"result1 = %@",resultDic);
                 int resultStatus = [resultDic[@"resultStatus"] intValue];
                 if (resultStatus == 9000) {
-                    [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
-                    MainVC * main = (MainVC *)self.window.rootViewController;
-                    [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                    main.selectedIndex = 3;
+                    [self paySuccess];
                 }
             }];
             
@@ -277,11 +283,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
                 NSLog(@"支付成功");
                 
                 //...支付成功相应的处理，跳转界面等
-                [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
-                MainVC * main = (MainVC *)self.window.rootViewController;
-                [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                main.selectedIndex = 3;
-                [SVProgressHUD showSuccessWithStatus:@"支付成功" duration:1];
+                [self paySuccess];
                 break;
             }
             case WXErrCodeUserCancel: {
@@ -299,10 +301,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
             default: {
                 
                 //                NSLog(@"支付失败");
-                [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_PAY_SUCCESS object:nil];
-                MainVC * main = (MainVC *)self.window.rootViewController;
-                [main.selectedViewController.navigationController popToRootViewControllerAnimated:true];
-                main.selectedIndex = 3;
+                [self paySuccess];
                 [SVProgressHUD showErrorWithStatus:@"支付失败\n请从我的订单查看" duration:2];
                 //...做相应的处理，重新支付或删除支付
                 

@@ -231,7 +231,7 @@
     
     WallpaperShowViewController * showVC = [WallpaperShowViewController new];
     showVC.wallpaperList = self.img_array;
-    showVC.current_index = tap.view.tag/10*4+tap.view.tag%10;
+    showVC.current_index = tap.view.tag/10*4 + tap.view.tag%10;
     [self.navigationController pushViewController:showVC animated:true];
     
 }

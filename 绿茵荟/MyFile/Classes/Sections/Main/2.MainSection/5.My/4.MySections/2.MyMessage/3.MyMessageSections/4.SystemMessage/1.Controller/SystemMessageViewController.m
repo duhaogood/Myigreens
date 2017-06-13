@@ -194,7 +194,7 @@
         }else{
             self.systemMessageArray = [NSMutableArray arrayWithArray:arr];
         }
-        if (arr.count > 0) {
+        if (self.systemMessageArray.count > 0) {
             self.noDateView.hidden = true;
         }else{
             self.noDateView.hidden = false;

@@ -66,6 +66,7 @@
 //刷新手机号码
 -(void)refresh_tel_label{
 //    NSLog(@"哈哈，进来了");
+    NSLog(@"member:%@",MYTOOL.memberDic);
     NSString * tel = [MYTOOL getProjectPropertyWithKey:@"user_tel"];
     if (!tel) {
         return;

@@ -7,7 +7,7 @@
 //
 
 #import "SubscribeSearchVC.h"
-
+#import "SubscribeInfoViewController.h"
 @interface SubscribeSearchVC ()<UISearchBarDelegate,UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)NSMutableArray * data_array;
@@ -70,6 +70,26 @@
     }
 }
 #pragma mark - UITableViewDataSource,UITableViewDelegate
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:true];
+    bool isLogin = [MYTOOL isLogin];
+    if (!isLogin) {
+        [SVProgressHUD showErrorWithStatus:@"未登录无法查看" duration:2];
+        return;
+    }
+    NSString * byMemberId = self.data_array[indexPath.row][@"memberId"];
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    NSDictionary * send_dic = @{
+                                @"memberId":memberId,
+                                @"byMemberId":byMemberId
+                                };
+    [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
+    [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
+        SubscribeInfoViewController * subscribeInfo = [SubscribeInfoViewController new];
+        subscribeInfo.member_dic = back_dic[@"member"];
+        [self.navigationController pushViewController:subscribeInfo animated:true];
+    }];
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return self.data_array.count;
 }

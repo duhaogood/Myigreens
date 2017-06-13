@@ -8,7 +8,7 @@
 
 #import "SubmitPostViewController.h"
 #import "SubmitPostTV.h"
-@interface SubmitPostViewController ()<UITextViewDelegate,UIImagePickerControllerDelegate>
+@interface SubmitPostViewController ()<UITextViewDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 @property(nonatomic,strong)UITextView * tv;//发表的内容
 @property(nonatomic,strong)NSMutableArray * img_arr;//图片view数组
 @property(nonatomic,strong)UIScrollView * scrollView;//主界面
