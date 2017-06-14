@@ -332,10 +332,10 @@
     NSDictionary * send = @{@"bannerId":@(bannerId)};
     NSString * interface = @"/shop/goods/getGoodsContent.intf";
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic1) {
-//        NSLog(@"back1:%@",back_dic1);
+        NSLog(@"back1:%@",back_dic1);
         NSString * interface2 = @"/shop/goods/getGoodList.intf";
         [MYNETWORKING getWithInterfaceName:interface2 andDictionary:send andSuccess:^(NSDictionary *back_dic2) {
-//            NSLog(@"back2:%@",back_dic2);
+            NSLog(@"back2:%@",back_dic2);
             
             
         }];
@@ -544,6 +544,7 @@
                     NSArray * bannerList = arr_dic[@"bannerList"];
                     if (showType == 2 && bannerList && bannerList.count > 0) {//商品组
                         [arr addObject:arr_dic];
+                        NSLog(@"arr_dic:%@",arr_dic);
                         break;
                     }
                 }

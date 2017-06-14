@@ -65,13 +65,17 @@
 }
 //刷新手机号码
 -(void)refresh_tel_label{
-//    NSLog(@"哈哈，进来了");
-    NSLog(@"member:%@",MYTOOL.memberDic);
-    NSString * tel = [MYTOOL getProjectPropertyWithKey:@"user_tel"];
-    if (!tel) {
-        return;
-    }
-    self.tel_label.text = tel;
+    //获取我的信息
+    NSString * interfaceName = @"/member/getMember.intf";
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
+        MYTOOL.memberDic = back_dic[@"member"];
+        NSString * tel = MYTOOL.memberDic[@"mobile"];
+        if (!tel) {
+            return;
+        }
+        self.tel_label.text = tel;
+    }];
 }
 
 //返回上个界面

@@ -14,6 +14,7 @@
 		0446697E1EE83BC10082D8BC /* jpush-ios-3.0.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0446697B1EE83BC10082D8BC /* jpush-ios-3.0.5.a */; };
 		044669801EE83C0F0082D8BC /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0446697F1EE83C0F0082D8BC /* UserNotifications.framework */; };
 		044669821EE83C1F0082D8BC /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 044669811EE83C1F0082D8BC /* libresolv.tbd */; };
+		044669A91EF0DAC30082D8BC /* GoodsGroupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 044669A81EF0DAC30082D8BC /* GoodsGroupVC.m */; };
 		04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAF71EE4F5D900990D28 /* LoginViewController.m */; };
 		04F4EC7F1EE4F5D900990D28 /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAFC1EE4F5D900990D28 /* MainVC.m */; };
 		04F4EC801EE4F5D900990D28 /* SpecialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EB031EE4F5D900990D28 /* SpecialVC.m */; };
@@ -286,6 +287,9 @@
 		0446697F1EE83C0F0082D8BC /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		044669811EE83C1F0082D8BC /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		044669831EE83C6F0082D8BC /* 绿茵荟.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "绿茵荟.entitlements"; sourceTree = "<group>"; };
+		044669A51EF0DA5D0082D8BC /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
+		044669A71EF0DAC30082D8BC /* GoodsGroupVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoodsGroupVC.h; sourceTree = "<group>"; };
+		044669A81EF0DAC30082D8BC /* GoodsGroupVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoodsGroupVC.m; sourceTree = "<group>"; };
 		04F4EAE71EE4F5D900990D28 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		04F4EAE91EE4F5D900990D28 /* Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comments.h; sourceTree = "<group>"; };
 		04F4EAEB1EE4F5D900990D28 /* PrefixHeader_notification.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader_notification.pch; sourceTree = "<group>"; };
@@ -1082,6 +1086,24 @@
 			path = JPush;
 			sourceTree = "<group>";
 		};
+		044669A41EF0DA5D0082D8BC /* 14.GoodsGroup */ = {
+			isa = PBXGroup;
+			children = (
+				044669A51EF0DA5D0082D8BC /* 0.Comments.h */,
+				044669A61EF0DA5D0082D8BC /* 1.Controller */,
+			);
+			path = 14.GoodsGroup;
+			sourceTree = "<group>";
+		};
+		044669A61EF0DA5D0082D8BC /* 1.Controller */ = {
+			isa = PBXGroup;
+			children = (
+				044669A71EF0DAC30082D8BC /* GoodsGroupVC.h */,
+				044669A81EF0DAC30082D8BC /* GoodsGroupVC.m */,
+			);
+			path = 1.Controller;
+			sourceTree = "<group>";
+		};
 		04F4EAE61EE4F5D900990D28 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1594,6 +1616,7 @@
 				04F4EB981EE4F5D900990D28 /* 7.AddressManager */,
 				04F4EBAE1EE4F5D900990D28 /* 8.SelectExpress */,
 				04F4EBB31EE4F5D900990D28 /* 9.SearchGoods */,
+				044669A41EF0DA5D0082D8BC /* 14.GoodsGroup */,
 			);
 			path = 3.Section;
 			sourceTree = "<group>";
@@ -3883,6 +3906,7 @@
 				78C23BA51ED2FB9A000CD40E /* FMDatabase.m in Sources */,
 				04F4ECAE1EE4F5D900990D28 /* ChangeTelViewController.m in Sources */,
 				78C23BAB1ED2FB9A000CD40E /* MJRefreshBackFooter.m in Sources */,
+				044669A91EF0DAC30082D8BC /* GoodsGroupVC.m in Sources */,
 				04F4ECC01EE4F5D900990D28 /* ContactCustomerVC.m in Sources */,
 				78C23BD61ED2FB9A000CD40E /* NSData+ImageContentType.m in Sources */,
 				04F4EC8A1EE4F5D900990D28 /* Cell_menu_icon_wine.m in Sources */,

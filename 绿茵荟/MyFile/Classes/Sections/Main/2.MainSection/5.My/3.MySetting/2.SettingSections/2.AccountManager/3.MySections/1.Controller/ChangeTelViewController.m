@@ -107,7 +107,6 @@
         NSString * memberId = back_dic[@"memberId"];
         if (success) {
             //把登录状态写进程序
-            [MYTOOL setProjectPropertyWithKey:@"user_tel" andValue:self.tel_tf.text];
             [MYTOOL setProjectPropertyWithKey:@"isLogin" andValue:@"1"];
             [MYTOOL setProjectPropertyWithKey:@"memberId" andValue:memberId];
             [SVProgressHUD showSuccessWithStatus:msg duration:1];

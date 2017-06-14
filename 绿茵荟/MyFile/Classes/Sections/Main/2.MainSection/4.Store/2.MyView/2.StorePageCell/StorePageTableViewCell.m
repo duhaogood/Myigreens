@@ -129,7 +129,7 @@
             row ++;
         }
         spaceView.frame = CGRectMake(0, 70 + 240.0*row-10, WIDTH, 10);
-    }else if (showType == 3) {//中间的新鲜热卖
+    }else if (showType == 3) {//导航展示类型
 //        NSLog(@"bannerList:%@",dictionary[@"bannerList"]);
         //图片序号
         {

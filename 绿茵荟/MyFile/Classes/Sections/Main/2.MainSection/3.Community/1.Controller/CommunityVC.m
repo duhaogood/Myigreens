@@ -1338,6 +1338,7 @@
         NSString * content = carouselDic[@"content"];
         TextBannerVC * text = [TextBannerVC new];
         text.content = content;
+        text.title = carouselDic[@"bannerTitle"];
         NSString * viewUrl = carouselDic[@"viewUrl"];
         text.viewUrl = viewUrl;
         [self.navigationController pushViewController:text animated:true];
@@ -1403,6 +1404,7 @@
         NSString * viewUrl = carouselDic[@"viewUrl"];
         TextBannerVC * text = [TextBannerVC new];
         text.viewUrl = viewUrl;
+        text.title = carouselDic[@"bannerTitle"];
         [self.navigationController pushViewController:text animated:true];
     }
     

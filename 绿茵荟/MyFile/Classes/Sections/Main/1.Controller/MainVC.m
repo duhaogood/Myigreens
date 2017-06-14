@@ -12,6 +12,7 @@
 #import "CommunityVC.h"
 #import "StoreVC.h"
 #import "MyVC.h"
+#import "JPUSHService.h"
 @interface MainVC ()
 
 @end
@@ -25,6 +26,31 @@
 //    NSLog(@"memberId:%@",[MYTOOL getProjectPropertyWithKey:@"memberId"]);
 
     self.delegate = self;
+    
+    //5秒后执行
+    [self performSelector:@selector(isUploadPushIdOrNor) withObject:nil afterDelay:5];
+    
+}
+//是否上传
+-(void)isUploadPushIdOrNor{
+    if ([JPUSHService registrationID]) {
+        //_registrationValueLabel.text = [APService registrationID];
+        NSLog(@"get RegistrationID:%@",[JPUSHService registrationID]);//获取registrationID
+        
+        [self uploadPushId:[JPUSHService registrationID]];
+    }
+}
+
+//上传pushid
+-(void)uploadPushId:(NSString *)pushId{
+    NSString * interface = @"/member/updatePushId.intf";
+    NSDictionary * send = @{
+                            @"memberId":MEMBERID,
+                            @"pushId":pushId
+                            };
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        
+    }];
 }
 
 //初始化tabbarItem

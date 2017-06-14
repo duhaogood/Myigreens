@@ -90,6 +90,8 @@ static BOOL isProduction = NO;
     
     // 应用程序右上角数字
     app.applicationIconBadgeNumber = 0;
+    
+    
     return YES;
 }
 -(void)goToMssageViewControllerWith:(NSDictionary *)remoteNotification{

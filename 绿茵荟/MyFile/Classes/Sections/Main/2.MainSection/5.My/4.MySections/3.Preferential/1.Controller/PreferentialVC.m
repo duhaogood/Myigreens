@@ -31,6 +31,7 @@
         self.tableView = tableView;
         tableView.rowHeight = [MYTOOL getHeightWithIphone_six:98] + 20;
         self.automaticallyAdjustsScrollViewInsets = false;
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     }
     //去商城转转-按钮
     {
@@ -74,14 +75,23 @@
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSDictionary * bonusDic = self.array[indexPath.row];
+    //bonusStatus：1：已领取 2：未领取 3：已过期 4：已使用
+    int bonusStatus = [bonusDic[@"bonusStatus"] intValue];
     UITableViewCell * cell = [UITableViewCell new];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     //背景图
     {
         UIImageView * icon = [UIImageView new];
         icon.frame = CGRectMake(10, 10, WIDTH - 20, tableView.rowHeight - 20);
         icon.image = [UIImage imageNamed:@"coupon"];
+        if (bonusStatus == 3) {
+            icon.image = [UIImage imageNamed:@"coupon_invalid"];
+        }else if(bonusStatus == 4){
+            icon.image = [UIImage imageNamed:@"coupon_used"];
+        }
         [cell addSubview:icon];
     }
+    float middle_top = 0;
     //优惠券名称
     {
         NSString * name = bonusDic[@"bonusName"];
@@ -92,6 +102,21 @@
         CGSize size = [MYTOOL getSizeWithLabel:label];
         label.frame = CGRectMake(20 + (WIDTH - 20)*0.33, tableView.rowHeight/5, size.width, size.height);
         [cell addSubview:label];
+        middle_top = tableView.rowHeight/5 + size.height/2;
+    }
+    //领取按钮
+    {
+        UIButton * btn = [UIButton new];
+        [btn setBackgroundImage:[UIImage imageNamed:@"btn_receive"] forState:UIControlStateNormal];
+        [btn setTitle:@"领取" forState:UIControlStateNormal];
+        [btn setTitleColor:[MYTOOL RGBWithRed:119 green:161 blue:52 alpha:1] forState:UIControlStateNormal];
+        btn.frame = CGRectMake(WIDTH - 60-34, middle_top-12, 60, 24);
+        if (bonusStatus == 2) {
+            [cell addSubview:btn];
+        }
+        NSInteger bonusId = [bonusDic[@"bonusId"] longValue];
+        btn.tag = bonusId;
+        [btn addTarget:self action:@selector(receivePreferential:) forControlEvents:UIControlEventTouchUpInside];
     }
     //优惠券过期时间
     {
@@ -128,7 +153,27 @@
      */
     return cell;
 }
-
+//领取优惠券
+-(void)receivePreferential:(UIButton *)btn{
+    NSLog(@"bonusId:%ld",btn.tag);
+    NSString * interface = @"/shop/goods/addMemberBonus.intf";
+    NSDictionary * send = @{
+                            @"memberId":MEMBERID,
+                            @"bonusId":@(btn.tag)
+                            };
+    [MYTOOL netWorkingWithTitle:@"领取中…"];
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        [self getDataForTableView];
+    }];
+    /*
+     op/goods/addMemberBonus.intf
+     Ø接口描述：会员领取优惠券
+     70.71.72.72.1Ø输入参数：
+     参数名称	参数含义	参数类型	是否必录
+     memberId	会员Id	数字	是
+     bonusId	优惠券Id	数字	是
+     */
+}
 #pragma mark - 获取优惠券列表
 -(void)getDataForTableView{
     NSString * interface = @"/shop/goods/getBonus.intf";
@@ -137,8 +182,8 @@
                             @"memberId":MEMBERID
                             };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
         NSArray * bonusList = back_dic[@"bonusList"];
+//        NSLog(@"list:%@",bonusList);
         self.array = bonusList;
         [self.tableView reloadData];
     }];
