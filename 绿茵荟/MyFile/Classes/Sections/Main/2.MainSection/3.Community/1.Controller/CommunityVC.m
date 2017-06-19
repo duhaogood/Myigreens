@@ -300,7 +300,7 @@
         if (flag) {
             [SVProgressHUD dismiss];
             TopTenViewController * topVC = [TopTenViewController new];
-            topVC.title = @"Top10";
+            topVC.title = @"本周排行TOP10";
             topVC.top_10_array = array;
             [self.navigationController pushViewController:topVC animated:true];
         }else{

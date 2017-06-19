@@ -956,7 +956,7 @@
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
     [MYCENTER_NOTIFICATION addObserver:self selector:@selector(paySuccess) name:NOTIFICATION_PAY_SUCCESS object:nil];
-    [MYCENTER_NOTIFICATION addObserver:self selector:@selector(payCancel) name:NOTIFICATION_PAY_SUCCESS object:nil];
+    [MYCENTER_NOTIFICATION addObserver:self selector:@selector(payCancel) name:NOTIFICATION_PAY_CANCEL object:nil];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [MYTOOL showTabBar];
@@ -968,11 +968,15 @@
     
 }
 -(void)paySuccess{
-    [self.selectPayVC removeFromSuperViewController:nil];
+    if (self.selectPayVC) {
+        [self.selectPayVC removeFromSuperViewController:nil];
+    }
     [self.navigationController popToRootViewControllerAnimated:true];
 }
 -(void)payCancel{
-    [self.selectPayVC removeFromSuperViewController:nil];
+    if (self.selectPayVC) {
+        [self.selectPayVC removeFromSuperViewController:nil];
+    }
     [self.navigationController popToRootViewControllerAnimated:true];
 }
 @end

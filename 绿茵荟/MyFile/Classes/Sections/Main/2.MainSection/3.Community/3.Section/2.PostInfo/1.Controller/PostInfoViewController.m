@@ -40,7 +40,7 @@
     //返回按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
     //举报按钮
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"icon_reportReporticon_report"] style:UIBarButtonItemStyleDone target:self action:@selector(reportBtnCallBack)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_report_white"] style:UIBarButtonItemStyleDone target:self action:@selector(reportBtnCallBack)];
 //    NSLog(@"postInfo:%@",self.post_dic);
     float left = 0;
     UIView * backView = [UIView new];
@@ -295,7 +295,12 @@
 }
 //举报帖子入口
 -(void)reportBtnCallBack{
-    
+    if (![MYTOOL isLogin]) {
+        [SVProgressHUD showErrorWithStatus:@"请先登录" duration:2];
+        LoginViewController * login = [LoginViewController new];
+        [self.navigationController pushViewController:login animated:true];
+        return;
+    }
 //    NSLog(@"帖子:%@",self.post_dic);
     int myMemberId = [MEMBERID intValue];
     NSInteger memberId = [self.post_dic[@"member"][@"memberId"] longValue];

@@ -487,7 +487,7 @@
                 for (NSDictionary * arr_dic in back_arr) {
                     NSInteger showType = [arr_dic[@"showType"] longValue];
                     NSArray * bannerList = arr_dic[@"bannerList"];
-                    if (showType == 3 && bannerList && bannerList.count > 0) {//中间的新鲜热卖
+                    if (showType == 3 && bannerList && bannerList.count > 0) {//导航展示类型
                         [arr addObject:arr_dic];
                         break;
                     }
@@ -544,7 +544,7 @@
                     NSArray * bannerList = arr_dic[@"bannerList"];
                     if (showType == 2 && bannerList && bannerList.count > 0) {//商品组
                         [arr addObject:arr_dic];
-                        NSLog(@"arr_dic:%@",arr_dic);
+//                        NSLog(@"arr_dic:%@",arr_dic);
                         break;
                     }
                 }

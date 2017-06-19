@@ -95,8 +95,18 @@
     for (NSString * key in info.allKeys) {
         [send setValue:info[key] forKey:key];
     }
+    NSString * app = info[@"app"];
+    NSString * type = @"";
+    //wechat 微信 ,qq QQ ,weibo 微博
+    if ([app isEqualToString:@"wechat"]) {
+        type = @"微信";
+    }else if ([app isEqualToString:@"qq"]) {
+        type = @"QQ";
+    }else{
+        type = @"微博";
+    }
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"back:%@",back_dic);
+        [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%@绑定成功",type] duration:1];
         [self updateMemberInfo];
     }];
 }
@@ -105,7 +115,7 @@
     //获取我的信息
     NSString * interfaceName = @"/member/getMember.intf";
     NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
-    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
+    [MYNETWORKING getNoPopWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
         self.member_dic = back_dic[@"member"];
         DHTOOL.memberDic = self.member_dic;
     }];
@@ -160,6 +170,7 @@
 }
 //qq授权
 - (void)getAuthWithUserInfoFromQQ{
+    [UMSocialGlobal shareInstance].isClearCacheWhenGetUserInfo = false;
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_QQ currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
             UISwitch * btn =  self.title_swich_dictionary[@"QQ"];

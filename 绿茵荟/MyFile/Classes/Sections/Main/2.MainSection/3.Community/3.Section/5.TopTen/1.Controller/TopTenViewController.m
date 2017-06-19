@@ -22,8 +22,28 @@
 //加载主界面
 -(void)loadMainView{
     self.view.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
+    //上部背景
+    UIView * bgView = [UIView new];
+    bgView.frame = CGRectMake(0, 0, WIDTH, 60+64);
+    bgView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"nav_bg"]];
+    [self.view addSubview:bgView];
     //返回按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
+    UIButton * btn = [UIButton new];
+    btn.frame = CGRectMake(0, 32, 30, 30);
+    [btn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
+    [self.view addSubview:btn];
+    [btn addTarget:self action:@selector(popUpViewController) forControlEvents:UIControlEventTouchUpInside];
+    //标题
+    UILabel * label = [UILabel new];
+    label.text = self.title;
+    label.font = [UIFont systemFontOfSize:18];
+    CGSize size = [MYTOOL getSizeWithLabel:label];
+    label.textColor = [UIColor whiteColor];
+    label.frame = CGRectMake(WIDTH/2-size.width/2, 42-size.height/2, size.width, size.height);
+    [self.view addSubview:label];
+    
+    
     
     UITableView * tableView = [UITableView new];
     tableView.dataSource = self;
@@ -31,10 +51,13 @@
     tableView.rowHeight = 80;
     //解决tableView露白
     self.automaticallyAdjustsScrollViewInsets = false,
-    tableView.frame = CGRectMake(0, 10, WIDTH, HEIGHT - 74);
+    tableView.frame = CGRectMake(14, 25+64, WIDTH-28, HEIGHT - 64 - 25);
     [self.view addSubview:tableView];
-    
-    
+    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:tableView.bounds byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(12, 12)];
+    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
+    maskLayer.frame = tableView.bounds;
+    maskLayer.path = maskPath.CGPath;
+    tableView.layer.mask = maskLayer;
     
     
 }
@@ -111,7 +134,7 @@
     //排名图标
     {
         UIImageView * difference_icon = [UIImageView new];
-        difference_icon.frame = CGRectMake(WIDTH-50, tableView.rowHeight/2-15, 30, 30);
+        difference_icon.frame = CGRectMake(WIDTH-50-20, tableView.rowHeight/2-15, 30, 30);
         NSString * icon_name = [NSString stringWithFormat:@"top%ld",indexPath.row+1];
         difference_icon.image = [UIImage imageNamed:icon_name];
         [cell addSubview:difference_icon];
@@ -130,9 +153,11 @@
 //此view出现时隐藏tabBar
 - (void)viewWillAppear: (BOOL)animated{
     [MYTOOL hiddenTabBar];
+    [self.navigationController setNavigationBarHidden:true animated:true];
 }
 //此view消失时还原tabBar
 - (void)viewWillDisappear: (BOOL)animated{
     [MYTOOL showTabBar];
+    [self.navigationController setNavigationBarHidden:false animated:true];
 }
 @end

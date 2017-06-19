@@ -28,5 +28,5 @@
  @param back_block @{@"count":@"0"}
  */
 -(void)getNumberOfShoppingCartCallback:(void (^)(NSDictionary * backDict))back_block;
-
+-(void)getNoPopWithInterfaceName:(NSString *)interfaceName andDictionary:(NSDictionary *)send_dic andSuccess:(void (^)(NSDictionary * back_dic))back_block;
 @end

@@ -70,6 +70,18 @@ static char TAG_ACTIVITY_SHOW;
                     return;
                 }
                 else if (image) {
+                    CATransition *animation = [CATransition animation];
+                    animation.duration = .85f;
+                    animation.type = kCATransitionFade;
+                    /*
+                     这个 type 还有几个兄弟：
+                     kCATransitionFade  //交叉淡化过渡
+                     kCATransitionMoveIn  //移动覆盖原图
+                     kCATransitionPush  //新视图将旧视图推出去
+                     kCATransitionReveal  //底部显出来
+                     */
+                    animation.removedOnCompletion = YES;
+                    [wself.layer addAnimation:animation forKey:@"transition"];
                     wself.image = image;
                     [wself setNeedsLayout];
                 } else {

@@ -19,6 +19,7 @@
     NSInteger showType = [dictionary[@"showType"] longValue];//展示类型
     NSString * tagName = dictionary[@"tagName"];//标签名称
     NSInteger tagId = [dictionary[@"tagId"] longValue];//标签id
+    
     //标签名称
     {
         UILabel * label = [UILabel new];
@@ -178,11 +179,11 @@
     }else if(showType == 2){
         float height = WIDTH/950.0*440;
         NSArray * bannerList = dictionary[@"bannerList"];
-//        NSLog(@"banner:%@",bannerList);
+        NSLog(@"banner:%@",bannerList);
         float img_width = (WIDTH - 30)/2.0;
         //横向滚动
         UIScrollView * scroll = [UIScrollView new];
-        scroll.frame = CGRectMake(0, 50, WIDTH, height - 50 - 10);
+        scroll.frame = CGRectMake(0, 55, WIDTH, height - 50 - 20);
 //        scroll.backgroundColor = [UIColor greenColor];
         [cell addSubview:scroll];
         float left = 10;
@@ -193,7 +194,7 @@
             NSInteger bannerId = [imgDic[@"bannerId"] longValue];//tag
 //            NSLog(@"id:%ld",bannerId);
             UIImageView * icon = [UIImageView new];
-            icon.frame = CGRectMake(10 + (10+img_width)*i, 0, img_width, height - 50 - 10);
+            icon.frame = CGRectMake(10 + (10+img_width)*i, 0, img_width, height - 50 - 20);
             icon.tag = bannerId;
             [icon sd_setImageWithURL:[NSURL URLWithString:bannerUrl]];
             [scroll addSubview:icon];
@@ -204,7 +205,7 @@
             tapGesture.numberOfTapsRequired=1;
             [icon addGestureRecognizer:tapGesture];
         }
-        
+        scroll.contentSize = CGSizeMake(10 + (10+img_width)*bannerList.count, 0);
         //分割线
         UIView * spaceView = [UIView new];
         spaceView.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];

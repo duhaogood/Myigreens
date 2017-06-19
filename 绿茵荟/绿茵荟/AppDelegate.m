@@ -24,7 +24,7 @@
 
 static NSString *appKey = @"19286ff90c8abb86842087a2";
 static NSString *channel = @"62b8468f1f54251e179cf0fa";
-static BOOL isProduction = NO;
+static BOOL isProduction = true;
 
 @interface AppDelegate ()<JPUSHRegisterDelegate>
 
@@ -100,7 +100,7 @@ static BOOL isProduction = NO;
     for (NSString * key in remoteNotification.allKeys) {
         [string appendString:[NSString stringWithFormat:@"%@:%@\n",key,remoteNotification[key]]];
     }
-    [SVProgressHUD showSuccessWithStatus:string duration:10];
+//    [SVProgressHUD showSuccessWithStatus:string duration:10];
 }
 - (void)application:(UIApplication *)application
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {

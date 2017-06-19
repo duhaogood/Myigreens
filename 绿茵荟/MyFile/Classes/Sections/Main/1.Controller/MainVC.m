@@ -23,20 +23,20 @@
     [super viewDidLoad];
     //初始化tabbarItem
     [self initTabbarItem];
-//    NSLog(@"memberId:%@",[MYTOOL getProjectPropertyWithKey:@"memberId"]);
+    NSLog(@"memberId:%@",[MYTOOL getProjectPropertyWithKey:@"memberId"]);
 
     self.delegate = self;
     
     //5秒后执行
     [self performSelector:@selector(isUploadPushIdOrNor) withObject:nil afterDelay:5];
+    UILabel * label = [UILabel new];
+    label.font = [UIFont systemFontOfSize:15];
+    NSLog(@"name:%@",label.font.fontName);
     
 }
 //是否上传
 -(void)isUploadPushIdOrNor{
-    if ([JPUSHService registrationID]) {
-        //_registrationValueLabel.text = [APService registrationID];
-        NSLog(@"get RegistrationID:%@",[JPUSHService registrationID]);//获取registrationID
-        
+    if ([JPUSHService registrationID] && [MYTOOL isLogin]) {
         [self uploadPushId:[JPUSHService registrationID]];
     }
 }

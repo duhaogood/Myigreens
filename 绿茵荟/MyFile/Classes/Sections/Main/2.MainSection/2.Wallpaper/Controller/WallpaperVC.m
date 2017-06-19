@@ -8,6 +8,7 @@
 
 #import "WallpaperVC.h"
 #import "WallpaperShowViewController.h"
+#import "WallPaperShowVC.h"
 @interface WallpaperVC ()<UITableViewDelegate,UITableViewDataSource>
 @property(nonatomic,strong)NSMutableArray * data_array;
 @property(nonatomic,strong)UITableView * tableView;
@@ -92,6 +93,7 @@
     //将数据重制为第一页
     current_page = 1;
     [self getImgsFromNet:^(NSArray *array) {
+        NSLog(@"array:%@",array);
         self.img_array = [NSMutableArray arrayWithArray:array];
         [self.tableView reloadData];
     }];
@@ -228,6 +230,12 @@
         return;
     }
 //    NSLog(@"image:%@",image);
+    WallPaperShowVC * vc = [WallPaperShowVC new];
+    vc.wallpaperList = self.img_array;
+    vc.current_index = tap.view.tag;
+    [self.navigationController pushViewController:vc animated:true];
+    return;
+    
     
     WallpaperShowViewController * showVC = [WallpaperShowViewController new];
     showVC.wallpaperList = self.img_array;

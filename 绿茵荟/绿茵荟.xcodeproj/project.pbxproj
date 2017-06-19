@@ -15,6 +15,9 @@
 		044669801EE83C0F0082D8BC /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0446697F1EE83C0F0082D8BC /* UserNotifications.framework */; };
 		044669821EE83C1F0082D8BC /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 044669811EE83C1F0082D8BC /* libresolv.tbd */; };
 		044669A91EF0DAC30082D8BC /* GoodsGroupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 044669A81EF0DAC30082D8BC /* GoodsGroupVC.m */; };
+		0454BD751EF3784900B9E8A0 /* UIFont+MyFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD741EF3784900B9E8A0 /* UIFont+MyFont.m */; };
+		0454BD761EF37C5A00B9E8A0 /* NotoSansHans-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0454BD701EF375F500B9E8A0 /* NotoSansHans-Regular.otf */; };
+		0454BD891EF6E7D000B9E8A0 /* WallPaperShowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD881EF6E7D000B9E8A0 /* WallPaperShowVC.m */; };
 		04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAF71EE4F5D900990D28 /* LoginViewController.m */; };
 		04F4EC7F1EE4F5D900990D28 /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAFC1EE4F5D900990D28 /* MainVC.m */; };
 		04F4EC801EE4F5D900990D28 /* SpecialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EB031EE4F5D900990D28 /* SpecialVC.m */; };
@@ -290,6 +293,11 @@
 		044669A51EF0DA5D0082D8BC /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		044669A71EF0DAC30082D8BC /* GoodsGroupVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoodsGroupVC.h; sourceTree = "<group>"; };
 		044669A81EF0DAC30082D8BC /* GoodsGroupVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoodsGroupVC.m; sourceTree = "<group>"; };
+		0454BD701EF375F500B9E8A0 /* NotoSansHans-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansHans-Regular.otf"; sourceTree = "<group>"; };
+		0454BD731EF3784900B9E8A0 /* UIFont+MyFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+MyFont.h"; sourceTree = "<group>"; };
+		0454BD741EF3784900B9E8A0 /* UIFont+MyFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+MyFont.m"; sourceTree = "<group>"; };
+		0454BD871EF6E7D000B9E8A0 /* WallPaperShowVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallPaperShowVC.h; sourceTree = "<group>"; };
+		0454BD881EF6E7D000B9E8A0 /* WallPaperShowVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WallPaperShowVC.m; sourceTree = "<group>"; };
 		04F4EAE71EE4F5D900990D28 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		04F4EAE91EE4F5D900990D28 /* Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comments.h; sourceTree = "<group>"; };
 		04F4EAEB1EE4F5D900990D28 /* PrefixHeader_notification.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader_notification.pch; sourceTree = "<group>"; };
@@ -1104,6 +1112,15 @@
 			path = 1.Controller;
 			sourceTree = "<group>";
 		};
+		0454BD721EF3783600B9E8A0 /* Font */ = {
+			isa = PBXGroup;
+			children = (
+				0454BD731EF3784900B9E8A0 /* UIFont+MyFont.h */,
+				0454BD741EF3784900B9E8A0 /* UIFont+MyFont.m */,
+			);
+			path = Font;
+			sourceTree = "<group>";
+		};
 		04F4EAE61EE4F5D900990D28 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1263,6 +1280,8 @@
 			children = (
 				04F4EB0C1EE4F5D900990D28 /* WallpaperShowViewController.h */,
 				04F4EB0D1EE4F5D900990D28 /* WallpaperShowViewController.m */,
+				0454BD871EF6E7D000B9E8A0 /* WallPaperShowVC.h */,
+				0454BD881EF6E7D000B9E8A0 /* WallPaperShowVC.m */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -2633,6 +2652,7 @@
 		04F4EC721EE4F5D900990D28 /* Private */ = {
 			isa = PBXGroup;
 			children = (
+				0454BD721EF3783600B9E8A0 /* Font */,
 				04F4EC731EE4F5D900990D28 /* 0.SharedVC */,
 				04F4EC761EE4F5D900990D28 /* DHNetWorking.h */,
 				04F4EC771EE4F5D900990D28 /* DHNetWorking.m */,
@@ -2776,6 +2796,7 @@
 		78C2399A1ED2FB9A000CD40E /* plist */ = {
 			isa = PBXGroup;
 			children = (
+				0454BD701EF375F500B9E8A0 /* NotoSansHans-Regular.otf */,
 				78C2399B1ED2FB9A000CD40E /* area.plist */,
 				78C2399C1ED2FB9A000CD40E /* city.plist */,
 				78C2399D1ED2FB9A000CD40E /* city_code.plist */,
@@ -3735,6 +3756,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0454BD761EF37C5A00B9E8A0 /* NotoSansHans-Regular.otf in Resources */,
 				0446696A1EE7A48A0082D8BC /* expressCode.plist in Resources */,
 				78C23BBE1ED2FB9A000CD40E /* AlipaySDK.bundle in Resources */,
 				78C23B961ED2FB9A000CD40E /* LaunchImg.png in Resources */,
@@ -3878,6 +3900,7 @@
 				78C23BB21ED2FB9A000CD40E /* MJRefreshBackGifFooter.m in Sources */,
 				04F4EC881EE4F5D900990D28 /* Cell_menu_icon_Flowers.m in Sources */,
 				04F4EC851EE4F5D900990D28 /* Cell_menu_icon_brush.m in Sources */,
+				0454BD751EF3784900B9E8A0 /* UIFont+MyFont.m in Sources */,
 				04F4ECB91EE4F5D900990D28 /* MyMessageSectionsViewController.m in Sources */,
 				044669781EE7FAF50082D8BC /* SubsribeMineList.m in Sources */,
 				04F4EC9C1EE4F5D900990D28 /* SelectBonusVC.m in Sources */,
@@ -3928,6 +3951,7 @@
 				78C23BAC1ED2FB9A000CD40E /* MJRefreshComponent.m in Sources */,
 				04F4ECC31EE4F5D900990D28 /* ShoppingCartViewController.m in Sources */,
 				78C23BAD1ED2FB9A000CD40E /* MJRefreshFooter.m in Sources */,
+				0454BD891EF6E7D000B9E8A0 /* WallPaperShowVC.m in Sources */,
 				78C23BE21ED2FB9A000CD40E /* UIImageView+HighlightedWebCache.m in Sources */,
 				78C23BB01ED2FB9A000CD40E /* MJRefreshAutoNormalFooter.m in Sources */,
 				04F4ECC41EE4F5D900990D28 /* ExchangeViewController.m in Sources */,
