@@ -12,7 +12,8 @@
 #import "GoodsCategoryVC.h"
 #import "PostInfoViewController.h"
 #import "GoodsBannerVC.h"
-@interface StoreVC ()<UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,SDCycleScrollViewDelegate>
+#import "GYZChooseCityController.h"
+@interface StoreVC ()<UITableViewDataSource,UITableViewDelegate,UISearchBarDelegate,SDCycleScrollViewDelegate,GYZChooseCityDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)NSArray * tagsList_array;//商品首页数据
 @property(nonatomic,strong)NSArray * carouselImage_array;//轮播图数据
@@ -20,6 +21,9 @@
 @property(nonatomic,strong)UILabel * numberOfGoodsLabel;//购物车商品数字label
 @property(nonatomic,strong)UISearchBar * searchBar;//搜索框
 @property(nonatomic,strong)UIView * shopView;//购物车view
+@property(nonatomic,strong)UILabel * cityLabel;//城市名label
+@property(nonatomic,strong)UIImageView * areaIcon;//城市图标
+
 @property(nonatomic,strong)StorePageTableViewCell * storeCell;//下侧cell
 @end
 
@@ -66,7 +70,7 @@
     searchBar.delegate = self;
     self.searchBar = searchBar;
     searchBar.tag = 123123;
-    searchBar.frame = CGRectMake(0.2*WIDTH, 14, WIDTH*0.6, 14.5);
+    searchBar.frame = CGRectMake(90, 14, WIDTH-160, 14.5);
     [self.navigationController.navigationBar addSubview:searchBar];
     searchBar.placeholder = @"搜索美图、专题和商品";
     
@@ -75,6 +79,40 @@
 }
 //加载主界面
 -(void)loadMainView{
+    //定位
+    //左侧定位按钮
+    {
+        UIView * v = [UIView new];
+        v.frame = CGRectMake(0, 0, 70, 44);
+        UIBarButtonItem * bar = [[UIBarButtonItem alloc] initWithCustomView:v];
+        self.navigationItem.leftBarButtonItem = bar;
+        //右侧图标-arrow_bottom_md 11*6
+        {
+            UIImageView * icon = [UIImageView new];
+            icon.image = [UIImage imageNamed:@"arrow_bottom_md"];
+            self.areaIcon = icon;
+            [v addSubview:icon];
+            //城市名称
+            UILabel * label = [UILabel new];
+            label.font = [UIFont systemFontOfSize:13];
+            label.textColor = [UIColor whiteColor];
+            [v addSubview:label];
+            label.text = @"定位中…";
+            self.cityLabel = label;
+            CGSize size = [MYTOOL getSizeWithLabel:label];
+            label.frame = CGRectMake(0, 22-size.height/2, size.width, size.height);
+            icon.frame = CGRectMake(label.frame.origin.x + label.frame.size.width + 5, 19, 11, 6);
+        }
+        //按钮
+        {
+            UIButton * btn = [UIButton new];
+            btn.frame = v.bounds;
+            [v addSubview:btn];
+            [btn addTarget:self action:@selector(clickUpLeftCityBtn) forControlEvents:UIControlEventTouchUpInside];
+        }
+        [[MyLocationManager sharedLocationManager] startLocation];
+    }
+    //
     UITableView * tableView = [UITableView new];
     tableView.frame = CGRectMake(0, 0, WIDTH, HEIGHT-64-49);
     tableView.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
@@ -95,7 +133,12 @@
     tableView.mj_header.automaticallyChangeAlpha = YES;
 }
 
-
+//点击左上角定位城市事件
+-(void)clickUpLeftCityBtn{
+    GYZChooseCityController *cityPickerVC = [[GYZChooseCityController alloc] init];
+    [cityPickerVC setDelegate:self];
+    [self.navigationController pushViewController:cityPickerVC animated:true];
+}
 //获取当前显示图片序号
 -(int)getIndexOfimage{
     return indexOfImage;
@@ -699,6 +742,37 @@
         self.leftLabel.text = [NSString stringWithFormat:@"%d",page];
     }
 }
+//设置顶上文字
+-(void)setCityName:(NSString *)city{
+    if (city && city.length > 0) {
+        if (city.length > 4) {//如果长度大于4，取前3个字+…
+            city = [city substringToIndex:3];
+            city = [NSString stringWithFormat:@"%@…",city];
+        }
+        self.cityLabel.text = city;
+        CGSize size = [MYTOOL getSizeWithLabel:self.cityLabel];
+        self.cityLabel.frame = CGRectMake(0, 22-size.height/2, size.width, size.height);
+        self.areaIcon.frame = CGRectMake(self.cityLabel.frame.origin.x + self.cityLabel.frame.size.width + 5, 19, 11, 6);
+    }
+}
+#pragma mark - GYZCityPickerDelegate
+- (void) cityPickerController:(GYZChooseCityController *)chooseCityController didSelectCity:(GYZCity *)city
+{
+    [chooseCityController.navigationController popViewControllerAnimated:true];
+    [self setCityName:city.cityName];
+    [MYTOOL setProjectPropertyWithKey:@"cityId" andValue:city.cityID];
+}
+
+- (void) cityPickerControllerDidCancel:(GYZChooseCityController *)chooseCityController
+{
+    [chooseCityController.navigationController popViewControllerAnimated:true];
+}
+//接收到定位成功通知
+-(void)receiveUpdateLocationSuccessNotification:(NSNotification *)notification{
+    NSDictionary * obj = notification.object;
+    NSString * city = obj[@"city"];
+    [self setCityName:city];
+}
 //页面显示
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:animated];
@@ -710,10 +784,13 @@
         [self refreshGoodsNumber:count];
     }];
     [MYCENTER_NOTIFICATION addObserver:self selector:@selector(autoScroll:) name:AUTOMATIC_SCROLL object:nil];
+    [MYCENTER_NOTIFICATION addObserver:self selector:@selector(receiveUpdateLocationSuccessNotification:) name:NOTIFICATION_UPDATELOCATION_SUCCESS object:nil];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     self.searchBar.hidden = true;
     self.shopView.hidden = true;
+    
+    [MYCENTER_NOTIFICATION removeObserver:self name:NOTIFICATION_UPDATELOCATION_SUCCESS object:nil];
     [MYCENTER_NOTIFICATION removeObserver:self name:AUTOMATIC_SCROLL object:nil];
 }
 @end

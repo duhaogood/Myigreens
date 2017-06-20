@@ -25,7 +25,7 @@
 #include "MJRefresh.h"
 #include "DHNetWorking.h"
 #include "LoginViewController.h"
-
+#import "MyLocationManager.h"
 #include "SharedManagerVC.h"
 #endif /* PrefixHeader_pch */
 

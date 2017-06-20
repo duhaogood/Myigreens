@@ -19,6 +19,12 @@
 		0454BD761EF37C5A00B9E8A0 /* NotoSansHans-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0454BD701EF375F500B9E8A0 /* NotoSansHans-Regular.otf */; };
 		0454BD891EF6E7D000B9E8A0 /* WallPaperShowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD881EF6E7D000B9E8A0 /* WallPaperShowVC.m */; };
 		0454BD8B1EF8B26D00B9E8A0 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BD8A1EF8B26D00B9E8A0 /* Accelerate.framework */; };
+		0454BD8D1EF9747D00B9E8A0 /* CityLocationData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0454BD8C1EF9747D00B9E8A0 /* CityLocationData.plist */; };
+		0454BD9A1EF974F100B9E8A0 /* GYZChooseCityController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD921EF974F100B9E8A0 /* GYZChooseCityController.m */; };
+		0454BD9B1EF974F100B9E8A0 /* GYZCity.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD951EF974F100B9E8A0 /* GYZCity.m */; };
+		0454BD9C1EF974F100B9E8A0 /* GYZCityGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD971EF974F100B9E8A0 /* GYZCityGroupCell.m */; };
+		0454BD9D1EF974F100B9E8A0 /* GYZCityHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD991EF974F100B9E8A0 /* GYZCityHeaderView.m */; };
+		0454BDA11EF975C100B9E8A0 /* MyLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BDA01EF975C100B9E8A0 /* MyLocationManager.m */; };
 		04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAF71EE4F5D900990D28 /* LoginViewController.m */; };
 		04F4EC7F1EE4F5D900990D28 /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAFC1EE4F5D900990D28 /* MainVC.m */; };
 		04F4EC801EE4F5D900990D28 /* SpecialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EB031EE4F5D900990D28 /* SpecialVC.m */; };
@@ -300,6 +306,19 @@
 		0454BD871EF6E7D000B9E8A0 /* WallPaperShowVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallPaperShowVC.h; sourceTree = "<group>"; };
 		0454BD881EF6E7D000B9E8A0 /* WallPaperShowVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WallPaperShowVC.m; sourceTree = "<group>"; };
 		0454BD8A1EF8B26D00B9E8A0 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		0454BD8C1EF9747D00B9E8A0 /* CityLocationData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CityLocationData.plist; sourceTree = "<group>"; };
+		0454BD8F1EF974F100B9E8A0 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
+		0454BD911EF974F100B9E8A0 /* GYZChooseCityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GYZChooseCityController.h; sourceTree = "<group>"; };
+		0454BD921EF974F100B9E8A0 /* GYZChooseCityController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GYZChooseCityController.m; sourceTree = "<group>"; };
+		0454BD931EF974F100B9E8A0 /* GYZChooseCityDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GYZChooseCityDelegate.h; sourceTree = "<group>"; };
+		0454BD941EF974F100B9E8A0 /* GYZCity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GYZCity.h; sourceTree = "<group>"; };
+		0454BD951EF974F100B9E8A0 /* GYZCity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GYZCity.m; sourceTree = "<group>"; };
+		0454BD961EF974F100B9E8A0 /* GYZCityGroupCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GYZCityGroupCell.h; sourceTree = "<group>"; };
+		0454BD971EF974F100B9E8A0 /* GYZCityGroupCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GYZCityGroupCell.m; sourceTree = "<group>"; };
+		0454BD981EF974F100B9E8A0 /* GYZCityHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GYZCityHeaderView.h; sourceTree = "<group>"; };
+		0454BD991EF974F100B9E8A0 /* GYZCityHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GYZCityHeaderView.m; sourceTree = "<group>"; };
+		0454BD9F1EF975C100B9E8A0 /* MyLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyLocationManager.h; sourceTree = "<group>"; };
+		0454BDA01EF975C100B9E8A0 /* MyLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyLocationManager.m; sourceTree = "<group>"; };
 		04F4EAE71EE4F5D900990D28 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		04F4EAE91EE4F5D900990D28 /* Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comments.h; sourceTree = "<group>"; };
 		04F4EAEB1EE4F5D900990D28 /* PrefixHeader_notification.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader_notification.pch; sourceTree = "<group>"; };
@@ -1124,6 +1143,41 @@
 			path = Font;
 			sourceTree = "<group>";
 		};
+		0454BD8E1EF974F100B9E8A0 /* 00.MainLocation */ = {
+			isa = PBXGroup;
+			children = (
+				0454BD8F1EF974F100B9E8A0 /* 0.Comments.h */,
+				0454BD901EF974F100B9E8A0 /* 1.Controller */,
+			);
+			path = 00.MainLocation;
+			sourceTree = "<group>";
+		};
+		0454BD901EF974F100B9E8A0 /* 1.Controller */ = {
+			isa = PBXGroup;
+			children = (
+				0454BD911EF974F100B9E8A0 /* GYZChooseCityController.h */,
+				0454BD921EF974F100B9E8A0 /* GYZChooseCityController.m */,
+				0454BD931EF974F100B9E8A0 /* GYZChooseCityDelegate.h */,
+				0454BD941EF974F100B9E8A0 /* GYZCity.h */,
+				0454BD951EF974F100B9E8A0 /* GYZCity.m */,
+				0454BD961EF974F100B9E8A0 /* GYZCityGroupCell.h */,
+				0454BD971EF974F100B9E8A0 /* GYZCityGroupCell.m */,
+				0454BD981EF974F100B9E8A0 /* GYZCityHeaderView.h */,
+				0454BD991EF974F100B9E8A0 /* GYZCityHeaderView.m */,
+			);
+			path = 1.Controller;
+			sourceTree = "<group>";
+		};
+		0454BD9E1EF975C100B9E8A0 /* 3.LocationManager */ = {
+			isa = PBXGroup;
+			children = (
+				0454BD9F1EF975C100B9E8A0 /* MyLocationManager.h */,
+				0454BDA01EF975C100B9E8A0 /* MyLocationManager.m */,
+			);
+			name = 3.LocationManager;
+			path = Private/3.LocationManager;
+			sourceTree = "<group>";
+		};
 		04F4EAE61EE4F5D900990D28 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
@@ -1626,6 +1680,7 @@
 			isa = PBXGroup;
 			children = (
 				04F4EB671EE4F5D900990D28 /* 0.Comments.h */,
+				0454BD8E1EF974F100B9E8A0 /* 00.MainLocation */,
 				04F4EB681EE4F5D900990D28 /* 1.GoodsTag */,
 				04F4EB6D1EE4F5D900990D28 /* 10.GoodsCategory */,
 				04F4EB721EE4F5D900990D28 /* 11.TextBannerVC */,
@@ -2590,6 +2645,7 @@
 			isa = PBXGroup;
 			children = (
 				04F4EC631EE4F5D900990D28 /* Comments.h */,
+				0454BD9E1EF975C100B9E8A0 /* 3.LocationManager */,
 				04F4EC641EE4F5D900990D28 /* Pay */,
 				04F4EC721EE4F5D900990D28 /* Private */,
 				04F4EC7B1EE4F5D900990D28 /* Public */,
@@ -2800,6 +2856,7 @@
 			isa = PBXGroup;
 			children = (
 				0454BD701EF375F500B9E8A0 /* NotoSansHans-Regular.otf */,
+				0454BD8C1EF9747D00B9E8A0 /* CityLocationData.plist */,
 				78C2399B1ED2FB9A000CD40E /* area.plist */,
 				78C2399C1ED2FB9A000CD40E /* city.plist */,
 				78C2399D1ED2FB9A000CD40E /* city_code.plist */,
@@ -3764,6 +3821,7 @@
 				0446696A1EE7A48A0082D8BC /* expressCode.plist in Resources */,
 				78C23BBE1ED2FB9A000CD40E /* AlipaySDK.bundle in Resources */,
 				78C23B961ED2FB9A000CD40E /* LaunchImg.png in Resources */,
+				0454BD8D1EF9747D00B9E8A0 /* CityLocationData.plist in Resources */,
 				78C237C21ED2FA80000CD40E /* LaunchScreen.storyboard in Resources */,
 				78C23B9D1ED2FB9A000CD40E /* city_code_3.plist in Resources */,
 				78C23C0E1ED2FB9B000CD40E /* VKSdkResources.bundle in Resources */,
@@ -3809,6 +3867,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0454BD9C1EF974F100B9E8A0 /* GYZCityGroupCell.m in Sources */,
 				04F4EC971EE4F5D900990D28 /* StorePageTableViewCell.m in Sources */,
 				04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */,
 				78C23BB51ED2FB9A000CD40E /* MJRefreshGifHeader.m in Sources */,
@@ -3873,6 +3932,7 @@
 				04F4EC941EE4F5D900990D28 /* StoreNetWorking.m in Sources */,
 				04F4ECCE1EE4F5D900990D28 /* DHNetWorking.m in Sources */,
 				78C23BC41ED2FB9A000CD40E /* openssl_wrapper.m in Sources */,
+				0454BD9A1EF974F100B9E8A0 /* GYZChooseCityController.m in Sources */,
 				04F4EC861EE4F5D900990D28 /* Cell_menu_icon_cut.m in Sources */,
 				04F4EC8D1EE4F5D900990D28 /* SubmitPostTV.m in Sources */,
 				78C23BD71ED2FB9A000CD40E /* SDImageCache.m in Sources */,
@@ -3885,6 +3945,7 @@
 				78C23BD01ED2FB9A000CD40E /* TADotView.m in Sources */,
 				04F4EC961EE4F5D900990D28 /* CarouselImageCell.m in Sources */,
 				04F4ECCA1EE4F5D900990D28 /* AliPayTool.m in Sources */,
+				0454BDA11EF975C100B9E8A0 /* MyLocationManager.m in Sources */,
 				04F4ECBB1EE4F5D900990D28 /* NewSubscribeViewController.m in Sources */,
 				04F4ECA41EE4F5D900990D28 /* EditAddressVC.m in Sources */,
 				78C23BE31ED2FB9A000CD40E /* UIImageView+WebCache.m in Sources */,
@@ -3892,6 +3953,7 @@
 				78C23BC61ED2FB9A000CD40E /* RSADataVerifier.m in Sources */,
 				78C23BD41ED2FB9A000CD40E /* UIView+SDExtension.m in Sources */,
 				04F4ECC81EE4F5D900990D28 /* MyReaderVC.m in Sources */,
+				0454BD9D1EF974F100B9E8A0 /* GYZCityHeaderView.m in Sources */,
 				78C23BC31ED2FB9A000CD40E /* NSDataEx.m in Sources */,
 				78C23BDB1ED2FB9A000CD40E /* SDWebImageDownloaderOperation.m in Sources */,
 				78C23BDF1ED2FB9A000CD40E /* UIImage+GIF.m in Sources */,
@@ -3915,6 +3977,7 @@
 				04F4ECC51EE4F5D900990D28 /* IntegralRuleVC.m in Sources */,
 				78C23BB91ED2FB9A000CD40E /* MJRefreshConst.m in Sources */,
 				78C23BA01ED2FB9A000CD40E /* AFNetworkReachabilityManager.m in Sources */,
+				0454BD9B1EF974F100B9E8A0 /* GYZCity.m in Sources */,
 				78C23BA61ED2FB9A000CD40E /* FMDatabaseAdditions.m in Sources */,
 				78C23BC51ED2FB9A000CD40E /* RSADataSigner.m in Sources */,
 				04F4EC891EE4F5D900990D28 /* Cell_menu_icon_tv.m in Sources */,

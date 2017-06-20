@@ -161,5 +161,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>需要定位</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>需要定位哦</string>
 </dict>
 </plist>
