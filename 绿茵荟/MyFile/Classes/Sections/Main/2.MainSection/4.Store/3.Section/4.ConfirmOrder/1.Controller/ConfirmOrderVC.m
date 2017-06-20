@@ -13,6 +13,7 @@
 #import "AddressManagerVC.h"
 #import "SelectExpressVC.h"
 #import "SelectBonusVC.h"
+#import "MyOrderVC.h"
 @interface ConfirmOrderVC ()<UIScrollViewDelegate>
 @property(nonatomic,strong)UIScrollView * scrollView;//总背景
 @property(nonatomic,strong)ReceiverView * receiverView;//收货人view
@@ -349,7 +350,7 @@
                     label.frame = CGRectMake(46, top+2, WIDTH-46-17, 30);
                     label.font = [UIFont systemFontOfSize:12];
                     label.numberOfLines = 0;
-                    label.text = @"                  （我们将为您的购买信息保密,以绿茵荟的名义将宝贝送出）";
+                    label.text = @"                        （我们将为您的购买信息保密,以绿茵荟的名义将宝贝送出）";
                     label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
                     [goodsView addSubview:label];
                 }
@@ -661,8 +662,18 @@
                                 @"orderId":back_dic[@"orderId"]
                                 };
         [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-//            NSLog(@"订单:%@",back_dic);
             [SVProgressHUD showSuccessWithStatus:@"订单创建成功" duration:1];
+            float totalPrice = [back_dic[@"order"][@"totalPrice"] floatValue];
+            if (totalPrice == 0) {
+                MainVC * main = (MainVC *)(AppDelegate *)([UIApplication sharedApplication].delegate).window.rootViewController;
+                main.selectedIndex = 3;
+                
+                UINavigationController * nc = main.childViewControllers[3];
+                [nc popToRootViewControllerAnimated:true];
+                MyOrderVC * order = [MyOrderVC new];
+                [nc pushViewController:order animated:true];
+                return;
+            }
             SelectPayTypeVC * payVC = [SelectPayTypeVC new];
             payVC.isSuccess = true;
             NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:back_dic[@"order"]];

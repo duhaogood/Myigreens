@@ -53,7 +53,6 @@
     [headerView addSubview:title_img_view];
     tableView.tableHeaderView = headerView;
     
-    tableView.rowHeight = 303.0*WIDTH/414.0;
     count = 0;
     // 下拉刷新
     tableView.mj_header= [MJRefreshNormalHeader headerWithRefreshingBlock:^{
@@ -93,7 +92,7 @@
     //将数据重制为第一页
     current_page = 1;
     [self getImgsFromNet:^(NSArray *array) {
-        NSLog(@"array:%@",array);
+//        NSLog(@"array:%@",array);
         self.img_array = [NSMutableArray arrayWithArray:array];
         [self.tableView reloadData];
     }];
@@ -108,7 +107,6 @@
             current_page --;
         }else{
             [self.img_array addObjectsFromArray:array];
-            
             [self.tableView reloadData];
         }
     }];
@@ -120,105 +118,144 @@
 
 
 #pragma mark - UITableViewDelegate,UITableViewDataSource
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-//    NSLog(@"图片组数:%ld",self.img_array.count);
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 303.0*WIDTH/414.0;
+    if (indexPath.section == 0) {
+        return 303.0*WIDTH/414.0;
+    }else{
+        return (185*WIDTH/414.0)*271.0/185 * 2 + 10*WIDTH/414.0 * 3;
+    }
+}
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return self.img_array.count;
 }
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 1;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 8;
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSDictionary * img_dic = self.img_array[indexPath.row];
+    NSDictionary * img_dic = self.img_array[indexPath.section];
     NSArray * img_url_array = img_dic[@"url"];
     UITableViewCell * cell = [UITableViewCell new];
     float space = 10*WIDTH/414.0;
     float left_img = space;
     float top_img = space;
-    //第一个图片
-    if (img_url_array.count >= 1){
-        UIImageView * imgView = [UIImageView new];
-        imgView.contentMode = UIViewContentModeScaleAspectFill;
-        imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
-        [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
-        imgView.layer.masksToBounds = true;
-        imgView.layer.cornerRadius = 10;
-        imgView.frame = CGRectMake(left_img, top_img, 185*WIDTH/414.0, (185*WIDTH/414.0)*271.0/185);
-        [cell addSubview:imgView];
-        left_img += 185*WIDTH/414.0 + space;
-        NSString * smallUrl = img_url_array[0][@"smallUrl"];
-        if (smallUrl && smallUrl.length) {
-            [imgView sd_setImageWithURL:[NSURL URLWithString:smallUrl]];
+    if (indexPath.section >= 0) {
+        //第一个图片
+        if (img_url_array.count >= 1){
+            UIImageView * imgView = [UIImageView new];
+            imgView.contentMode = UIViewContentModeScaleAspectFill;
+            imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+            [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
+            imgView.layer.masksToBounds = true;
+            imgView.layer.cornerRadius = 10;
+            imgView.frame = CGRectMake(left_img, top_img, 185*WIDTH/414.0, (185*WIDTH/414.0)*271.0/185);
+            [cell addSubview:imgView];
+            left_img += 185*WIDTH/414.0 + space;
+            NSString * smallUrl = img_url_array[0][@"smallUrl"];
+            if (smallUrl && smallUrl.length) {
+                [imgView sd_setImageWithURL:[NSURL URLWithString:smallUrl]];
+            }
+            [imgView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigWallpaper:)];
+            tapGesture.numberOfTapsRequired=1;
+            [imgView addGestureRecognizer:tapGesture];
+            imgView.tag = indexPath.section * 10 + 0;
         }
-        [imgView setUserInteractionEnabled:YES];
-        UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigWallpaper:)];
-        tapGesture.numberOfTapsRequired=1;
-        [imgView addGestureRecognizer:tapGesture];
-        imgView.tag = indexPath.row * 10 + 0;
-    }
-    //第二个图片
-    if (img_url_array.count >= 2){
-        UIImageView * imgView = [UIImageView new];
-        imgView.contentMode = UIViewContentModeScaleAspectFill;
-        imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
-        [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
-        imgView.layer.masksToBounds = true;
-        imgView.layer.cornerRadius = 10;
-        imgView.frame = CGRectMake(left_img, top_img, 185*WIDTH/414.0, (185*WIDTH/414.0)*128.0/185.0);
-        [cell addSubview:imgView];
-        top_img += (185*WIDTH/414.0)*128.0/185.0 + space;
-        NSString * smallUrl = img_url_array[1][@"smallUrl"];
-        if (smallUrl && smallUrl.length) {
-            [imgView sd_setImageWithURL:[NSURL URLWithString:smallUrl]];
+        //第二个图片
+        if (img_url_array.count >= 2){
+            UIImageView * imgView = [UIImageView new];
+            imgView.contentMode = UIViewContentModeScaleAspectFill;
+            imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+            [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
+            imgView.layer.masksToBounds = true;
+            imgView.layer.cornerRadius = 10;
+            imgView.frame = CGRectMake(left_img, top_img, 185*WIDTH/414.0, (185*WIDTH/414.0)*128.0/185.0);
+            [cell addSubview:imgView];
+            top_img += (185*WIDTH/414.0)*128.0/185.0 + space;
+            NSString * smallUrl = img_url_array[1][@"smallUrl"];
+            if (smallUrl && smallUrl.length) {
+                [imgView sd_setImageWithURL:[NSURL URLWithString:smallUrl]];
+            }
+            [imgView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigWallpaper:)];
+            tapGesture.numberOfTapsRequired=1;
+            [imgView addGestureRecognizer:tapGesture];
+            imgView.tag = indexPath.section * 10 + 1;
         }
-        [imgView setUserInteractionEnabled:YES];
-        UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigWallpaper:)];
-        tapGesture.numberOfTapsRequired=1;
-        [imgView addGestureRecognizer:tapGesture];
-        imgView.tag = indexPath.row * 10 + 1;
-    }
-    //第三个图片
-    if (img_url_array.count >= 3){
-        UIImageView * imgView = [UIImageView new];
-        imgView.contentMode = UIViewContentModeScaleAspectFill;
-        imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
-        [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
-        imgView.layer.masksToBounds = true;
-        imgView.layer.cornerRadius = 10;
-        imgView.frame = CGRectMake(left_img, top_img, (182*WIDTH/414.0)*127.0/185.0/236.0*162, (185*WIDTH/414.0)*128.0/185.0);
-        [cell addSubview:imgView];
-        left_img += (182*WIDTH/414.0)*127.0/185.0/236.0*162 + space;
-        NSString * smallUrl = img_url_array[2][@"smallUrl"];
-        if (smallUrl && smallUrl.length) {
-            [imgView sd_setImageWithURL:[NSURL URLWithString:smallUrl]];
+        //第三个图片
+        if (img_url_array.count >= 3){
+            UIImageView * imgView = [UIImageView new];
+            imgView.contentMode = UIViewContentModeScaleAspectFill;
+            imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+            [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
+            imgView.layer.masksToBounds = true;
+            imgView.layer.cornerRadius = 10;
+            imgView.frame = CGRectMake(left_img, top_img, (182*WIDTH/414.0)*127.0/185.0/236.0*162, (185*WIDTH/414.0)*128.0/185.0);
+            [cell addSubview:imgView];
+            left_img += (182*WIDTH/414.0)*127.0/185.0/236.0*162 + space;
+            NSString * smallUrl = img_url_array[2][@"smallUrl"];
+            if (smallUrl && smallUrl.length) {
+                [imgView sd_setImageWithURL:[NSURL URLWithString:smallUrl]];
+            }
+            [imgView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigWallpaper:)];
+            tapGesture.numberOfTapsRequired=1;
+            [imgView addGestureRecognizer:tapGesture];
+            imgView.tag = indexPath.section * 10 + 2;
         }
-        [imgView setUserInteractionEnabled:YES];
-        UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigWallpaper:)];
-        tapGesture.numberOfTapsRequired=1;
-        [imgView addGestureRecognizer:tapGesture];
-        imgView.tag = indexPath.row * 10 + 2;
-    }
-    //第四个图片
-    if (img_url_array.count >= 4){
-        UIImageView * imgView = [UIImageView new];
-        imgView.contentMode = UIViewContentModeScaleAspectFill;
-        imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
-        [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
-        imgView.layer.masksToBounds = true;
-        imgView.layer.cornerRadius = 10;
-        imgView.frame = CGRectMake(left_img, top_img, (182*WIDTH/414.0)*127.0/185.0/236.0*162, (185*WIDTH/414.0)*127.0/185.0);
-        [cell addSubview:imgView];
-        NSString * smallUrl = img_url_array[3][@"smallUrl"];
-        if (smallUrl && smallUrl.length) {
-            [imgView sd_setImageWithURL:[NSURL URLWithString:smallUrl]];
+        //第四个图片
+        if (img_url_array.count >= 4){
+            UIImageView * imgView = [UIImageView new];
+            imgView.contentMode = UIViewContentModeScaleAspectFill;
+            imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+            [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
+            imgView.layer.masksToBounds = true;
+            imgView.layer.cornerRadius = 10;
+            imgView.frame = CGRectMake(left_img, top_img, (182*WIDTH/414.0)*127.0/185.0/236.0*162, (185*WIDTH/414.0)*127.0/185.0);
+            [cell addSubview:imgView];
+            NSString * smallUrl = img_url_array[3][@"smallUrl"];
+            if (smallUrl && smallUrl.length) {
+                [imgView sd_setImageWithURL:[NSURL URLWithString:smallUrl]];
+            }
+            [imgView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigWallpaper:)];
+            tapGesture.numberOfTapsRequired=1;
+            [imgView addGestureRecognizer:tapGesture];
+            imgView.tag = indexPath.section * 10 + 3;
         }
-        [imgView setUserInteractionEnabled:YES];
-        UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigWallpaper:)];
-        tapGesture.numberOfTapsRequired=1;
-        [imgView addGestureRecognizer:tapGesture];
-        imgView.tag = indexPath.row * 10 + 3;
+    }else{
+        //高度  185*WIDTH/414.0, (185*WIDTH/414.0)*271.0/185
+        float width = 185*WIDTH/414.0;
+        float height = (185*WIDTH/414.0)*271.0/185;
+        for(int i = 0 ; i < img_url_array.count ; i ++){
+            UIImageView * imgView = [UIImageView new];
+            imgView.contentMode = UIViewContentModeScaleAspectFill;
+            imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
+            [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
+            imgView.layer.masksToBounds = true;
+            imgView.layer.cornerRadius = 10;
+            imgView.frame = CGRectMake(left_img + (space + width)*(i%2), top_img + (space + height)*(i/2), width, height);
+            [cell addSubview:imgView];
+            NSString * smallUrl = img_url_array[i][@"smallUrl"];
+            if (smallUrl && smallUrl.length) {
+                [imgView sd_setImageWithURL:[NSURL URLWithString:smallUrl]];
+            }
+            [imgView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showBigWallpaper:)];
+            tapGesture.numberOfTapsRequired=1;
+            [imgView addGestureRecognizer:tapGesture];
+            imgView.tag = indexPath.section * 10 + i;
+        }
     }
-    //下侧view
-    UIView * space_view = [UIView new];
-    space_view.frame = CGRectMake(0, tableView.rowHeight-10, WIDTH, 10);
-    [cell addSubview:space_view];
-    space_view.backgroundColor = [UIColor colorWithRed:242/255.0 green:242/255.0 blue:242/255.0 alpha:1];
+    
+    
+    
+    
+    
+    
     //无法被点击
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;

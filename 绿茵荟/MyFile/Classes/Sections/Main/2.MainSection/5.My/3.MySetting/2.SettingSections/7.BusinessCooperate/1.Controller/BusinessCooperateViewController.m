@@ -36,8 +36,9 @@
     NSString * interfaceName = @"/sys/getSysInfoBykey.intf";
     NSString * infoKey = @"business_cooperation";
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"infoKey":infoKey} andSuccess:^(NSDictionary *back_dic) {
-        content = back_dic[@"info"][@"content"];
-        [self.webView loadHTMLString:content baseURL:nil];
+        content = back_dic[@"info"][@"url"];
+        NSURLRequest * request = [NSURLRequest requestWithURL:[NSURL URLWithString:content]];
+        [self.webView loadRequest:request];
     }];
     
 }

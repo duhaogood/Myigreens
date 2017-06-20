@@ -31,7 +31,6 @@
     [self performSelector:@selector(isUploadPushIdOrNor) withObject:nil afterDelay:5];
     UILabel * label = [UILabel new];
     label.font = [UIFont systemFontOfSize:15];
-    NSLog(@"name:%@",label.font.fontName);
     
 }
 //是否上传

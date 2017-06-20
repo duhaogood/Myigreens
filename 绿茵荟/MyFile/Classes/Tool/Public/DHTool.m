@@ -8,6 +8,7 @@
 #import <objc/runtime.h>
 #import "DHTool.h"
 #import "AFNetworking.h"
+#import <Accelerate/Accelerate.h>
 static id instance;
 @interface DHTool()
 
@@ -319,5 +320,159 @@ static id instance;
     CGContextRelease(ctx);
     CGImageRelease(cgimg);
     return img;
+}
+/**
+ *  截取URL中的参数
+ *
+ *  @return NSMutableDictionary parameters
+ */
+- (NSMutableDictionary *)getURLParameters:(NSString *)urlStr {
+    
+    // 查找参数
+    NSRange range = [urlStr rangeOfString:@"?"];
+    if (range.location == NSNotFound) {
+        return nil;
+    }
+    
+    // 以字典形式将参数返回
+    NSMutableDictionary *params = [NSMutableDictionary dictionary];
+    
+    // 截取参数
+    NSString *parametersString = [urlStr substringFromIndex:range.location + 1];
+    
+    // 判断参数是单个参数还是多个参数
+    if ([parametersString containsString:@"&"]) {
+        
+        // 多个参数，分割参数
+        NSArray *urlComponents = [parametersString componentsSeparatedByString:@"&"];
+        
+        for (NSString *keyValuePair in urlComponents) {
+            // 生成Key/Value
+            NSArray *pairComponents = [keyValuePair componentsSeparatedByString:@"="];
+            NSString *key = [pairComponents.firstObject stringByRemovingPercentEncoding];
+            NSString *value = [pairComponents.lastObject stringByRemovingPercentEncoding];
+            
+            // Key不能为nil
+            if (key == nil || value == nil) {
+                continue;
+            }
+            
+            id existValue = [params valueForKey:key];
+            
+            if (existValue != nil) {
+                
+                // 已存在的值，生成数组
+                if ([existValue isKindOfClass:[NSArray class]]) {
+                    // 已存在的值生成数组
+                    NSMutableArray *items = [NSMutableArray arrayWithArray:existValue];
+                    [items addObject:value];
+                    
+                    [params setValue:items forKey:key];
+                } else {
+                    
+                    // 非数组
+                    [params setValue:@[existValue, value] forKey:key];
+                }
+                
+            } else {
+                
+                // 设置值
+                [params setValue:value forKey:key];
+            }
+        }
+    } else {
+        // 单个参数
+        
+        // 生成Key/Value
+        NSArray *pairComponents = [parametersString componentsSeparatedByString:@"="];
+        
+        // 只有一个参数，没有值
+        if (pairComponents.count == 1) {
+            return nil;
+        }
+        
+        // 分隔值
+        NSString *key = [pairComponents.firstObject stringByRemovingPercentEncoding];
+        NSString *value = [pairComponents.lastObject stringByRemovingPercentEncoding];
+        
+        // Key不能为nil
+        if (key == nil || value == nil) {
+            return nil;
+        }
+        
+        // 设置值
+        [params setValue:value forKey:key];
+    }
+    
+    return params;
+}
+//模糊图片
+-(UIImage *)boxblurImage:(UIImage *)image withBlurNumber:(CGFloat)blur
+{
+    CIContext *context = [CIContext contextWithOptions:nil];
+    CIImage *inputImage= [CIImage imageWithCGImage:image.CGImage];
+    //设置filter
+    CIFilter *filter = [CIFilter filterWithName:@"CIGaussianBlur"];
+    [filter setValue:inputImage forKey:kCIInputImageKey]; [filter setValue:@(blur) forKey: @"inputRadius"];
+    //模糊图片
+    CIImage *result=[filter valueForKey:kCIOutputImageKey];
+    CGImageRef outImage=[context createCGImage:result fromRect:[result extent]];
+    UIImage *blurImage=[UIImage imageWithCGImage:outImage];
+    CGImageRelease(outImage);
+    return blurImage;
+    
+    if (blur < 0.f || blur > 1.f) {
+        blur = 0.5f;
+    }
+    int boxSize = (int)(blur * 40);
+    boxSize = boxSize - (boxSize % 2) + 1;
+    CGImageRef img = image.CGImage;
+    vImage_Buffer inBuffer, outBuffer;
+    vImage_Error error;
+    void *pixelBuffer;
+    //从CGImage中获取数据
+    CGDataProviderRef inProvider = CGImageGetDataProvider(img);
+    CFDataRef inBitmapData = CGDataProviderCopyData(inProvider);
+    //设置从CGImage获取对象的属性
+    inBuffer.width = CGImageGetWidth(img);
+    inBuffer.height = CGImageGetHeight(img);
+    inBuffer.rowBytes = CGImageGetBytesPerRow(img);
+    inBuffer.data = (void*)CFDataGetBytePtr(inBitmapData);
+    pixelBuffer = malloc(CGImageGetBytesPerRow(img) * CGImageGetHeight(img));
+    if(pixelBuffer == NULL)
+        NSLog(@"No pixelbuffer");
+    outBuffer.data = pixelBuffer;
+    outBuffer.width = CGImageGetWidth(img);
+    outBuffer.height = CGImageGetHeight(img);
+    outBuffer.rowBytes = CGImageGetBytesPerRow(img);
+    error = vImageBoxConvolve_ARGB8888(&inBuffer, &outBuffer, NULL, 0, 0, boxSize, boxSize, NULL, kvImageEdgeExtend);
+    if (error) {
+        NSLog(@"error from convolution %ld", error);
+    }
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGContextRef ctx = CGBitmapContextCreate( outBuffer.data, outBuffer.width, outBuffer.height, 8, outBuffer.rowBytes, colorSpace, kCGImageAlphaNoneSkipLast);
+    CGImageRef imageRef = CGBitmapContextCreateImage (ctx);
+    UIImage *returnImage = [UIImage imageWithCGImage:imageRef];
+    //clean up CGContextRelease(ctx);
+    CGColorSpaceRelease(colorSpace);
+    free(pixelBuffer);
+    CFRelease(inBitmapData);
+    CGColorSpaceRelease(colorSpace);
+    CGImageRelease(imageRef);
+    return returnImage;
+}
+-(NSDictionary *)getDictionaryWithJsonString:(NSString *)jsonString {
+    if (jsonString == nil) {
+        return nil;
+    }
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *err;
+    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers
+                         error:&err];
+    if(err) {
+        NSLog(@"json解析失败：%@",err);
+        return nil;
+    }
+    return dic;
 }
 @end

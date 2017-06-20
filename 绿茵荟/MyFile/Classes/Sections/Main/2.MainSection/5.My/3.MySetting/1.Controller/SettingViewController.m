@@ -95,7 +95,7 @@
         NSString * title = self.view_data_array[indexPath.section][indexPath.row][0];
         if ([title isEqualToString:@"给我们评分"]) {
             NSString *str = [NSString stringWithFormat:
-                             @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@&pageNumber=0&sortOrdering=2&mt=8",@"1178537125"]; //appID 解释如下
+                             @"itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@&pageNumber=0&sortOrdering=2&mt=8",@"1238065310"]; //appID 解释如下
             bool flag = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:str]];
             if (flag) {
                 [[UIApplication sharedApplication] openURL:[NSURL URLWithString:str]];

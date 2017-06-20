@@ -216,7 +216,7 @@
         [answer_btn setTitleColor:[MYTOOL RGBWithRed:114 green:158 blue:52 alpha:1] forState:UIControlStateNormal];
         [cell addSubview:answer_btn];
 #warning 待增加字段
-        answer_btn.tag = [dict[@"postCommentId"] longValue];
+        answer_btn.tag = indexPath.row;
         [answer_btn addTarget:self action:@selector(answer_callback:) forControlEvents:UIControlEventTouchUpInside];
 //        answer_btn.backgroundColor = [UIColor redColor];
         
@@ -243,17 +243,21 @@
             [SVProgressHUD showErrorWithStatus:@"请输入内容" duration:2];
             return;
         }
+        NSDictionary * dicc = self.receiveCommentArray[btn.tag];
+//        NSLog(@"aray:%@",self.receiveCommentArray);
+//        NSLog(@"dicc:%@",dicc);
         //拼接上传参数
         NSMutableDictionary * send_dic = [NSMutableDictionary new];
         [send_dic setValue:msg forKey:@"comment"];
-        NSInteger postId = btn.tag;
-        [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
-        [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
-        [send_dic setValue:[NSString stringWithFormat:@"%ld",btn.tag] forKey:@"parentPostCommentId"];
+        
+        [send_dic setValue:dicc[@"postId"] forKey:@"postId"];
+        [send_dic setValue:MEMBERID forKey:@"memberId"];
+        [send_dic setValue:dicc[@"postCommentId"] forKey:@"parentPostCommentId"];
         //        NSLog(@"send:%@",send_dic);
         //开始上传
         [MYNETWORKING getWithInterfaceName:@"/community/postRevert.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
-            [self pushPostInfoWithPostId:[NSString stringWithFormat:@"%ld",postId]];
+            
+            [self pushPostInfoWithPostId:[NSString stringWithFormat:@"%ld",[dicc[@"postId"] longValue]]];
             [SVProgressHUD showSuccessWithStatus:@"回复成功" duration:1];
         }];
     }];
@@ -276,6 +280,7 @@
     NSString * interfaceName = @"/member/receivedComments.intf";
     [SVProgressHUD showWithStatus:@"加载中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID,@"pageNo":@(pageNo)} andSuccess:^(NSDictionary *back_dic) {
+//        NSLog(@"back:%@",back_dic);
         NSArray * arr = back_dic[@"commentList"];
         if (pageNo > 1) {
             if (arr.count > 0) {

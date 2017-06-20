@@ -35,8 +35,9 @@
     NSString * interfaceName = @"/sys/getSysInfoBykey.intf";
     NSString * infoKey = @"integral_rule";
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"infoKey":infoKey} andSuccess:^(NSDictionary *back_dic) {
-        self.url_string = back_dic[@"info"][@"content"];
-        [self.webView loadHTMLString:self.url_string baseURL:nil];
+        NSString * content = back_dic[@"info"][@"url"];
+        NSURLRequest * request = [NSURLRequest requestWithURL:[NSURL URLWithString:content]];
+        [self.webView loadRequest:request];
     }];
     
 }

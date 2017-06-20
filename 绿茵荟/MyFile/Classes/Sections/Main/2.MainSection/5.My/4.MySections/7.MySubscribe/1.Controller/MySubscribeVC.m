@@ -195,7 +195,6 @@
     }
     [send_dic setValue:@"1" forKey:@"type"];//
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:send_dic andSuccess:^(NSDictionary * back_dic){
-                        NSLog(@"back:%@",back_dic);
         bool flag = [back_dic[@"code"] boolValue];
         NSString * msg = back_dic[@"msg"];
         //        NSLog(@"%d--%@",flag,msg);

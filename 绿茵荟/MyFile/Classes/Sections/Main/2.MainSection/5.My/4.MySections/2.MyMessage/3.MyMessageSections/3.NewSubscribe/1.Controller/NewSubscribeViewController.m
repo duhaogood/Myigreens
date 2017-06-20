@@ -169,7 +169,7 @@
         }
     }
     //名字
-    NSString * name = dict[@"title"];
+    NSString * name = dict[@"nickName"];
     if (name == nil || name.length == 0) {
         name = @"匿名用户";
     }
@@ -222,6 +222,7 @@
     [SVProgressHUD showWithStatus:@"加载中…" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":MEMBERID,@"pageNo":@(pageNo)} andSuccess:^(NSDictionary *back_dic) {
         NSArray * arr = back_dic[@"subscriptionsList"];
+//        NSLog(@"arr:%@",arr);
         if (pageNo > 1) {
             if (arr.count > 0) {
                 [self.subscribeArray addObjectsFromArray:arr];

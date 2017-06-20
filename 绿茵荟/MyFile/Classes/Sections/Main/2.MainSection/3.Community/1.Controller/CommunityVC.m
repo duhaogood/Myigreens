@@ -208,6 +208,25 @@
         [down_view.mj_footer endRefreshing];
     }];
     self.tableView = down_view;
+    //覆盖一个没有数据时显示的view
+    {
+        UIView * view = [UIView new];
+        view.frame = down_view.bounds;
+        self.noDateView = view;
+        view.hidden = true;
+        [down_view addSubview:view];
+        view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+        //没有数据提示
+        {
+            UILabel * label = [UILabel new];
+            label.text = @"暂无此类型的帖子数据";
+            label.textAlignment = NSTextAlignmentCenter;
+            label.textColor = MYCOLOR_46_42_42;
+            label.font = [UIFont systemFontOfSize:15];
+            label.frame = CGRectMake(0, 10, WIDTH, 20);
+            [view addSubview:label];
+        }
+    }
     //加载数据
     [self loadDefaultData];
     
@@ -352,6 +371,25 @@
             [self footerRefresh];
             [select_view.mj_footer endRefreshing];
         }];
+        //覆盖一个没有数据时显示的view
+        {
+            UIView * view = [UIView new];
+            view.frame = select_view.bounds;
+            self.noDateView = view;
+            view.hidden = true;
+            [select_view addSubview:view];
+            view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+            //没有数据提示
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"暂无此类型的帖子数据";
+                label.textAlignment = NSTextAlignmentCenter;
+                label.textColor = MYCOLOR_46_42_42;
+                label.font = [UIFont systemFontOfSize:15];
+                label.frame = CGRectMake(0, 10, WIDTH, 20);
+                [view addSubview:label];
+            }
+        }
         self.tableView = select_view;
         [self loadDefaultData];
     }else if ([title isEqualToString:@"圈子"]) {
@@ -411,7 +449,7 @@
             //没有数据提示
             {
                 UILabel * label = [UILabel new];
-                label.text = @"还没有订阅的好友哦";
+                label.text = @"暂无此类型的帖子数据";
                 label.textAlignment = NSTextAlignmentCenter;
                 label.textColor = MYCOLOR_46_42_42;
                 label.font = [UIFont systemFontOfSize:15];
@@ -521,7 +559,7 @@
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSDictionary * data_dic = self.data_array[indexPath.row];
-    NSLog(@"%ld-----%@",indexPath.row,data_dic);
+//    NSLog(@"%ld-----%@",indexPath.row,data_dic);
 
     NSString * releaseTime = data_dic[@"releaseTime"];//距离当前的发布时间
     NSString * content = data_dic[@"content"];//内容
@@ -890,6 +928,12 @@
             right_icon.frame = CGRectMake(WIDTH-38, 12, 33, 33);
             right_icon.image = [UIImage imageNamed:@"icon_reportReporticon_report"];
             [cell addSubview:right_icon];
+            right_icon.tag = indexPath.row;
+            [right_icon setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(reportBtnCallBack:)];
+            tapGesture.numberOfTapsRequired=1;
+            [right_icon addGestureRecognizer:tapGesture];
+            
         }
         //个性签名
         float top = 0;
@@ -1058,6 +1102,69 @@
     
     return cell;
 }
+//举报帖子入口
+-(void)reportBtnCallBack:(UITapGestureRecognizer *)tap{
+    if (![MYTOOL isLogin]) {
+        [SVProgressHUD showErrorWithStatus:@"请先登录" duration:2];
+        LoginViewController * login = [LoginViewController new];
+        [self.navigationController pushViewController:login animated:true];
+        return;
+    }
+    //    NSLog(@"帖子:%@",self.post_dic);
+    int myMemberId = [MEMBERID intValue];
+    NSDictionary * postDict = self.data_array[tap.view.tag];
+    NSInteger memberId = [postDict[@"member"][@"memberId"] longValue];
+    if (myMemberId == memberId) {//自己帖子，删除
+        UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要删除此帖？" preferredStyle:(UIAlertControllerStyleActionSheet)];
+        
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定删除" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            
+            [SVProgressHUD showWithStatus:@"删除中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+            
+            NSInteger postCommentId = [postDict[@"postId"] longValue];
+            NSString * interfaceName = @"/community/delPost.intf";
+            [SVProgressHUD showWithStatus:@"正在删除" maskType:SVProgressHUDMaskTypeClear];
+            [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"postId":[NSString stringWithFormat:@"%ld",postCommentId]} andSuccess:^(NSDictionary *back_dic) {
+                //            NSLog(@"back:%@",back_dic);
+                [SVProgressHUD showSuccessWithStatus:@"删除成功" duration:1];
+                [self updateData];
+            }];
+            
+        }];
+        
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
+        [alert addAction:action];
+        [alert addAction:cancel];
+        [self showDetailViewController:alert sender:nil];
+        
+        
+        
+    }else{//别人帖子，举报
+        UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要举报此帖？" preferredStyle:(UIAlertControllerStyleActionSheet)];
+        
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定举报" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            
+            [SVProgressHUD showWithStatus:@"举报中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+            //拼接上传参数
+            NSMutableDictionary * send_dic = [NSMutableDictionary new];
+            NSInteger postId = [postDict[@"postId"] longValue];
+            [send_dic setValue:[NSString stringWithFormat:@"%ld",postId] forKey:@"postId"];
+            [send_dic setValue:[MYTOOL getProjectPropertyWithKey:@"memberId"] forKey:@"memberId"];
+            //开始上传
+            [MYNETWORKING getWithInterfaceName:@"/community/postInform.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+                //            NSLog(@"back:%@",back_dic);
+                [SVProgressHUD showSuccessWithStatus:@"举报成功" duration:1];
+            }];
+            
+        }];
+        
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
+        [alert addAction:action];
+        [alert addAction:cancel];
+        [self showDetailViewController:alert sender:nil];
+    }
+}
+
 #pragma mark - UIScrollViewDelegate
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
     [MYTOOL hideKeyboard];
@@ -1312,11 +1419,12 @@
         }else if([title isEqualToString:@"圈子"]){
             [(UITableView *)down_img_circle_view reloadData];
         }else{//订阅
-            if (self.data_array.count == 0) {
-                self.noDateView.hidden = false;
-            }else{
-                self.noDateView.hidden = true;
-            }
+            
+        }
+        if (self.data_array.count == 0) {
+            self.noDateView.hidden = false;
+        }else{
+            self.noDateView.hidden = true;
         }
     }andFailure:^(NSError *error_failure) {
         if (pageNo == 1) {

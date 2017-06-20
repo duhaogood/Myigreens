@@ -180,4 +180,15 @@
  @return 处理好之后的图片
  */
 - (UIImage *)fixOrientationOfImage:(UIImage *)aImage;
+/**
+ *  截取URL中的参数
+ *
+ *  @return NSMutableDictionary parameters
+ */
+- (NSMutableDictionary *)getURLParameters:(NSString *)urlStr;
+//模糊图片
+-(UIImage *)boxblurImage:(UIImage *)image withBlurNumber:(CGFloat)blur;
+
+//字符串转成字典
+-(NSDictionary *)getDictionaryWithJsonString:(NSString *)jsonString;
 @end

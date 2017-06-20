@@ -92,6 +92,7 @@
                                    @"flowId":[NSString stringWithFormat:@"%ld",flowId]
                                    };
         [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+            pageNo = 1;
             [self reloadViewData];
         }];
     }

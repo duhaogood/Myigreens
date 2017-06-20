@@ -20,12 +20,26 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchImg.png" translatesAutoresizingMaskIntoConstraints="NO" id="n5J-D8-fLM">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            </imageView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="n5J-D8-fLM" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="3yE-EK-qtN"/>
+                            <constraint firstItem="xb3-aO-Qok" firstAttribute="top" secondItem="n5J-D8-fLM" secondAttribute="bottom" id="Iae-Zc-UfI"/>
+                            <constraint firstItem="n5J-D8-fLM" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="LJH-vq-L27"/>
+                            <constraint firstAttribute="trailing" secondItem="n5J-D8-fLM" secondAttribute="trailing" id="vGV-0z-6c0"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-658.39999999999998" y="294.60269865067471"/>
+            <point key="canvasLocation" x="-1378.4000000000001" y="218.1409295352324"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="LaunchImg.png" width="750" height="1334"/>
+    </resources>
 </document>

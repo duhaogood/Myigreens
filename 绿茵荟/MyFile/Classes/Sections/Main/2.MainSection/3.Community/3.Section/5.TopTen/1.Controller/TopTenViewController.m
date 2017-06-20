@@ -51,15 +51,17 @@
     tableView.rowHeight = 80;
     //解决tableView露白
     self.automaticallyAdjustsScrollViewInsets = false,
-    tableView.frame = CGRectMake(14, 25+64, WIDTH-28, HEIGHT - 64 - 25);
+    tableView.frame = CGRectMake(14, 25+64+12, WIDTH-28, HEIGHT - 64 - 25-12);
     [self.view addSubview:tableView];
-    UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:tableView.bounds byRoundingCorners:UIRectCornerTopLeft | UIRectCornerTopRight cornerRadii:CGSizeMake(12, 12)];
-    CAShapeLayer *maskLayer = [[CAShapeLayer alloc] init];
-    maskLayer.frame = tableView.bounds;
-    maskLayer.path = maskPath.CGPath;
-    tableView.layer.mask = maskLayer;
+    UIView * view = [UIView new];
+    view.frame = CGRectMake(14, 25+64, WIDTH-28, 24);
+    view.layer.masksToBounds = true;
+    view.layer.cornerRadius = 12;
+    view.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:view];
     
     
+    NSLog(@"count:%ld",self.top_10_array.count);
 }
 
 
@@ -67,17 +69,23 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:true];
 //    NSLog(@"%@",self.top_10_array[indexPath.row]);
-    bool isLogin = [MYTOOL isLogin];
-    if (!isLogin) {
-        [SVProgressHUD showErrorWithStatus:@"未登录无法查看" duration:2];
-        return;
-    }
+//    bool isLogin = [MYTOOL isLogin];
+//    if (!isLogin) {
+//        [SVProgressHUD showErrorWithStatus:@"未登录无法查看" duration:2];
+//        return;
+//    }
     NSString * byMemberId = self.top_10_array[indexPath.row][@"memberId"];
     NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
     NSDictionary * send_dic = @{
-                                    @"memberId":memberId,
-                                    @"byMemberId":byMemberId
+                                @"memberId":memberId ? memberId : @"",
+                                @"byMemberId":byMemberId
                                 };
+    if (memberId == nil) {
+        send_dic = @{
+                     @"byMemberId":byMemberId
+                     };
+    }
+    
     [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
         SubscribeInfoViewController * subscribeInfo = [SubscribeInfoViewController new];

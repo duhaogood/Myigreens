@@ -124,67 +124,21 @@
         //分割线
         UIView * spaceView = [UIView new];
         spaceView.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
-        [cell addSubview:spaceView];
+//        [cell addSubview:spaceView];
         NSInteger row = goodsList.count/2;
         if (goodsList.count > row * 2) {
             row ++;
         }
         spaceView.frame = CGRectMake(0, 70 + 240.0*row-10, WIDTH, 10);
     }else if (showType == 3) {//导航展示类型
-//        NSLog(@"bannerList:%@",dictionary[@"bannerList"]);
-        //图片序号
-        {
-            UILabel * leftLabel = [UILabel new];
-            leftLabel.text = [NSString stringWithFormat:@"%d",[delegate getIndexOfimage]];
-            leftLabel.textColor = [MYTOOL RGBWithRed:106 green:151 blue:53 alpha:1];
-            leftLabel.font = [UIFont systemFontOfSize:18];
-            leftLabel.frame = CGRectMake(WIDTH-72, 27, 36, 18);//39
-            leftLabel.textAlignment = NSTextAlignmentRight;
-            self.leftLabel = leftLabel;
-            [delegate setLeftLabel:leftLabel];
-//            leftLabel.backgroundColor = [UIColor greenColor];
-            [cell addSubview:leftLabel];
-            
-            UILabel * rightLabel = [UILabel new];
-            rightLabel.text = [NSString stringWithFormat:@"/%ld",[dictionary[@"bannerList"] count]];
-            rightLabel.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
-            rightLabel.font = [UIFont systemFontOfSize:18];
-            rightLabel.frame = CGRectMake(WIDTH-36, 27, 30, 18);
-            self.rightLabel = rightLabel;
-//            rightLabel.backgroundColor = [UIColor redColor];
-            [cell addSubview:rightLabel];
-        }
-        //图片url数组
-        NSMutableArray * url_arr = [NSMutableArray new];
-        for (NSDictionary * dic in dictionary[@"bannerList"]) {
-            NSString * bannerUrl = dic[@"bannerUrl"];
-            [url_arr addObject:bannerUrl];
-        }
-        SDCycleScrollView * cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(15, 71, WIDTH-30, 229) imageURLStringsGroup:url_arr];
-        cycleScrollView.tag = 200;
-        cycleScrollView.layer.masksToBounds = true;
-        cycleScrollView.layer.cornerRadius = 12;
-        cycleScrollView.delegate = delegate;
-        [cell addSubview:cycleScrollView];
-        cycleScrollView.infiniteLoop = false;//无限循环
-        cycleScrollView.autoScroll = true;//自动滚动
-        cycleScrollView.showPageControl = false;//不显示分页控件
-        
-        
-        //分割线
-        UIView * spaceView = [UIView new];
-        spaceView.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
-        [cell addSubview:spaceView];
-        spaceView.frame = CGRectMake(0, 332-10, WIDTH, 10);
-    }else if(showType == 2){
         float height = WIDTH/950.0*440;
         NSArray * bannerList = dictionary[@"bannerList"];
-        NSLog(@"banner:%@",bannerList);
+//        NSLog(@"banner:%@",bannerList);
         float img_width = (WIDTH - 30)/2.0;
         //横向滚动
         UIScrollView * scroll = [UIScrollView new];
         scroll.frame = CGRectMake(0, 55, WIDTH, height - 50 - 20);
-//        scroll.backgroundColor = [UIColor greenColor];
+        //        scroll.backgroundColor = [UIColor greenColor];
         [cell addSubview:scroll];
         float left = 10;
         //添加图片
@@ -192,7 +146,7 @@
             NSDictionary * imgDic = bannerList[i];
             NSString * bannerUrl = imgDic[@"bannerUrl"];//图片链接
             NSInteger bannerId = [imgDic[@"bannerId"] longValue];//tag
-//            NSLog(@"id:%ld",bannerId);
+            //            NSLog(@"id:%ld",bannerId);
             UIImageView * icon = [UIImageView new];
             icon.frame = CGRectMake(10 + (10+img_width)*i, 0, img_width, height - 50 - 20);
             icon.tag = bannerId;
@@ -206,11 +160,30 @@
             [icon addGestureRecognizer:tapGesture];
         }
         scroll.contentSize = CGSizeMake(10 + (10+img_width)*bannerList.count, 0);
-        //分割线
-        UIView * spaceView = [UIView new];
-        spaceView.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
-        [cell addSubview:spaceView];
-        spaceView.frame = CGRectMake(0, height-10, WIDTH, 10);
+    }else if(showType == 2){
+        float height = WIDTH/950.0*440;
+        NSArray * bannerList = dictionary[@"bannerList"];
+//        NSLog(@"banner:%@",bannerList);
+        float img_width = (WIDTH - 30)/2.0;
+        float left = 10;
+        //添加图片
+        for (int i = 0; i < bannerList.count ; i ++) {
+            NSDictionary * imgDic = bannerList[i];
+            NSString * bannerUrl = imgDic[@"bannerUrl"];//图片链接
+            NSInteger bannerId = [imgDic[@"bannerId"] longValue];//tag
+//            NSLog(@"id:%ld",bannerId);
+            UIImageView * icon = [UIImageView new];
+            icon.frame = CGRectMake(10 + (10+img_width)*(i%2), (i/2)*(height - 50 - 20+10)+70, img_width, height - 50 - 20);
+            icon.tag = bannerId;
+            [icon sd_setImageWithURL:[NSURL URLWithString:bannerUrl]];
+            [cell addSubview:icon];
+            left += (10+img_width)*i;
+            //添加点击事件
+            [icon setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:delegate action:@selector(clickImgOfGoodsGroup:)];
+            tapGesture.numberOfTapsRequired=1;
+            [icon addGestureRecognizer:tapGesture];
+        }
     }
     
     return (StorePageTableViewCell *)cell;

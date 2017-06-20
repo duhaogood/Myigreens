@@ -998,9 +998,9 @@
 
 //复制订单
 -(void)copyOrderIdCallback:(UIButton *)btn{
-//    NSLog(@"订单编号:%ld",btn.tag);
+    NSString * orderNo = self.orderDictionary[@"orderNo"];
     UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
-    pasteboard.string = [NSString stringWithFormat:@"%ld",btn.tag];
+    pasteboard.string = orderNo;
     [SVProgressHUD showSuccessWithStatus:@"复制成功" duration:0.5];
 }
 #pragma mark - 重写返回按钮事件

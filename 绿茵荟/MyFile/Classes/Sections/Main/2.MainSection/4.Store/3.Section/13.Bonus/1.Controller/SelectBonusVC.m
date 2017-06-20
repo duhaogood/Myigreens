@@ -10,7 +10,7 @@
 #import "ConfirmOrderVC.h"
 @interface SelectBonusVC ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
-
+@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
 @end
 
 @implementation SelectBonusVC
@@ -31,6 +31,31 @@
         self.tableView = tableView;
         tableView.rowHeight = [MYTOOL getHeightWithIphone_six:98] + 20;
         self.automaticallyAdjustsScrollViewInsets = false;
+        //覆盖一个没有数据时显示的view
+        //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+        {
+            UIView * view = [UIView new];
+            view.frame = tableView.bounds;
+            self.noDateView = view;
+            view.hidden = true;
+            [tableView addSubview:view];
+            view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+            //没有数据提示
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"暂无优惠券";
+                label.textAlignment = NSTextAlignmentCenter;
+                label.textColor = MYCOLOR_46_42_42;
+                label.font = [UIFont systemFontOfSize:15];
+                label.frame = CGRectMake(0, 10, WIDTH, 20);
+                [view addSubview:label];
+            }
+        }
+        if (_bonusList && _bonusList.count) {
+            self.noDateView.hidden = true;
+        }else{
+            self.noDateView.hidden = false;
+        }
     }
     
 }

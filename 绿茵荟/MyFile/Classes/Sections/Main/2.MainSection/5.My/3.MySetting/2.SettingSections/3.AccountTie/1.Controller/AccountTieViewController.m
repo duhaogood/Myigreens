@@ -64,7 +64,6 @@
     for (NSString * key in self.title_swich_dictionary.allKeys) {
         UISwitch * s_btn = self.title_swich_dictionary[key];
         if ([s_btn isEqual:btn]) {
-            NSLog(@"点击:%@,目前状态:%d",key,btn.on);
             if (btn.on) {
                 [self startTieWithTitle:key];
             }else{
@@ -101,6 +100,7 @@
     if ([app isEqualToString:@"wechat"]) {
         type = @"微信";
     }else if ([app isEqualToString:@"qq"]) {
+        
         type = @"QQ";
     }else{
         type = @"微博";
@@ -158,6 +158,17 @@
             if ([msg isEqualToString:@"Operation is cancel"]) {
                 msg = @"取消绑定";
             }
+            switch (error.code) {
+                case UMSocialPlatformErrorType_NotInstall:
+                    msg = @"应用未安装";
+                    break;
+                case UMSocialPlatformErrorType_Cancel:
+                    msg = @"您已取消分享";
+                    break;
+                default:
+                    break;
+            }
+            [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {
             UMSocialUserInfoResponse *resp = result;
             NSDictionary * info = @{
@@ -179,13 +190,21 @@
             if ([msg isEqualToString:@"Operation is cancel"]) {
                 msg = @"取消绑定";
             }
+            switch (error.code) {
+                case UMSocialPlatformErrorType_NotInstall:
+                    msg = @"应用未安装";
+                    break;
+                case UMSocialPlatformErrorType_Cancel:
+                    msg = @"您已取消分享";
+                    break;
+                default:
+                    break;
+            }
             [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {
             UMSocialUserInfoResponse *resp = result;
             
             // 授权信息
-            NSLog(@"QQ uid: %@", resp.uid);
-            NSLog(@"QQ openid: %@", resp.openid);
             NSDictionary * info = @{
                                     @"app":@"qq",
                                     @"openId":resp.openid
@@ -213,6 +232,16 @@
             NSString * msg = error.userInfo[@"message"];
             if ([msg isEqualToString:@"Operation is cancel"]) {
                 msg = @"取消绑定";
+            }
+            switch (error.code) {
+                case UMSocialPlatformErrorType_NotInstall:
+                    msg = @"应用未安装";
+                    break;
+                case UMSocialPlatformErrorType_Cancel:
+                    msg = @"您已取消分享";
+                    break;
+                default:
+                    break;
             }
             [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {

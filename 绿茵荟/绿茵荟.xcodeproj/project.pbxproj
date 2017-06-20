@@ -18,6 +18,7 @@
 		0454BD751EF3784900B9E8A0 /* UIFont+MyFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD741EF3784900B9E8A0 /* UIFont+MyFont.m */; };
 		0454BD761EF37C5A00B9E8A0 /* NotoSansHans-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0454BD701EF375F500B9E8A0 /* NotoSansHans-Regular.otf */; };
 		0454BD891EF6E7D000B9E8A0 /* WallPaperShowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD881EF6E7D000B9E8A0 /* WallPaperShowVC.m */; };
+		0454BD8B1EF8B26D00B9E8A0 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BD8A1EF8B26D00B9E8A0 /* Accelerate.framework */; };
 		04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAF71EE4F5D900990D28 /* LoginViewController.m */; };
 		04F4EC7F1EE4F5D900990D28 /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAFC1EE4F5D900990D28 /* MainVC.m */; };
 		04F4EC801EE4F5D900990D28 /* SpecialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EB031EE4F5D900990D28 /* SpecialVC.m */; };
@@ -298,6 +299,7 @@
 		0454BD741EF3784900B9E8A0 /* UIFont+MyFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+MyFont.m"; sourceTree = "<group>"; };
 		0454BD871EF6E7D000B9E8A0 /* WallPaperShowVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallPaperShowVC.h; sourceTree = "<group>"; };
 		0454BD881EF6E7D000B9E8A0 /* WallPaperShowVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WallPaperShowVC.m; sourceTree = "<group>"; };
+		0454BD8A1EF8B26D00B9E8A0 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
 		04F4EAE71EE4F5D900990D28 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		04F4EAE91EE4F5D900990D28 /* Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comments.h; sourceTree = "<group>"; };
 		04F4EAEB1EE4F5D900990D28 /* PrefixHeader_notification.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader_notification.pch; sourceTree = "<group>"; };
@@ -950,6 +952,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0454BD8B1EF8B26D00B9E8A0 /* Accelerate.framework in Frameworks */,
 				044669821EE83C1F0082D8BC /* libresolv.tbd in Frameworks */,
 				044669801EE83C0F0082D8BC /* UserNotifications.framework in Frameworks */,
 				78C23C311ED30002000CD40E /* libsqlite3.0.tbd in Frameworks */,
@@ -3622,6 +3625,7 @@
 		78C23C1B1ED2FDFC000CD40E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0454BD8A1EF8B26D00B9E8A0 /* Accelerate.framework */,
 				044669811EE83C1F0082D8BC /* libresolv.tbd */,
 				0446697F1EE83C0F0082D8BC /* UserNotifications.framework */,
 				78C23C301ED30002000CD40E /* libsqlite3.0.tbd */,

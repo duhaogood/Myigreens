@@ -11,6 +11,7 @@
 @interface PreferentialVC ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)NSArray * array;//优惠券数组
 @property(nonatomic,strong)UITableView * tableView;
+@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
 @end
 
 @implementation PreferentialVC
@@ -32,6 +33,26 @@
         tableView.rowHeight = [MYTOOL getHeightWithIphone_six:98] + 20;
         self.automaticallyAdjustsScrollViewInsets = false;
         tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        //覆盖一个没有数据时显示的view
+        //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+        {
+            UIView * view = [UIView new];
+            view.frame = tableView.bounds;
+            self.noDateView = view;
+            view.hidden = true;
+            [tableView addSubview:view];
+            view.backgroundColor = [MYTOOL RGBWithRed:240 green:240 blue:240 alpha:1];
+            //没有数据提示
+            {
+                UILabel * label = [UILabel new];
+                label.text = @"暂无优惠券";
+                label.textAlignment = NSTextAlignmentCenter;
+                label.textColor = MYCOLOR_46_42_42;
+                label.font = [UIFont systemFontOfSize:15];
+                label.frame = CGRectMake(0, 10, WIDTH, 20);
+                [view addSubview:label];
+            }
+        }
     }
     //去商城转转-按钮
     {
@@ -155,7 +176,6 @@
 }
 //领取优惠券
 -(void)receivePreferential:(UIButton *)btn{
-    NSLog(@"bonusId:%ld",btn.tag);
     NSString * interface = @"/shop/goods/addMemberBonus.intf";
     NSDictionary * send = @{
                             @"memberId":MEMBERID,
@@ -183,8 +203,12 @@
                             };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
         NSArray * bonusList = back_dic[@"bonusList"];
-//        NSLog(@"list:%@",bonusList);
         self.array = bonusList;
+        if (bonusList && bonusList.count) {
+            self.noDateView.hidden = true;
+        }else{
+            self.noDateView.hidden = false;
+        }
         [self.tableView reloadData];
     }];
     

@@ -15,6 +15,8 @@
 #import "JPUSHService.h"
 #import <AdSupport/AdSupport.h>
 #import "MyOrderVC.h"
+#import "GoodsInfoViewController.h"
+#import "PostInfoViewController.h"
 // iOS10注册APNs所需头 件
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max 
 #import <UserNotifications/UserNotifications.h>
@@ -95,12 +97,60 @@ static BOOL isProduction = true;
     return YES;
 }
 -(void)goToMssageViewControllerWith:(NSDictionary *)remoteNotification{
-    NSLog(@"notification:%@",remoteNotification);
-    NSMutableString * string = [NSMutableString new];
-    for (NSString * key in remoteNotification.allKeys) {
-        [string appendString:[NSString stringWithFormat:@"%@:%@\n",key,remoteNotification[key]]];
+    NSArray * receiveArray = (NSArray *)[MYTOOL getDictionaryWithJsonString:remoteNotification[@"ExtraData"]];
+    NSDictionary * receiveDic = receiveArray[0];
+    int contentType = [receiveDic[@"contentType"] intValue];
+    NSString * contentId = receiveDic[@"contentId"];
+    if (contentId == nil || contentId.length == 0) {
+        return;
     }
-//    [SVProgressHUD showSuccessWithStatus:string duration:10];
+    if (contentType == 1) {//商品
+        //网络获取商品详情
+        NSString * interfaceName = @"/shop/goods/getGoodsInfo.intf";
+        NSString * cityId = [MYTOOL getProjectPropertyWithKey:@"cityId"];
+        if (cityId == nil || cityId.length == 0) {
+            cityId = @"320300";
+        }
+        NSDictionary * sendDict = @{
+                                    @"goodsId":contentId,
+                                    @"cityId":cityId
+                                    };
+        [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDict andSuccess:^(NSDictionary *back_dic) {
+            GoodsInfoViewController * info = [GoodsInfoViewController new];
+            info.goodsInfoDictionary = back_dic[@"goods"];
+            MainVC * main = (MainVC *)self.window.rootViewController;
+            main.selectedIndex = 2;
+            UINavigationController * nc = main.childViewControllers[2];
+            [nc pushViewController:info animated:true];
+        }];
+    }else if (contentType == 2) {//帖子
+        NSMutableDictionary * send_dic = [NSMutableDictionary new];
+        NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+        if (memberId) {
+            [send_dic setValue:memberId forKey:@"memberId"];
+        }
+        [send_dic setValue:contentId forKey:@"postId"];
+        
+        
+        //开始请求
+        [SVProgressHUD showWithStatus:@"获取帖子" maskType:SVProgressHUDMaskTypeClear];
+        [MYNETWORKING getWithInterfaceName:@"/community/getPostInfo.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+            bool flag = [back_dic[@"code"] boolValue];
+            if (flag) {
+                [SVProgressHUD dismiss];
+                PostInfoViewController * postVC = [PostInfoViewController new];
+                postVC.title = @"帖子详情";
+                NSMutableDictionary * dict = [NSMutableDictionary dictionaryWithDictionary:back_dic[@"post"]];
+                postVC.post_dic = dict;
+                MainVC * main = (MainVC *)self.window.rootViewController;
+                main.selectedIndex = 1;
+                UINavigationController * nc = main.childViewControllers[1];
+                [nc pushViewController:postVC animated:true];
+            }else{
+                [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
+            }
+        }];
+    }
 }
 - (void)application:(UIApplication *)application
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {

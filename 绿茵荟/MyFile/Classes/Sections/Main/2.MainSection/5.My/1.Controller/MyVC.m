@@ -384,9 +384,9 @@
         label.text = [NSString stringWithFormat:@"等级:%d",[self.member_dic[@"level"] intValue]];
         label.font = [UIFont systemFontOfSize:16];
         CGSize size = [MYTOOL getSizeWithLabel:label];
-        label.frame = CGRectMake(WIDTH-40-size.width-10, tableView.rowHeight/2-8, WIDTH/4, 16);
+        label.frame = CGRectMake(WIDTH-size.width-15, tableView.rowHeight/2-8, WIDTH/4, 16);
         [cell addSubview:label];
-        label.textColor = [UIColor greenColor];
+        label.textColor = MYCOLOR_181_181_181;
     }else{
         UIImageView * imgV = [UIImageView new];
         imgV.image = [UIImage imageNamed:@"arrow_right"];

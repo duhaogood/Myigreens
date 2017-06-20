@@ -269,7 +269,7 @@
                                 @"pageNo":[NSString stringWithFormat:@"%d",pageNo]
                                };
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        NSLog(@"back:%@",back_dic);
+//        NSLog(@"back:%@",back_dic);
         NSArray * arr = back_dic[@"postList"];
         //成功--如果页数=1，重置数组，如果页数>1，数据加上去
         if (pageNo > 1) {

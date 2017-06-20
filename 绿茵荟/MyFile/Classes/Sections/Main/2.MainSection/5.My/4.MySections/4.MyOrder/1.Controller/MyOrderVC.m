@@ -14,7 +14,7 @@
 #import "ShowExpress.h"
 #import "ShoppingCartVC.h"
 @interface MyOrderVC ()<UITableViewDataSource,UITableViewDelegate>
-@property(nonatomic,strong)NSArray * orderArray;//所有订单信息
+@property(nonatomic,strong)NSMutableArray * orderArray;//所有订单信息
 @property(nonatomic,strong)NSMutableArray * timerArray;//定时器
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)UIView * greenView;//按钮下方view
@@ -26,6 +26,8 @@
 {
     NSTimer * timer;//定时器
     NSMutableArray * statusBtnArray;//状态按钮数组
+    int pageNo;//分页
+    NSInteger currentIndex;//当前按钮序号
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -34,6 +36,7 @@
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
     //加载主界面
     [self loadMainView];
+    pageNo = 1;
     [self orderStatusBtnCallback:statusBtnArray[0]];
 }
 //加载主界面
@@ -85,6 +88,20 @@
         self.automaticallyAdjustsScrollViewInsets = false;
         //不显示分割线
         tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [self headerRefresh];
+            // 结束刷新
+            [tableView.mj_header endRefreshing];
+        }];
+        
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        tableView.mj_header.automaticallyChangeAlpha = YES;
+        
+        // 上拉刷新
+        tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [self footerRefresh];
+            [tableView.mj_footer endRefreshing];
+        }];
         //覆盖一个没有数据时显示的view
         //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
         {
@@ -120,9 +137,21 @@
         }
     }
     NSInteger index = [statusBtnArray indexOfObject:btn];
+    if (index != currentIndex) {
+        pageNo = 1;
+    }
+    currentIndex = index;
     [self getOrderDataWithStatus:(int)index];
 }
-
+#pragma mark - 上拉、下拉刷新
+-(void)headerRefresh{
+    pageNo = 1;
+    [self orderStatusBtnCallback:statusBtnArray[currentIndex]];
+}
+-(void)footerRefresh{
+    pageNo ++;
+    [self orderStatusBtnCallback:statusBtnArray[currentIndex]];
+}
 #pragma mark - UITableViewDataSource,UITableViewDelegate
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [tableView deselectRowAtIndexPath:indexPath animated:true];
@@ -134,8 +163,6 @@
                                @"orderId":orderDic[@"orderId"]
                                };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-        //
-        NSLog(@"back:%@",back_dic[@"order"]);
         NSDictionary * orderDic = back_dic[@"order"];
         if (orderDic) {
             OrderInfoVC * infoVC = [OrderInfoVC new];
@@ -694,12 +721,12 @@
     NSString * interfaceName = @"/shop/order/getOrder.intf";
     NSDictionary * sendDic = @{
                                @"memberId":MEMBERID,
-                               @"status":[NSString stringWithFormat:@"%d",status]
+                               @"status":[NSString stringWithFormat:@"%d",status],
+                               @"pageNo":@(pageNo)
                                };
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
         NSArray * orderArray = back_dic[@"orderList"];
 //        NSLog(@"订单列表:%@",orderArray[0]);
-        self.orderArray = orderArray;
         self.timerArray = [NSMutableArray new];
         for (NSDictionary * orderDic in orderArray) {
             int payStatus = [orderDic[@"payStatus"] intValue];
@@ -724,12 +751,30 @@
         [timer invalidate];
         timer = nil;
         timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(refreshTimeLeft) userInfo:nil repeats:true];
-        if (orderArray.count == 0) {
+        
+        if (pageNo == 1) {
+            self.orderArray = [NSMutableArray arrayWithArray:orderArray];
+        }else{
+            if (orderArray.count > 0) {
+                [self.orderArray addObjectsFromArray:orderArray];
+            }else{
+                pageNo --;
+                [SVProgressHUD showErrorWithStatus:@"到底了" duration:1];
+            }
+        }
+        if (self.orderArray.count == 0) {
             self.noDateView.hidden = false;
         }else{
             self.noDateView.hidden = true;
         }
         [self.tableView reloadData];
+    } andFailure:^(NSError *error_failure) {
+        if (pageNo == 1) {
+            [self.orderArray removeAllObjects];
+            [self.tableView reloadData];
+        }else{
+            pageNo --;
+        }
     }];
 }
 //定时器刷新剩余时间

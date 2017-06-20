@@ -436,17 +436,12 @@
         NSString * interfaceName = @"/shop/order/confirmOrder.intf";
         NSMutableDictionary * sendDic = [NSMutableDictionary new];
         [sendDic setValue:MEMBERID forKey:@"memberId"];
-        NSString * productId_1 = [NSString stringWithFormat:@"%ld",[self.goodsInfo[@"productList"][0][@"productId"] longValue]];
+        
         NSString * quantity_1 = self.goodsCountLabel.text;
-        [sendDic setValue:productId_1 forKey:@"productId"];
+        [sendDic setValue:self.selectProductDic[@"productId"] forKey:@"productId"];
         [sendDic setValue:quantity_1 forKey:@"quantity"];
         [sendDic setValue:@"1" forKey:@"integral"];
-//        NSLog(@"send:%@",sendDic);
         [SVProgressHUD showWithStatus:@"购买中…" maskType:SVProgressHUDMaskTypeClear];
-        //        NSLog(@"send:%@",sendDic);
-//        [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//                        NSLog(@"back:%@",back_dic);
-//            NSLog(@"send:%@",sendDic);
             [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
                 NSLog(@"back:%@",back_dic);
                 ConfirmOrderVC * orderVC = [ConfirmOrderVC new];
@@ -462,12 +457,6 @@
                 [self.navigationController pushViewController:orderVC animated:true];
                 
             }];
-//        }];
-    
-    
-    
-    
-    
     
 }
 }
