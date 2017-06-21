@@ -100,14 +100,13 @@
     if ([app isEqualToString:@"wechat"]) {
         type = @"微信";
     }else if ([app isEqualToString:@"qq"]) {
-        
         type = @"QQ";
     }else{
         type = @"微博";
     }
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
         [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%@绑定成功",type] duration:1];
-        [self updateMemberInfo];
+        [self getUserInfoAgagin];
     }];
 }
 //更新我的信息
@@ -118,6 +117,7 @@
     [MYNETWORKING getNoPopWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
         self.member_dic = back_dic[@"member"];
         DHTOOL.memberDic = self.member_dic;
+        
     }];
 }
 //取消绑定
@@ -278,7 +278,7 @@
     //获取我的信息
     NSString * interfaceName = @"/member/getMember.intf";
     NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
-    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
+    [MYNETWORKING getNoPopWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
         //        NSLog(@"back:%@",back_dic);
         self.member_dic = back_dic[@"member"];
         DHTOOL.memberDic = back_dic[@"member"];

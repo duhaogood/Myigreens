@@ -9,13 +9,15 @@
 #import "PreferentialVC.h"
 #import "MainVC.h"
 @interface PreferentialVC ()<UITableViewDataSource,UITableViewDelegate>
-@property(nonatomic,strong)NSArray * array;//优惠券数组
+@property(nonatomic,strong)NSMutableArray * array;//优惠券数组
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
 @end
 
 @implementation PreferentialVC
-
+{
+    int pageNo;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -33,6 +35,20 @@
         tableView.rowHeight = [MYTOOL getHeightWithIphone_six:98] + 20;
         self.automaticallyAdjustsScrollViewInsets = false;
         tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [self headerRefresh];
+            // 结束刷新
+            [tableView.mj_header endRefreshing];
+        }];
+        
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        tableView.mj_header.automaticallyChangeAlpha = YES;
+        
+        // 上拉刷新
+        tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [self footerRefresh];
+            [tableView.mj_footer endRefreshing];
+        }];
         //覆盖一个没有数据时显示的view
         //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
         {
@@ -84,7 +100,15 @@
     app.window.rootViewController = main;
     main.selectedIndex = 2;
 }
-
+#pragma mark - 上拉、下拉刷新
+-(void)headerRefresh{
+    pageNo = 1;
+    [self getDataForTableView];
+}
+-(void)footerRefresh{
+    pageNo ++;
+    [self getDataForTableView];
+}
 
 
 #pragma mark - UITableViewDataSource,UITableViewDelegate
@@ -199,17 +223,39 @@
     NSString * interface = @"/shop/goods/getBonus.intf";
     [MYTOOL netWorkingWithTitle:@"获取优惠券"];
     NSDictionary * send = @{
-                            @"memberId":MEMBERID
+                            @"memberId":MEMBERID,
+                            @"pageNo":@(pageNo)
                             };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
         NSArray * bonusList = back_dic[@"bonusList"];
-        self.array = bonusList;
-        if (bonusList && bonusList.count) {
+        if (pageNo > 1) {
+            
+            if (bonusList.count > 0) {
+                [self.array addObjectsFromArray:bonusList];
+            }else{
+                pageNo --;
+                [SVProgressHUD showErrorWithStatus:@"到底了" duration:1];
+            }
+            
+        }else{
+            self.array = [NSMutableArray arrayWithArray:bonusList];
+        }
+        
+        
+        
+        if (self.array && self.array.count) {
             self.noDateView.hidden = true;
         }else{
             self.noDateView.hidden = false;
         }
         [self.tableView reloadData];
+    } andFailure:^(NSError *error_failure) {
+        if (pageNo == 1) {
+            [self.array removeAllObjects];
+            [self.tableView reloadData];
+        }else{
+            pageNo --;
+        }
     }];
     
 }
@@ -222,6 +268,7 @@
 //此view出现时隐藏tabBar
 - (void)viewWillAppear: (BOOL)animated{
     [MYTOOL hiddenTabBar];
+    pageNo = 1;
     [self getDataForTableView];
 }
 //此view消失时还原tabBar

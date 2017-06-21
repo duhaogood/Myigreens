@@ -74,6 +74,7 @@
     
     
 }
+
 //搜索事件
 -(void)submitSearch{
     SubscribeSearchVC * search = [SubscribeSearchVC new];

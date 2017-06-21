@@ -10,5 +10,6 @@
 
 @interface SelectBonusVC : UIViewController
 @property(nonatomic,strong)NSArray * bonusList;//优惠券列表
+@property(nonatomic,strong)NSObject * orderPrice;//订单金额
 @property(nonatomic,assign)id delegate;
 @end

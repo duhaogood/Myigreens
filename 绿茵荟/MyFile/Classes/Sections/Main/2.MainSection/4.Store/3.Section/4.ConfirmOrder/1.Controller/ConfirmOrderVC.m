@@ -753,7 +753,8 @@
     NSString * interface = @"/shop/goods/getUseBonus.intf";
     NSDictionary * send = @{
                             @"memberId":MEMBERID,
-                            @"orderPrice":self.order[@"orderPrice"]
+                            @"orderPrice":self.order[@"orderPrice"],
+                            @"pageNo":@"1"
                             };
     [MYTOOL netWorkingWithTitle:@"获取可用优惠券"];
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
@@ -762,6 +763,7 @@
         SelectBonusVC * bonusVC = [SelectBonusVC new];
         bonusVC.bonusList = bonusList;
         bonusVC.title = @"选择优惠券";
+        bonusVC.orderPrice = self.order[@"orderPrice"];
         bonusVC.delegate = self;
         [self.navigationController pushViewController:bonusVC animated:true];
     }];

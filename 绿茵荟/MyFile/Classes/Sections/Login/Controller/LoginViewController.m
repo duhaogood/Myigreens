@@ -253,7 +253,9 @@
             UMSocialUserInfoResponse *resp = result;
             NSDictionary * info = @{
                                     @"app":@"weibo",
-                                    @"openId":resp.uid
+                                    @"openId":resp.uid,
+                                    @"nickName":resp.name,
+                                    @"headImg":resp.iconurl
                                     };
             [self thirtLoginWithInfo:info];
         }
@@ -272,7 +274,9 @@
             UMSocialUserInfoResponse *resp = result;
             NSDictionary * info = @{
                                     @"app":@"qq",
-                                    @"openId":resp.openid
+                                    @"openId":resp.openid,
+                                    @"nickName":resp.name,
+                                    @"headImg":resp.iconurl
                                     };
             [self thirtLoginWithInfo:info];
         }
@@ -292,7 +296,9 @@
             NSDictionary * info = @{
                                     @"app":@"wechat",
                                     @"openId":resp.openid,
-                                    @"unionId":resp.uid
+                                    @"unionId":resp.uid,
+                                    @"nickName":resp.name,
+                                    @"headImg":resp.iconurl
                                     };
             [self thirtLoginWithInfo:info];
         }

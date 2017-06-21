@@ -598,10 +598,13 @@
             userImgView.layer.cornerRadius = user_width/2;
             
             [userImgView sd_setImageWithURL:[NSURL URLWithString:headUrl] placeholderImage:[UIImage imageNamed:@"logo"]];
+            //添加点击事件
+            userImgView.userInteractionEnabled = true;
+            userImgView.tag = indexPath.row;
             [userImgView setUserInteractionEnabled:YES];
-            UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
-            tapGesture2.numberOfTapsRequired=1;
-//            [userImgView addGestureRecognizer:tapGesture2];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickUserImage:)];
+            tapGesture.numberOfTapsRequired=1;
+            [userImgView addGestureRecognizer:tapGesture];
         }
         //名字
         {
@@ -776,10 +779,14 @@
             userImgView.layer.masksToBounds = true;
             userImgView.layer.cornerRadius = user_width/2;
             [userImgView sd_setImageWithURL:[NSURL URLWithString:headUrl] placeholderImage:[UIImage imageNamed:@"logo"]];
+            
+            //添加点击事件
+            userImgView.userInteractionEnabled = true;
+            userImgView.tag = indexPath.row;
             [userImgView setUserInteractionEnabled:YES];
-            UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView:)];
-            tapGesture2.numberOfTapsRequired=1;
-            [userImgView addGestureRecognizer:tapGesture2];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickUserImage:)];
+            tapGesture.numberOfTapsRequired=1;
+            [userImgView addGestureRecognizer:tapGesture];
         }
         //名字
         {
@@ -900,6 +907,13 @@
             [cell addSubview:userImgView];
             userImgView.layer.masksToBounds = true;
             userImgView.layer.cornerRadius = 20;
+            //添加点击事件
+            userImgView.userInteractionEnabled = true;
+            userImgView.tag = indexPath.row;
+            [userImgView setUserInteractionEnabled:YES];
+            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickUserImage:)];
+            tapGesture.numberOfTapsRequired=1;
+            [userImgView addGestureRecognizer:tapGesture];
         }
         //用户名字
         {
@@ -1101,6 +1115,39 @@
     
     
     return cell;
+}
+//点击用户头像跳转
+-(void)clickUserImage:(UITapGestureRecognizer *)tap{
+    NSDictionary * postInfo = self.data_array[tap.view.tag];
+    NSString * byMemberId = postInfo[@"member"][@"memberId"];
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    NSDictionary * send_dic = @{
+                                @"byMemberId":byMemberId
+                                };
+    if (memberId == nil) {
+        send_dic = @{
+                     @"memberId":byMemberId,
+                     @"byMemberId":byMemberId
+                     };
+    }else{
+        send_dic = @{
+                     @"memberId":memberId,
+                     @"byMemberId":byMemberId
+                     };
+    }
+    
+    [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
+    [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
+        SubscribeInfoViewController * subscribeInfo = [SubscribeInfoViewController new];
+        NSDictionary * memberInfo = back_dic[@"member"];
+        if (memberInfo == nil || memberInfo.allKeys.count == 0) {
+            [SVProgressHUD showErrorWithStatus:@"查询失败" duration:2];
+            return;
+        }else{
+            subscribeInfo.member_dic = memberInfo;
+        }
+        [self.navigationController pushViewController:subscribeInfo animated:true];
+    }];
 }
 //举报帖子入口
 -(void)reportBtnCallBack:(UITapGestureRecognizer *)tap{
@@ -1340,6 +1387,14 @@
 }
 #pragma mark - 发帖按钮回调
 -(void)submitPostBtnBack{
+    if (![MYTOOL isLogin]) {
+        //跳转至登录页
+        LoginViewController * loginVC = [LoginViewController new];
+        loginVC.delegate = self;
+        loginVC.donotUpdate = self.donotUpdate;
+        [self.navigationController pushViewController:loginVC animated:true];
+        return;
+    }
 //    NSLog(@"准备发帖");
     SubmitPostViewController * postVC = [SubmitPostViewController new];
     postVC.title = @"发帖";
@@ -1454,7 +1509,7 @@
         //网络获取商品详情
         NSString * interfaceName = @"/shop/goods/getGoodsInfo.intf";
         NSString * cityId = [MYTOOL getProjectPropertyWithKey:@"cityId"];
-        if (cityId == nil || cityId.length == 0) {
+        if (cityId == nil) {
             cityId = @"320300";
         }
         NSDictionary * sendDict = @{

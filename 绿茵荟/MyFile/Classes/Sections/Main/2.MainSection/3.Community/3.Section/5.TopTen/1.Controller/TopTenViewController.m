@@ -77,11 +77,16 @@
     NSString * byMemberId = self.top_10_array[indexPath.row][@"memberId"];
     NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
     NSDictionary * send_dic = @{
-                                @"memberId":memberId ? memberId : @"",
                                 @"byMemberId":byMemberId
                                 };
     if (memberId == nil) {
         send_dic = @{
+                     @"memberId":byMemberId,
+                     @"byMemberId":byMemberId
+                     };
+    }else{
+        send_dic = @{
+                     @"memberId":memberId,
                      @"byMemberId":byMemberId
                      };
     }

@@ -108,7 +108,7 @@ static BOOL isProduction = true;
         //网络获取商品详情
         NSString * interfaceName = @"/shop/goods/getGoodsInfo.intf";
         NSString * cityId = [MYTOOL getProjectPropertyWithKey:@"cityId"];
-        if (cityId == nil || cityId.length == 0) {
+        if (cityId == nil ) {
             cityId = @"320300";
         }
         NSDictionary * sendDict = @{
@@ -249,6 +249,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     UINavigationController * nc = main.childViewControllers[3];
     [nc popToRootViewControllerAnimated:true];
     MyOrderVC * order = [MyOrderVC new];
+    order.title = @"我的订单";
     [nc pushViewController:order animated:true];
     
 }

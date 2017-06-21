@@ -11,13 +11,17 @@
 @interface SelectBonusVC ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
+@property(nonatomic,strong)NSMutableArray * bonusArray;
 @end
 
 @implementation SelectBonusVC
-
+{
+    int pageNo;
+}
 - (void)viewDidLoad {
+    pageNo = 1;
     [super viewDidLoad];
-    
+    self.bonusArray = [NSMutableArray arrayWithArray:self.bonusList];
     self.view.backgroundColor = [UIColor whiteColor];
     //左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
@@ -31,6 +35,20 @@
         self.tableView = tableView;
         tableView.rowHeight = [MYTOOL getHeightWithIphone_six:98] + 20;
         self.automaticallyAdjustsScrollViewInsets = false;
+        tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+            [self headerRefresh];
+            // 结束刷新
+            [tableView.mj_header endRefreshing];
+        }];
+        
+        // 设置自动切换透明度(在导航栏下面自动隐藏)
+        tableView.mj_header.automaticallyChangeAlpha = YES;
+        
+        // 上拉刷新
+        tableView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+            [self footerRefresh];
+            [tableView.mj_footer endRefreshing];
+        }];
         //覆盖一个没有数据时显示的view
         //@property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
         {
@@ -59,7 +77,15 @@
     }
     
 }
-
+#pragma mark - 上拉、下拉刷新
+-(void)headerRefresh{
+    pageNo = 1;
+    [self freshDiscountCoupon];
+}
+-(void)footerRefresh{
+    pageNo ++;
+    [self freshDiscountCoupon];
+}
 
 #pragma mark - UITableViewDataSource,UITableViewDelegate
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -70,10 +96,10 @@
     
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.bonusList.count;
+    return self.bonusArray.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSDictionary * bonusDic = self.bonusList[indexPath.row];
+    NSDictionary * bonusDic = self.bonusArray[indexPath.row];
     UITableViewCell * cell = [UITableViewCell new];
     //背景图
     {
@@ -128,7 +154,38 @@
      */
     return cell;
 }
-
+//重新加载
+-(void)freshDiscountCoupon{
+    NSString * interface = @"/shop/goods/getUseBonus.intf";
+    NSDictionary * send = @{
+                            @"memberId":MEMBERID,
+                            @"orderPrice":self.orderPrice,
+                            @"pageNo":@(pageNo)
+                            };
+    [MYTOOL netWorkingWithTitle:@"获取可用优惠券"];
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        //        NSLog(@"back:%@",back_dic);
+        NSArray * bonusList = back_dic[@"bonusList"];
+        if (pageNo > 1) {
+            if (bonusList.count > 0) {
+                [self.bonusArray addObjectsFromArray:bonusList];
+            }else{
+                pageNo --;
+                [SVProgressHUD showErrorWithStatus:@"到底了" duration:1];
+            }
+        }else{
+            self.bonusArray = [NSMutableArray arrayWithArray:bonusList];
+        }
+        [self.tableView reloadData];
+    } andFailure:^(NSError *error_failure) {
+        if (pageNo == 1) {
+            [self.bonusArray removeAllObjects];
+            [self.tableView reloadData];
+        }else{
+            pageNo --;
+        }
+    }];
+}
 #pragma mark - 重写返回按钮事件
 //返回上一个页面
 -(void)popUpViewController{

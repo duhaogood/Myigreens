@@ -264,9 +264,9 @@ NSString *const cityCell = @"CityCell";
     }
     GYZCityHeaderView *headerView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:cityHeaderView];
     NSString * title = [_arraySection objectAtIndex:section + 1];
-    if (section >= 2) {
-        title = [_arraySection objectAtIndex:section + 2];
-    }
+//    if (section >= 2) {
+//        title = [_arraySection objectAtIndex:section + 2];
+//    }
     headerView.titleLabel.text = title;
     return headerView;
 }

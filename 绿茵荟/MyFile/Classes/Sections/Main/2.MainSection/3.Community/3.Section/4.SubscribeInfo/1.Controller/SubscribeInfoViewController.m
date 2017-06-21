@@ -65,12 +65,16 @@
     float top = 0;
     back_view.frame = CGRectMake(0, 0, WIDTH, 480);
     self.tableView.tableHeaderView = back_view;
+    NSString * normalUrl = nil;
     //背景图
     UIImageView * back_imgV = [UIImageView new];
     {
         back_imgV.frame = [MYTOOL getRectWithIphone_six_X:0 andY:0 andWidth:375 andHeight:230];
         [back_view addSubview:back_imgV];
-        NSString * normalUrl = self.member_dic[@"headUrl"][@"normalUrl"];
+        normalUrl = self.member_dic[@"headUrl"][@"normalUrl"];
+        if (normalUrl == nil) {
+            normalUrl = @"http://www.qqai.net/uploads/i_2_3130105460x438192042_21.jpg";
+        }
 //        [back_imgV sd_setImageWithURL:[NSURL URLWithString:normalUrl] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
 //            UIImage * lastImg = [MYTOOL boxblurImage:image withBlurNumber:0.5];
 //            back_imgV.image = lastImg;
@@ -117,7 +121,7 @@
     {
         UIImageView * user_icon = [UIImageView new];
         user_icon.frame = CGRectMake(WIDTH/2-40, back_imgV.frame.size.height-50, 80, 80);
-        [user_icon sd_setImageWithURL:[NSURL URLWithString:self.member_dic[@"headUrl"][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"logo"]];
+        [user_icon sd_setImageWithURL:[NSURL URLWithString:normalUrl] placeholderImage:[UIImage imageNamed:@"logo"]];
         user_icon.layer.masksToBounds = true;
         user_icon.layer.cornerRadius = 40;
         [user_icon setUserInteractionEnabled:YES];
@@ -519,10 +523,18 @@
 -(void)getMemberInfo{
     NSString * byMemberId = self.member_dic[@"memberId"];
     NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
-    NSDictionary * send_dic = @{
-                                @"memberId":memberId,
-                                @"byMemberId":byMemberId
-                                };
+    NSDictionary * send_dic = nil;
+    if (memberId) {
+        send_dic = @{
+                     @"memberId":memberId,
+                     @"byMemberId":byMemberId
+                     };
+    }else{
+        send_dic = @{
+                     @"memberId":byMemberId,
+                     @"byMemberId":byMemberId
+                     };
+    }
     [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
         self.member_dic = back_dic[@"member"];

@@ -79,7 +79,7 @@ static id instance;
              }
              else if (error != nil)
              {
-                 [SVProgressHUD showErrorWithStatus:@"定位出错" duration:2];
+//                 [SVProgressHUD showErrorWithStatus:@"定位出错" duration:2];
                  [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_UPDATELOCATION_FAILED object:@{@"msg":@"定位出错"}];
              }
          }];

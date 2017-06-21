@@ -91,7 +91,7 @@
 -(void)getGoods{
     NSString * interface = @"/shop/goods/getCatGoods.intf";
     NSString * cityId = [MYTOOL getProjectPropertyWithKey:@"cityId"];
-    if (cityId == nil || cityId.length == 0) {
+    if (cityId == nil) {
         cityId = @"320300";
     }
     NSDictionary * send = @{
@@ -353,7 +353,7 @@
     //网络获取商品详情
     NSString * interfaceName = @"/shop/goods/getGoodsInfo.intf";
     NSString * cityId = [MYTOOL getProjectPropertyWithKey:@"cityId"];
-    if (cityId == nil || cityId.length == 0) {
+    if (cityId == nil) {
         cityId = @"320300";
     }
     NSDictionary * sendDict = @{
