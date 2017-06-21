@@ -98,7 +98,7 @@
     CGSize size = [self.titleLabel sizeThatFits:CGSizeMake(MAXFLOAT, MAXFLOAT)];
     [self.titleLabel setFrame:CGRectMake(x, y, self.frame.size.width - x, size.height)];
     y += size.height + 3;
-    [self.noDataLabel setFrame:CGRectMake(x + 5, y, self.frame.size.width - x - 5, self.titleLabel.frame.size.height)];
+    [self.noDataLabel setFrame:CGRectMake(x + 5, y+3, self.frame.size.width - x - 5, self.titleLabel.frame.size.height)];
     
     y += 7;
     float space = MIN_SPACE;            // 最小空隙

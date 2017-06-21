@@ -181,7 +181,7 @@ NSString *const cityCell = @"CityCell";
 - (NSMutableArray *) arraySection
 {
     if (_arraySection == nil) {
-        _arraySection = [[NSMutableArray alloc] initWithObjects:UITableViewIndexSearch, @"定位", @"最近", @"最热", nil];
+        _arraySection = [[NSMutableArray alloc] initWithObjects:UITableViewIndexSearch, @"定位", @"最近",  nil];
     }
     return _arraySection;
 }
@@ -210,7 +210,7 @@ NSString *const cityCell = @"CityCell";
     if (self.isSearch) {
         return 1;
     }
-    return self.cityDatas.count + 3;
+    return self.cityDatas.count + 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -218,10 +218,10 @@ NSString *const cityCell = @"CityCell";
     if (self.isSearch) {
         return self.searchCities.count;
     }
-    if (section < 3) {
+    if (section < 2) {
         return 1;
     }
-    GYZCityGroup *group = [self.cityDatas objectAtIndex:section - 3];
+    GYZCityGroup *group = [self.cityDatas objectAtIndex:section - 2];
     return group.arrayCitys.count;
 }
 
@@ -234,7 +234,7 @@ NSString *const cityCell = @"CityCell";
         return cell;
     }
     
-    if (indexPath.section < 3) {
+    if (indexPath.section < 2) {
         GYZCityGroupCell *cell = [tableView dequeueReusableCellWithIdentifier:cityGroupCell];
         if (indexPath.section == 0) {
             cell.titleLabel.text = @"定位城市";
@@ -245,15 +245,11 @@ NSString *const cityCell = @"CityCell";
             cell.titleLabel.text = @"最近访问城市";
             [cell setCityArray:self.commonCityData];
         }
-        else {
-            cell.titleLabel.text = @"热门城市";
-            [cell setCityArray:self.hotCityData];
-        }
         [cell setDelegate:self];
         return cell;
     }
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cityCell];
-    GYZCityGroup *group = [self.cityDatas objectAtIndex:indexPath.section - 3];
+    GYZCityGroup *group = [self.cityDatas objectAtIndex:indexPath.section - 2];
     GYZCity *city =  [group.arrayCitys objectAtIndex:indexPath.row];
     [cell.textLabel setText:city.cityName];
     
@@ -263,11 +259,14 @@ NSString *const cityCell = @"CityCell";
 #pragma mark UITableViewDelegate
 - (UIView *) tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    if (section < 3 || self.isSearch) {
+    if (section < 2 || self.isSearch) {
         return nil;
     }
     GYZCityHeaderView *headerView = [tableView dequeueReusableHeaderFooterViewWithIdentifier:cityHeaderView];
-    NSString *title = [_arraySection objectAtIndex:section + 1];
+    NSString * title = [_arraySection objectAtIndex:section + 1];
+    if (section >= 2) {
+        title = [_arraySection objectAtIndex:section + 2];
+    }
     headerView.titleLabel.text = title;
     return headerView;
 }
@@ -283,15 +282,15 @@ NSString *const cityCell = @"CityCell";
     else if (indexPath.section == 1) {
         return [GYZCityGroupCell getCellHeightOfCityArray:self.commonCityData];
     }
-    else if (indexPath.section == 2){
-        return [GYZCityGroupCell getCellHeightOfCityArray:self.hotCityData];
-    }
+//    else if (indexPath.section == 2){
+//        return [GYZCityGroupCell getCellHeightOfCityArray:self.hotCityData];
+//    }
     return 44.0f;
 }
 
 - (CGFloat) tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    if (section < 3 || self.isSearch) {
+    if (section < 2 || self.isSearch) {
         return 0.0f;
     }
     return 23.5f;
@@ -304,13 +303,13 @@ NSString *const cityCell = @"CityCell";
     if (self.isSearch) {
         city =  [self.searchCities objectAtIndex:indexPath.row];
     }else{
-        if (indexPath.section < 3) {
+        if (indexPath.section < 2) {
             if (indexPath.section == 0 && self.localCityData.count <= 0) {
                 [self locationStart];
             }
             return;
         }
-        GYZCityGroup *group = [self.cityDatas objectAtIndex:indexPath.section - 3];
+        GYZCityGroup *group = [self.cityDatas objectAtIndex:indexPath.section - 2];
         city =  [group.arrayCitys objectAtIndex:indexPath.row];
     }
    
