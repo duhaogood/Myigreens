@@ -466,9 +466,127 @@
                 [view addSubview:label];
             }
         }
+        //分割线
+        {
+            UIView * spaceView = [UIView new];
+            view_top += 18;
+            spaceView.frame = CGRectMake(14, view_top, WIDTH-28, 1);
+            spaceView.backgroundColor = [MYTOOL RGBWithRed:220 green:220 blue:220 alpha:1];
+            [view addSubview:spaceView];
+            view_top += 1;
+        }
+        //发票抬头
+        {
+//            NSLog(@"订单:%@",self.orderDictionary);
+            float label_height = 0;
+            //左侧提示
+            {
+                UILabel * label = [UILabel new];
+                label.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:18]];
+                label.textColor = MYCOLOR_46_42_42;
+                label.text = @"发票抬头";
+                view_top += 18;
+                CGSize size = [MYTOOL getSizeWithLabel:label];
+                label.frame = CGRectMake(14, view_top, size.width, size.height);
+                [view addSubview:label];
+                view_top += size.height;
+                label_height = size.height;
+            }
+            //右侧显示
+            {
+                UILabel * label = [UILabel new];
+                label.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
+                label.textColor = MYCOLOR_181_181_181;
+                NSString * invoiceTitle = self.orderDictionary[@"invoiceTitle"];
+                NSString * text = invoiceTitle ? invoiceTitle : @"";
+                label.text = text;
+                CGSize size = [MYTOOL getSizeWithLabel:label];
+                label.frame = CGRectMake(WIDTH-14-size.width, view_top - label_height/2-size.height/2, size.width, size.height);
+                [view addSubview:label];
+            }
+        }
+        /*如果已经支付过，承运方式，物流状态，支付方式*/
+        BOOL payStatus = [self.orderDictionary[@"payStatus"] boolValue];
+        NSLog(@"payStatus:%d",payStatus);
+        if (payStatus) {
+            //分割线
+            {
+                UIView * spaceView = [UIView new];
+                view_top += 18;
+                spaceView.frame = CGRectMake(14, view_top, WIDTH-28, 1);
+                spaceView.backgroundColor = [MYTOOL RGBWithRed:220 green:220 blue:220 alpha:1];
+                [view addSubview:spaceView];
+                view_top += 1;
+            }
+            //承运方式
+            {
+                float label_height = 0;
+                //左侧提示
+                {
+                    UILabel * label = [UILabel new];
+                    label.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:18]];
+                    label.textColor = MYCOLOR_46_42_42;
+                    label.text = @"承运方式";
+                    view_top += 18;
+                    CGSize size = [MYTOOL getSizeWithLabel:label];
+                    label.frame = CGRectMake(14, view_top, size.width, size.height);
+                    [view addSubview:label];
+                    view_top += size.height;
+                    label_height = size.height;
+                }
+                //右侧显示
+                {
+                    UILabel * label = [UILabel new];
+                    label.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
+                    label.textColor = MYCOLOR_181_181_181;
+                    NSString * expressName = self.orderDictionary[@"expressName"];
+                    NSString * text = expressName ? expressName : @"";
+                    label.text = text;
+                    CGSize size = [MYTOOL getSizeWithLabel:label];
+                    label.frame = CGRectMake(WIDTH-14-size.width, view_top - label_height/2-size.height/2, size.width, size.height);
+                    [view addSubview:label];
+                }
+            }
+            //分割线
+            {
+                UIView * spaceView = [UIView new];
+                view_top += 18;
+                spaceView.frame = CGRectMake(14, view_top, WIDTH-28, 1);
+                spaceView.backgroundColor = [MYTOOL RGBWithRed:220 green:220 blue:220 alpha:1];
+                [view addSubview:spaceView];
+                view_top += 1;
+            }
+            //支付方式
+            {
+                float label_height = 0;
+                //左侧提示
+                {
+                    UILabel * label = [UILabel new];
+                    label.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:18]];
+                    label.textColor = MYCOLOR_46_42_42;
+                    label.text = @"支付方式";
+                    view_top += 18;
+                    CGSize size = [MYTOOL getSizeWithLabel:label];
+                    label.frame = CGRectMake(14, view_top, size.width, size.height);
+                    [view addSubview:label];
+                    view_top += size.height;
+                    label_height = size.height;
+                }
+                //右侧显示
+                {
+                    UILabel * label = [UILabel new];
+                    label.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
+                    label.textColor = MYCOLOR_181_181_181;
+                    NSString * payTypeName = self.orderDictionary[@"payTypeName"];
+                    NSString * text = payTypeName ? payTypeName : @"";
+                    label.text = text;
+                    CGSize size = [MYTOOL getSizeWithLabel:label];
+                    label.frame = CGRectMake(WIDTH-14-size.width, view_top - label_height/2-size.height/2, size.width, size.height);
+                    [view addSubview:label];
+                }
+            }
+        }
         view_top += 20;
-        
-        
         
         view.frame = CGRectMake(0, top_all, WIDTH, view_top);
         top_all += view_top + 10;
@@ -479,7 +597,6 @@
         UIView * bgView = [UIView new];
         float bg_height = [MYTOOL getHeightWithIphone_six:185];//背景view总高度
         float view_top = [MYTOOL getHeightWithIphone_six:15];//各个控件的y坐标
-        float view_height = 0;//左侧label高度
         {
             bgView.frame = CGRectMake(0, top_all, WIDTH, bg_height);
             bgView.backgroundColor = [UIColor whiteColor];

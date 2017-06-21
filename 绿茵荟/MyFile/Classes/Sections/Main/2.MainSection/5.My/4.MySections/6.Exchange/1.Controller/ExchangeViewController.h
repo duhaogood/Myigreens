@@ -10,5 +10,5 @@
 
 @interface ExchangeViewController : UIViewController
 @property(nonatomic,strong)NSDictionary * member_dic;//我的信息
-@property(nonatomic,strong)NSArray * goodsList;//积分商品列表
+@property(nonatomic,strong)NSMutableArray * goodsList;//积分商品列表
 @end

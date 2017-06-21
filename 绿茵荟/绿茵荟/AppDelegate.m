@@ -94,6 +94,9 @@ static BOOL isProduction = true;
     app.applicationIconBadgeNumber = 0;
     
     
+    
+    
+    
     return YES;
 }
 -(void)goToMssageViewControllerWith:(NSDictionary *)remoteNotification{

@@ -475,4 +475,16 @@ static id instance;
     }
     return dic;
 }
+//是否安装qq
+-(BOOL)isInstallQQ{
+    return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"mqq://"]];
+}
+//是否安装微信
+-(BOOL)isInstallWX{
+    return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"weixin://"]];
+}
+//是否安装微博
+-(BOOL)isInstallWB{
+    return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"Sinaweibo://"]];
+}
 @end

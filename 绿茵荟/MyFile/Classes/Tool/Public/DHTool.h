@@ -191,4 +191,10 @@
 
 //字符串转成字典
 -(NSDictionary *)getDictionaryWithJsonString:(NSString *)jsonString;
+//是否安装qq
+-(BOOL)isInstallQQ;
+//是否安装微信
+-(BOOL)isInstallWX;
+//是否安装微博
+-(BOOL)isInstallWB;
 @end

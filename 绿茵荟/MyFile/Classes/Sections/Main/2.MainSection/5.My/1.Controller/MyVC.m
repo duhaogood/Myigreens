@@ -339,10 +339,10 @@
         exVC.member_dic = self.member_dic;
         [MYTOOL netWorkingWithTitle:@"获取商品列表"];
         NSString * interface = @"/shop/pointGoods/getPointGoods.intf";
-        [MYNETWORKING getWithInterfaceName:interface andDictionary:nil andSuccess:^(NSDictionary *back_dic) {
+        [MYNETWORKING getWithInterfaceName:interface andDictionary:@{@"pageNo":@"1"} andSuccess:^(NSDictionary *back_dic) {
 //            NSLog(@"back:%@",back_dic);
             NSArray * array = back_dic[@"pointGoodsList"];
-            exVC.goodsList = array;
+            exVC.goodsList = [NSMutableArray arrayWithArray:array];
             [self.navigationController pushViewController:vc animated:YES];
         }];
         return;

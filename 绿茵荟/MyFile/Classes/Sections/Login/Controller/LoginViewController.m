@@ -242,6 +242,10 @@
 #pragma mark - 按钮回调
 //微博授权
 - (void)getAuthWithUserInfoFromSina{
+    if (![MYTOOL isInstallWB]) {
+        [SVProgressHUD showErrorWithStatus:@"未安装微博" duration:2];
+        return;
+    }
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_Sina currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
             NSString * msg = error.userInfo[@"message"];
@@ -263,6 +267,10 @@
 }
 //qq授权
 - (void)getAuthWithUserInfoFromQQ{
+    if (![MYTOOL isInstallQQ]) {
+        [SVProgressHUD showErrorWithStatus:@"未安装QQ" duration:2];
+//        return;
+    }
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_QQ currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
             NSString * msg = error.userInfo[@"message"];
@@ -284,6 +292,10 @@
 }
 //微信授权
 - (void)getAuthWithUserInfoFromWechat{
+    if (![MYTOOL isInstallWX]) {
+        [SVProgressHUD showErrorWithStatus:@"未安装微信" duration:2];
+        return;
+    }
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_WechatSession currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
             NSString * msg = error.userInfo[@"message"];

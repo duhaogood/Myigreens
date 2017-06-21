@@ -15,12 +15,14 @@
 @implementation AccountTieViewController
 {
     NSString * currentTitle;//要操作的类型
+    BOOL isPop;//是否弹框提示
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.member_dic = DHTOOL.memberDic;
     //加载主界面
     [self loadMainView];
+    isPop = false;
 }
 //加载主界面
 -(void)loadMainView{
@@ -73,8 +75,10 @@
         }
     }
 }
+
 //第三方绑定入口
 -(void)startTieWithTitle:(NSString *)title{
+    isPop = true;
     //@"新浪微博",@"微信",@"QQ"
     if ([title isEqualToString:@"新浪微博"]) {
         [self getAuthWithUserInfoFromSina];
@@ -138,35 +142,34 @@
                             @"memberId":MEMBERID,
                             @"app":key
                             };
-    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-        if ([back_dic[@"code"] boolValue]) {
-            [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%@取消成功",title] duration:1];
-//            [self updateMemberInfo];
-        }else{
-            btn.on = true;;
-        }
-    }];
+    if (!isPop){//直接取消，并不是打开后未安装而触发的取消
+        isPop = false;
+        [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+            if ([back_dic[@"code"] boolValue]) {
+                [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%@取消成功",title] duration:1];
+                //            [self updateMemberInfo];
+            }else{
+                btn.on = true;;
+            }
+        }];
+    }
+    
     
 }
 //微博授权
 - (void)getAuthWithUserInfoFromSina{
+    UISwitch * btn =  self.title_swich_dictionary[@"新浪微博"];
+    if (![MYTOOL isInstallWB]) {
+        [SVProgressHUD showErrorWithStatus:@"未安装微博" duration:2];
+        btn.on = false;
+        return;
+    }
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_Sina currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
-            UISwitch * btn =  self.title_swich_dictionary[@"新浪微博"];
             btn.on = false;
             NSString * msg = error.userInfo[@"message"];
             if ([msg isEqualToString:@"Operation is cancel"]) {
                 msg = @"取消绑定";
-            }
-            switch (error.code) {
-                case UMSocialPlatformErrorType_NotInstall:
-                    msg = @"应用未安装";
-                    break;
-                case UMSocialPlatformErrorType_Cancel:
-                    msg = @"您已取消分享";
-                    break;
-                default:
-                    break;
             }
             [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {
@@ -181,24 +184,19 @@
 }
 //qq授权
 - (void)getAuthWithUserInfoFromQQ{
+    UISwitch * btn =  self.title_swich_dictionary[@"QQ"];
+    if (![MYTOOL isInstallQQ]) {
+        [SVProgressHUD showErrorWithStatus:@"未安装QQ" duration:2];
+        btn.on = false;
+        return;
+    }
     [UMSocialGlobal shareInstance].isClearCacheWhenGetUserInfo = false;
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_QQ currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
-            UISwitch * btn =  self.title_swich_dictionary[@"QQ"];
             btn.on = false;
             NSString * msg = error.userInfo[@"message"];
             if ([msg isEqualToString:@"Operation is cancel"]) {
                 msg = @"取消绑定";
-            }
-            switch (error.code) {
-                case UMSocialPlatformErrorType_NotInstall:
-                    msg = @"应用未安装";
-                    break;
-                case UMSocialPlatformErrorType_Cancel:
-                    msg = @"您已取消分享";
-                    break;
-                default:
-                    break;
             }
             [SVProgressHUD showErrorWithStatus:msg duration:2];
         } else {
@@ -225,9 +223,14 @@
 }
 //微信授权
 - (void)getAuthWithUserInfoFromWechat{
+    UISwitch * btn =  self.title_swich_dictionary[@"微信"];
+    if (![MYTOOL isInstallWX]) {
+        [SVProgressHUD showErrorWithStatus:@"未安装微信" duration:2];
+        btn.on = false;
+        return;
+    }
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_WechatSession currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
-            UISwitch * btn =  self.title_swich_dictionary[@"微信"];
             btn.on = false;
             NSString * msg = error.userInfo[@"message"];
             if ([msg isEqualToString:@"Operation is cancel"]) {
@@ -253,10 +256,6 @@
                                     };
             [self bindTirdAPPWithTitle:info];
             
-            
-            // 授权信息
-            NSLog(@"Wechat uid: %@", resp.uid);
-            NSLog(@"Wechat openid: %@", resp.openid);
             
             //            NSLog(@"Wechat accessToken: %@", resp.accessToken);
 //            NSLog(@"Wechat refreshToken: %@", resp.refreshToken);

@@ -11,17 +11,22 @@
 #import "PointGoodsInfoVC.h"
 @interface ExchangeViewController ()<UICollectionViewDataSource,UICollectionViewDelegate>
 @property(nonatomic,strong)UICollectionView * collectionView;
+@property(nonatomic,strong)UILabel * pointLabel;//积分label
 @end
 
 @implementation ExchangeViewController
-
+{
+    int pageNo;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
+    pageNo = 1;
     self.view.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
     self.automaticallyAdjustsScrollViewInsets = false;
     //左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
     [self loadMainView];
+    [self headerRefresh];
 }
 //加载主界面
 -(void)loadMainView{
@@ -38,6 +43,20 @@
     self.collectionView.backgroundColor = [UIColor whiteColor];
     //注册头视图
     [self.collectionView registerClass:[UICollectionReusableView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"collectionHeaderView"];
+    self.collectionView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
+        [self headerRefresh];
+        // 结束刷新
+        [self.collectionView.mj_header endRefreshing];
+    }];
+    
+    // 设置自动切换透明度(在导航栏下面自动隐藏)
+    self.collectionView.mj_header.automaticallyChangeAlpha = YES;
+    
+    // 上拉刷新
+    self.collectionView.mj_footer = [MJRefreshBackNormalFooter footerWithRefreshingBlock:^{
+        [self footerRefresh];
+        [self.collectionView.mj_footer endRefreshing];
+    }];
     
 }
 #pragma mark - UICollectionViewDataSource,UICollectionViewDelegate
@@ -224,6 +243,7 @@
             label.textColor = MYCOLOR_46_42_42;
             CGSize size = LABEL_SIZE;
             label.frame = CGRectMake(0, top + 5, WIDTH, size.height);
+            self.pointLabel = label;
             label.textAlignment = NSTextAlignmentCenter;
             [header addSubview:label];
         }
@@ -273,6 +293,42 @@
     }
     return nil;
 }
+#pragma mark - 上拉、下拉刷新
+-(void)headerRefresh{
+    pageNo = 1;
+    [self loadDefaultData];
+}
+-(void)footerRefresh{
+    pageNo ++;
+    [self loadDefaultData];
+}
+-(void)loadDefaultData{
+    NSString * interface = @"/shop/pointGoods/getPointGoods.intf";
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:@{@"pageNo":@(pageNo)} andSuccess:^(NSDictionary *back_dic) {
+        //            NSLog(@"back:%@",back_dic);
+        NSArray * array = back_dic[@"pointGoodsList"];
+        if (pageNo > 1) {
+            if (array.count > 0) {
+                [self.goodsList addObjectsFromArray:array];
+            }else{
+                pageNo --;
+                [SVProgressHUD showErrorWithStatus:@"到底了" duration:1];
+            }
+            
+        }else{
+            self.goodsList = [NSMutableArray arrayWithArray:array];
+        }
+        [self.collectionView reloadData];
+        
+    } andFailure:^(NSError *error_failure) {
+        if (pageNo == 1) {
+            [self.goodsList removeAllObjects];
+            [self.collectionView reloadData];
+        }else{
+            pageNo --;
+        }
+    }];
+}
 #pragma mark --UICollectionViewDelegate
 //UICollectionView被选中时调用的方法
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
@@ -304,10 +360,24 @@
     [MYTOOL netWorkingWithTitle:@"规则获取"];
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
         IntegralRuleVC * vc = [IntegralRuleVC new];
-        vc.url = back_dic[@"info"][@"content"];
+        vc.url = back_dic[@"info"][@"url"];
         vc.title = @"积分规则";
         [self.navigationController pushViewController:vc animated:true];
     }];
+}
+#pragma mark - 重新网络获取个人信息数据刷新页面
+-(void)freshPoint{
+    //获取我的信息
+    NSString * interfaceName = @"/member/getMember.intf";
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"memberId":memberId} andSuccess:^(NSDictionary *back_dic) {
+        MYTOOL.memberDic = back_dic[@"member"];
+        self.member_dic = MYTOOL.memberDic;
+        NSInteger integral = [self.member_dic[@"integral"] longValue];
+        self.pointLabel.text = [NSString stringWithFormat:@"%ld",integral];
+    }];
+    
+    
 }
 #pragma mark - 重写返回按钮事件
 //返回上一个页面
@@ -318,7 +388,7 @@
 //此view出现时隐藏tabBar
 - (void)viewWillAppear: (BOOL)animated{
     [MYTOOL hiddenTabBar];
-    
+    [self freshPoint];
 }
 //此view消失时还原tabBar
 - (void)viewWillDisappear: (BOOL)animated{

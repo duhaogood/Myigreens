@@ -71,42 +71,7 @@
     {
         back_imgV.frame = [MYTOOL getRectWithIphone_six_X:0 andY:0 andWidth:375 andHeight:230];
         [back_view addSubview:back_imgV];
-        normalUrl = self.member_dic[@"headUrl"][@"normalUrl"];
-        if (normalUrl == nil) {
-            normalUrl = @"http://www.qqai.net/uploads/i_2_3130105460x438192042_21.jpg";
-        }
-//        [back_imgV sd_setImageWithURL:[NSURL URLWithString:normalUrl] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-//            UIImage * lastImg = [MYTOOL boxblurImage:image withBlurNumber:0.5];
-//            back_imgV.image = lastImg;
-//        }];
-        //
-        __block UIView * pro_view = [UIView new];
-        pro_view.frame = back_imgV.bounds;
-        [back_imgV addSubview:pro_view];
-        UIView * upView = [UIView new];
-        UIView * downView = [UIView new];
-        upView.backgroundColor = [UIColor grayColor];
-        downView.backgroundColor = [UIColor clearColor];
-        upView.frame = CGRectMake(0, 0, back_imgV.frame.size.width, back_imgV.frame.size.height);
-        downView.frame = CGRectMake(0, back_imgV.frame.size.height, back_imgV.frame.size.width, 0);
-        UIImageView * imgV2 = [UIImageView new];
-        imgV2.frame = back_imgV.bounds;
-        [back_imgV addSubview:imgV2];
-        [imgV2 addSubview:upView];
-        [imgV2 addSubview:downView];
-        [imgV2 sd_setImageWithURL:[NSURL URLWithString:normalUrl] placeholderImage:nil options:SDWebImageCacheMemoryOnly /*SDWebImageLowPriority|SDWebImageRetryFailed*/ progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-            float pro = (float)receivedSize/expectedSize;
-            upView.frame = CGRectMake(0, 0, back_imgV.frame.size.width, back_imgV.frame.size.height*(1-pro));
-            downView.frame = CGRectMake(0, back_imgV.frame.size.height*(1-pro), back_imgV.frame.size.width, back_imgV.frame.size.height*pro);
-        } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-            [pro_view removeFromSuperview];
-            pro_view = nil;
-            [imgV2 removeFromSuperview];
-            UIImage * lastImg = [MYTOOL boxblurImage:image withBlurNumber:3];
-            back_imgV.image = lastImg;
-            
-            
-        }];
+        back_imgV.image = [UIImage imageNamed:@"bg_picture_profile"];
     }
     //返回按钮
     {
@@ -548,39 +513,7 @@
         {
             back_imgV.frame = [MYTOOL getRectWithIphone_six_X:0 andY:0 andWidth:375 andHeight:230];
             [back_view addSubview:back_imgV];
-            NSString * normalUrl = self.member_dic[@"headUrl"][@"normalUrl"];
-            //        [back_imgV sd_setImageWithURL:[NSURL URLWithString:normalUrl] completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-            //            UIImage * lastImg = [MYTOOL boxblurImage:image withBlurNumber:0.5];
-            //            back_imgV.image = lastImg;
-            //        }];
-            //
-            __block UIView * pro_view = [UIView new];
-            pro_view.frame = back_imgV.bounds;
-            [back_imgV addSubview:pro_view];
-            UIView * upView = [UIView new];
-            UIView * downView = [UIView new];
-            upView.backgroundColor = [UIColor grayColor];
-            downView.backgroundColor = [UIColor clearColor];
-            upView.frame = CGRectMake(0, 0, back_imgV.frame.size.width, back_imgV.frame.size.height);
-            downView.frame = CGRectMake(0, back_imgV.frame.size.height, back_imgV.frame.size.width, 0);
-            UIImageView * imgV2 = [UIImageView new];
-            imgV2.frame = back_imgV.bounds;
-            [back_imgV addSubview:imgV2];
-            [imgV2 addSubview:upView];
-            [imgV2 addSubview:downView];
-            [imgV2 sd_setImageWithURL:[NSURL URLWithString:normalUrl] placeholderImage:nil options:SDWebImageCacheMemoryOnly /*SDWebImageLowPriority|SDWebImageRetryFailed*/ progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-                float pro = (float)receivedSize/expectedSize;
-                upView.frame = CGRectMake(0, 0, back_imgV.frame.size.width, back_imgV.frame.size.height*(1-pro));
-                downView.frame = CGRectMake(0, back_imgV.frame.size.height*(1-pro), back_imgV.frame.size.width, back_imgV.frame.size.height*pro);
-            } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-                [pro_view removeFromSuperview];
-                pro_view = nil;
-                [imgV2 removeFromSuperview];
-                UIImage * lastImg = [MYTOOL boxblurImage:image withBlurNumber:3];
-                back_imgV.image = lastImg;
-                
-                
-            }];
+            back_imgV.image = [UIImage imageNamed:@"bg_picture_profile"];
         }
         //返回按钮
         {
@@ -589,7 +522,6 @@
             [back_btn setImage:[UIImage imageNamed:@"nav_back"] forState:UIControlStateNormal];
             [back_btn addTarget:self action:@selector(popUpViewController) forControlEvents:UIControlEventTouchUpInside];
             [back_view addSubview:back_btn];
-            
         }
         //头像
         {

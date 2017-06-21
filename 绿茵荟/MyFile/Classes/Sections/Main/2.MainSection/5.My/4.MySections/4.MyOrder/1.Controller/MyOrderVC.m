@@ -361,9 +361,9 @@
                 if (price == (int)price) {
                     label.text = [NSString stringWithFormat:@"￥%d",(int)price];
                 }
-//                if ([goodsDic[@"point"] floatValue] > 0) {
-//                    label.text = [NSString stringWithFormat:@"%@积分 + %@",goodsDic[@"point"],label.text];
-//                }
+                if ([goodsDic[@"point"] floatValue] > 0) {
+                    label.text = [NSString stringWithFormat:@"%@积分 + %@",goodsDic[@"point"],label.text];
+                }
                 CGSize size = [MYTOOL getSizeWithLabel:label];
                 label.frame = CGRectMake(100, 90, size.width, size.height);
                 [bgView addSubview:label];
@@ -412,16 +412,16 @@
         float totalPrice = [orderDic[@"totalPrice"] floatValue];
         {
             UILabel * label = [UILabel new];
-            label.font = [UIFont systemFontOfSize:15];
+            label.font = [UIFont systemFontOfSize:13];
             label.textColor = [MYTOOL RGBWithRed:220 green:53 blue:53 alpha:1];
             label.text = [NSString stringWithFormat:@"￥%.2f",totalPrice];
             if (totalPrice == (int)totalPrice) {
                 label.text = [NSString stringWithFormat:@"￥%d",(int)totalPrice];
             }
-//            int totalPoint = [orderDic[@"totalPoint"] intValue];
-//            if (totalPoint > 0) {
-//                label.text = [NSString stringWithFormat:@"%d积分 + %@",totalPoint,label.text];
-//            }
+            int totalPoint = [orderDic[@"totalPoint"] intValue];
+            if (totalPoint > 0) {
+                label.text = [NSString stringWithFormat:@"%d积分 + %@",totalPoint,label.text];
+            }
             CGSize size = [MYTOOL getSizeWithLabel:label];
             left -= size.width;
             label.frame = CGRectMake(left, top-size.height, size.width, size.height);
@@ -432,7 +432,7 @@
         int quantity = [orderDic[@"quantity"] intValue];
         {
             UILabel * label = [UILabel new];
-            label.font = [UIFont systemFontOfSize:16];
+            label.font = [UIFont systemFontOfSize:14];
             label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
             label.text = [NSString stringWithFormat:@"共%d件  应付总额:",quantity];
             CGSize size = [MYTOOL getSizeWithLabel:label];

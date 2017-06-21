@@ -25,7 +25,8 @@
     webView.frame = self.view.bounds;
     self.webView = webView;
     [self.view addSubview:webView];
-    [self.webView loadHTMLString:self.url baseURL:nil];
+    NSURLRequest * request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.url]];
+    [self.webView loadRequest:request];
 }
 
 
