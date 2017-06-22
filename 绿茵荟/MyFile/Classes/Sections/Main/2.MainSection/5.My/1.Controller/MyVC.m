@@ -76,6 +76,7 @@
             name_label.frame = CGRectMake(WIDTH/4, r_user*2+10, WIDTH/2, 20);
             name_label.textAlignment = NSTextAlignmentCenter;
             name_label.text = @"绿茵荟";
+            name_label.font = [UIFont titleFontOfSize:18];
             name_label.textColor = [MYTOOL RGBWithRed:39 green:42 blue:47 alpha:1];
             [view addSubview:name_label];
             self.name_label = name_label;

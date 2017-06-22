@@ -27,6 +27,7 @@
         label.textColor = [MYTOOL RGBWithRed:106 green:151 blue:53 alpha:1];
         label.textAlignment = NSTextAlignmentCenter;
         label.font = [UIFont systemFontOfSize:18];
+        label.font = [UIFont titleFontOfSize:18];
         CGSize size = [MYTOOL getSizeWithLabel:label];
         float width = WIDTH - 140;
         while (size.width > width) {

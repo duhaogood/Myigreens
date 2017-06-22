@@ -106,7 +106,7 @@
     {
         UILabel * name_label = [UILabel new];
         name_label.frame = CGRectMake(76, 22, WIDTH/2, 16);
-        name_label.font = [UIFont systemFontOfSize:16];
+        name_label.font = [UIFont titleFontOfSize:16];
         name_label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
         NSString * nickName = memberDic[@"nickName"];
         if (!nickName || nickName.length == 0) {

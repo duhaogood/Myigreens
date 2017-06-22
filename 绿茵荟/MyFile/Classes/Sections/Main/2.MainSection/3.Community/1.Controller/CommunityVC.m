@@ -99,7 +99,7 @@
     select_btn.frame = CGRectMake(center_view.frame.size.width/6-25, 6, 50, 30);
     [select_btn setTitle:@"精选" forState:UIControlStateNormal];
     self.firstBtn = select_btn;
-    select_btn.titleLabel.font = [UIFont systemFontOfSize:18];
+    select_btn.titleLabel.font = [UIFont titleFontOfSize:18];
     [center_view addSubview:select_btn];
     current_btn = select_btn;
     [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",select_btn.frame.size.width/2-18+center_view.frame.size.width/6-25] forKey:@"精选"];
@@ -115,7 +115,7 @@
     circle_btn.frame = CGRectMake(center_view.frame.size.width/2-25, 6, 50, 30);
     [circle_btn setTitle:@"圈子" forState:UIControlStateNormal];
     [center_view addSubview:circle_btn];
-    circle_btn.titleLabel.font = [UIFont systemFontOfSize:18];
+    circle_btn.titleLabel.font = [UIFont titleFontOfSize:18];
     [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",center_view.frame.size.width/2-18] forKey:@"圈子"];
     [circle_btn addTarget:self action:@selector(submitCenterBtn:) forControlEvents:UIControlEventTouchUpInside];
     //订阅
@@ -123,7 +123,7 @@
     subscribe_btn.frame = CGRectMake(center_view.frame.size.width/6*5-25, 6, 50, 30);
     [subscribe_btn setTitle:@"订阅" forState:UIControlStateNormal];
     [center_view addSubview:subscribe_btn];
-    subscribe_btn.titleLabel.font = [UIFont systemFontOfSize:18];
+    subscribe_btn.titleLabel.font = [UIFont titleFontOfSize:18];
     [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",subscribe_btn.frame.origin.x+subscribe_btn.frame.size.width/2-18] forKey:@"订阅"];
     [subscribe_btn addTarget:self action:@selector(submitCenterBtn:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -143,7 +143,7 @@
             UIButton * btn = [UIButton new];
             [btn setTitle:circle_img_title_value_array[i][@"label"] forState:UIControlStateNormal];
             [btn setTitleColor:[MYTOOL RGBWithRed:92 green:92 blue:92 alpha:1] forState:UIControlStateNormal];
-            btn.titleLabel.font = [UIFont systemFontOfSize:15];
+            btn.titleLabel.font = [UIFont titleFontOfSize:15];
             float btn_width = view.contentSize.width/circle_img_title_value_array.count;
             btn.frame = CGRectMake(btn_width*i, 15, btn_width, 20);
             btn.tag = i;
@@ -622,7 +622,7 @@
         {
             UILabel * label = [UILabel new];
             label.text = nickName;
-            label.font = [UIFont systemFontOfSize:18];
+            label.font = [UIFont titleFontOfSize:18];
             label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
             label.frame = CGRectMake(60,space_y+10 , WIDTH - 75, 20);
             [cell addSubview:label];
@@ -804,7 +804,7 @@
         {
             UILabel * label = [UILabel new];
             label.text = nickName;
-            label.font = [UIFont systemFontOfSize:24];
+            label.font = [UIFont titleFontOfSize:24];
             label.textColor = [UIColor whiteColor];
             label.frame = CGRectMake(WIDTH/4, 79, WIDTH/2, 24);
             label.textAlignment = NSTextAlignmentCenter;
@@ -932,7 +932,7 @@
             UILabel * label = [UILabel new];
             label.text = nickName;
             label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
-            label.font = [UIFont systemFontOfSize:16];
+            label.font = [UIFont titleFontOfSize:16];
             CGSize size = [MYTOOL getSizeWithString:label.text andFont:label.font];
             label.frame = CGRectMake(61, 21, size.width, 18);
             [cell addSubview:label];

@@ -27,6 +27,7 @@
 #include "LoginViewController.h"
 #import "MyLocationManager.h"
 #include "SharedManagerVC.h"
+#include "UIFont+MyFont.h"
 #endif /* PrefixHeader_pch */
 
 

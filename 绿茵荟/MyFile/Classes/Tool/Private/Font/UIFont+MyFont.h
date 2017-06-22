@@ -9,8 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface UIFont(MyFont)
-
-
 //替换原来的字体方法
+
+
+
+//标题字体
++ (UIFont *)titleFontOfSize:(CGFloat)fontSize;
+
 
 @end

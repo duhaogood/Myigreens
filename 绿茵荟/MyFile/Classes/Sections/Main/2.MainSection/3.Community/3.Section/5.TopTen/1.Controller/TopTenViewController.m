@@ -133,7 +133,7 @@
     {
         UILabel * name_label = [UILabel new];
         name_label.frame = CGRectMake(83, tableView.rowHeight/2-9, WIDTH/2, 18);
-        name_label.font = [UIFont systemFontOfSize:18];
+        name_label.font = [UIFont titleFontOfSize:18];
         name_label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
         NSString * name = user_dic[@"nickName"];
         if (!name || name.length == 0) {

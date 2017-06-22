@@ -68,7 +68,7 @@
             }
             nameLabel.text = nickName;
             nameLabel.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
-            nameLabel.font = [UIFont systemFontOfSize:nameLabel.frame.size.height];
+            nameLabel.font = [UIFont titleFontOfSize:nameLabel.frame.size.height];
             [bg_view addSubview:nameLabel];
         }
         //签名

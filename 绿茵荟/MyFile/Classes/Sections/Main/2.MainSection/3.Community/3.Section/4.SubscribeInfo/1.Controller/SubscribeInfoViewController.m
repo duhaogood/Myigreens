@@ -100,7 +100,7 @@
     {
         UILabel * name_label = [UILabel new];
         name_label.frame = CGRectMake(WIDTH/4, top, WIDTH/2, 24);
-        name_label.font = [UIFont systemFontOfSize:18];
+        name_label.font = [UIFont titleFontOfSize:18];
         name_label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
         [back_view addSubview:name_label];
         name_label.textAlignment = NSTextAlignmentCenter;
@@ -541,7 +541,7 @@
         {
             UILabel * name_label = [UILabel new];
             name_label.frame = CGRectMake(WIDTH/4, top, WIDTH/2, 24);
-            name_label.font = [UIFont systemFontOfSize:18];
+            name_label.font = [UIFont titleFontOfSize:18];
             name_label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
             [back_view addSubview:name_label];
             name_label.textAlignment = NSTextAlignmentCenter;

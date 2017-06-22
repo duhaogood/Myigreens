@@ -63,7 +63,7 @@
     
     UIColor * titleColor = [UIColor whiteColor];
     NSDictionary * dictColor = @{
-                                 NSFontAttributeName:[UIFont systemFontOfSize:18],
+                                 NSFontAttributeName:[UIFont titleFontOfSize:18],
                                  NSForegroundColorAttributeName:titleColor
                                  };
     UINavigationController * nc1 = [[UINavigationController alloc]initWithRootViewController:[SpecialVC new]];

@@ -56,7 +56,7 @@
         title_label.frame = CGRectMake(WIDTH/2-60, top + 13, 120, 40);
         title_label.textAlignment = NSTextAlignmentCenter;
         [headerView addSubview:title_label];
-        title_label.font = [UIFont systemFontOfSize:24];
+        title_label.font = [UIFont titleFontOfSize:24];
         
         
         //去掉分割线

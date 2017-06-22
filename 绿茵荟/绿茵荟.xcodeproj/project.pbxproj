@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		043D709F1EFBE8270053D71E /* 方正兰亭圆简体_细.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 043D709D1EFBE8160053D71E /* 方正兰亭圆简体_细.TTF */; };
+		043D70A01EFBE8290053D71E /* 方正兰亭圆简体_准.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 043D709E1EFBE8160053D71E /* 方正兰亭圆简体_准.TTF */; };
 		0446696A1EE7A48A0082D8BC /* expressCode.plist in Resources */ = {isa = PBXBuildFile; fileRef = 044669691EE7A48A0082D8BC /* expressCode.plist */; };
 		044669751EE7F9730082D8BC /* MySubscribeListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 044669741EE7F9730082D8BC /* MySubscribeListVC.m */; };
 		044669781EE7FAF50082D8BC /* SubsribeMineList.m in Sources */ = {isa = PBXBuildFile; fileRef = 044669771EE7FAF50082D8BC /* SubsribeMineList.m */; };
@@ -16,7 +18,6 @@
 		044669821EE83C1F0082D8BC /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 044669811EE83C1F0082D8BC /* libresolv.tbd */; };
 		044669A91EF0DAC30082D8BC /* GoodsGroupVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 044669A81EF0DAC30082D8BC /* GoodsGroupVC.m */; };
 		0454BD751EF3784900B9E8A0 /* UIFont+MyFont.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD741EF3784900B9E8A0 /* UIFont+MyFont.m */; };
-		0454BD761EF37C5A00B9E8A0 /* NotoSansHans-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0454BD701EF375F500B9E8A0 /* NotoSansHans-Regular.otf */; };
 		0454BD891EF6E7D000B9E8A0 /* WallPaperShowVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD881EF6E7D000B9E8A0 /* WallPaperShowVC.m */; };
 		0454BD8B1EF8B26D00B9E8A0 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BD8A1EF8B26D00B9E8A0 /* Accelerate.framework */; };
 		0454BD8D1EF9747D00B9E8A0 /* CityLocationData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0454BD8C1EF9747D00B9E8A0 /* CityLocationData.plist */; };
@@ -283,6 +284,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		043D709D1EFBE8160053D71E /* 方正兰亭圆简体_细.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "方正兰亭圆简体_细.TTF"; sourceTree = "<group>"; };
+		043D709E1EFBE8160053D71E /* 方正兰亭圆简体_准.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = "方正兰亭圆简体_准.TTF"; sourceTree = "<group>"; };
 		044669691EE7A48A0082D8BC /* expressCode.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = expressCode.plist; sourceTree = "<group>"; };
 		0446696C1EE7F8CB0082D8BC /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		0446696E1EE7F8CB0082D8BC /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
@@ -300,7 +303,6 @@
 		044669A51EF0DA5D0082D8BC /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		044669A71EF0DAC30082D8BC /* GoodsGroupVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoodsGroupVC.h; sourceTree = "<group>"; };
 		044669A81EF0DAC30082D8BC /* GoodsGroupVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoodsGroupVC.m; sourceTree = "<group>"; };
-		0454BD701EF375F500B9E8A0 /* NotoSansHans-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NotoSansHans-Regular.otf"; sourceTree = "<group>"; };
 		0454BD731EF3784900B9E8A0 /* UIFont+MyFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+MyFont.h"; sourceTree = "<group>"; };
 		0454BD741EF3784900B9E8A0 /* UIFont+MyFont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+MyFont.m"; sourceTree = "<group>"; };
 		0454BD871EF6E7D000B9E8A0 /* WallPaperShowVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallPaperShowVC.h; sourceTree = "<group>"; };
@@ -2855,7 +2857,8 @@
 		78C2399A1ED2FB9A000CD40E /* plist */ = {
 			isa = PBXGroup;
 			children = (
-				0454BD701EF375F500B9E8A0 /* NotoSansHans-Regular.otf */,
+				043D709D1EFBE8160053D71E /* 方正兰亭圆简体_细.TTF */,
+				043D709E1EFBE8160053D71E /* 方正兰亭圆简体_准.TTF */,
 				0454BD8C1EF9747D00B9E8A0 /* CityLocationData.plist */,
 				78C2399B1ED2FB9A000CD40E /* area.plist */,
 				78C2399C1ED2FB9A000CD40E /* city.plist */,
@@ -3817,7 +3820,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0454BD761EF37C5A00B9E8A0 /* NotoSansHans-Regular.otf in Resources */,
+				043D709F1EFBE8270053D71E /* 方正兰亭圆简体_细.TTF in Resources */,
+				043D70A01EFBE8290053D71E /* 方正兰亭圆简体_准.TTF in Resources */,
 				0446696A1EE7A48A0082D8BC /* expressCode.plist in Resources */,
 				78C23BBE1ED2FB9A000CD40E /* AlipaySDK.bundle in Resources */,
 				78C23B961ED2FB9A000CD40E /* LaunchImg.png in Resources */,

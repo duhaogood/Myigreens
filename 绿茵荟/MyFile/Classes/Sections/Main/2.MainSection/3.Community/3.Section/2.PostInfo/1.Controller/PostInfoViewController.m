@@ -69,7 +69,7 @@
         }
         label.text = nickName;
         label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
-        label.font = [UIFont systemFontOfSize:18];
+        label.font = [UIFont titleFontOfSize:18];
         CGSize size = [MYTOOL getSizeWithString:label.text andFont:label.font];
         label.frame = CGRectMake(63, 23, size.width, 18);
         [backView addSubview:label];
@@ -400,7 +400,7 @@
     float left = 0;
     {
         UILabel * nameLabel = [UILabel new];
-        nameLabel.font = [UIFont systemFontOfSize:15];
+        nameLabel.font = [UIFont titleFontOfSize:15];
         NSString * name = reviewDic[@"nickName"];
         if (name == nil || name.length == 0) {
             name = @"匿名用户";

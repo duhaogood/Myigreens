@@ -142,7 +142,7 @@
         self.nameLabel = name_label;
         [self.up_view addSubview:name_label];
         name_label.textColor = [UIColor whiteColor];
-        name_label.font = [UIFont systemFontOfSize:20];
+        name_label.font = [UIFont titleFontOfSize:20];
         //增加返回按钮
         UIImageView * back_img = [UIImageView new];
         back_img.frame = CGRectMake(10, 40, 30, 30);

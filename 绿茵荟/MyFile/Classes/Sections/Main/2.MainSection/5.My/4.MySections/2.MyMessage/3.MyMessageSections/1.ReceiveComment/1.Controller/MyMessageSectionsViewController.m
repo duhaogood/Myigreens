@@ -177,7 +177,7 @@
     }
     UILabel * name_label = [UILabel new];
     {
-        name_label.font = [UIFont systemFontOfSize:15];
+        name_label.font = [UIFont titleFontOfSize:15];
         name_label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
         CGSize size = [MYTOOL getSizeWithString:name andFont:[UIFont systemFontOfSize:15]];
         name_label.frame = CGRectMake(63/375.0*WIDTH, 40/667.0*HEIGHT-8, size.width, 16);
