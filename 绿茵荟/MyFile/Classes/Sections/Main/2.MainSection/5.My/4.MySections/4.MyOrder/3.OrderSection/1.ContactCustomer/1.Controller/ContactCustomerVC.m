@@ -249,15 +249,18 @@
             if (status != 1) {
                 img=[UIImage imageNamed:@"dialog-box_gray"];
             }
-            UIEdgeInsets edge=UIEdgeInsetsMake(0, 30, 0,30);
+            UIEdgeInsets edge = UIEdgeInsetsMake(25, 25, 25,25);
             //UIImageResizingModeStretch：拉伸模式，通过拉伸UIEdgeInsets指定的矩形区域来填充图片
-            img= [img resizableImageWithCapInsets:edge resizingMode:UIImageResizingModeStretch];
+            img = [img resizableImageWithCapInsets:edge];
             //背景图
             UIImageView * bg = [UIImageView new];
             bg.image = img;
             CGRect rect = label.frame;
-            
-            bg.frame = CGRectMake(rect.origin.x - 30, rect.origin.y - 25, rect.size.width + 60, rect.size.height + 50);
+            float height = rect.size.height + 20;
+            if (height < 50) {
+                height = 50;
+            }
+            bg.frame = CGRectMake(rect.origin.x- 30, rect.origin.y + rect.size.height/2 - height/2 , rect.size.width + 60, height);
             [cell addSubview:bg];
             
         }

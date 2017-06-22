@@ -119,7 +119,6 @@
 
 #pragma mark - UITableViewDelegate,UITableViewDataSource
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 303.0*WIDTH/414.0;
     if (indexPath.section == 0) {
         return 303.0*WIDTH/414.0;
     }else{
@@ -142,7 +141,7 @@
     float space = 10*WIDTH/414.0;
     float left_img = space;
     float top_img = space;
-    if (indexPath.section >= 0) {
+    if (indexPath.section == 0) {
         //第一个图片
         if (img_url_array.count >= 1){
             UIImageView * imgView = [UIImageView new];
@@ -150,7 +149,7 @@
             imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
             [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
             imgView.layer.masksToBounds = true;
-            imgView.layer.cornerRadius = 10;
+//            imgView.layer.cornerRadius = 10;
             imgView.frame = CGRectMake(left_img, top_img, 185*WIDTH/414.0, (185*WIDTH/414.0)*271.0/185);
             [cell addSubview:imgView];
             left_img += 185*WIDTH/414.0 + space;
@@ -171,7 +170,7 @@
             imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
             [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
             imgView.layer.masksToBounds = true;
-            imgView.layer.cornerRadius = 10;
+//            imgView.layer.cornerRadius = 10;
             imgView.frame = CGRectMake(left_img, top_img, 185*WIDTH/414.0, (185*WIDTH/414.0)*128.0/185.0);
             [cell addSubview:imgView];
             top_img += (185*WIDTH/414.0)*128.0/185.0 + space;
@@ -192,7 +191,7 @@
             imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
             [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
             imgView.layer.masksToBounds = true;
-            imgView.layer.cornerRadius = 10;
+//            imgView.layer.cornerRadius = 10;
             imgView.frame = CGRectMake(left_img, top_img, (182*WIDTH/414.0)*127.0/185.0/236.0*162, (185*WIDTH/414.0)*128.0/185.0);
             [cell addSubview:imgView];
             left_img += (182*WIDTH/414.0)*127.0/185.0/236.0*162 + space;
@@ -213,7 +212,7 @@
             imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
             [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
             imgView.layer.masksToBounds = true;
-            imgView.layer.cornerRadius = 10;
+//            imgView.layer.cornerRadius = 10;
             imgView.frame = CGRectMake(left_img, top_img, (182*WIDTH/414.0)*127.0/185.0/236.0*162, (185*WIDTH/414.0)*127.0/185.0);
             [cell addSubview:imgView];
             NSString * smallUrl = img_url_array[3][@"smallUrl"];
@@ -236,7 +235,7 @@
             imgView.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
             [imgView setContentScaleFactor:[[UIScreen mainScreen] scale]];
             imgView.layer.masksToBounds = true;
-            imgView.layer.cornerRadius = 10;
+//            imgView.layer.cornerRadius = 10;
             imgView.frame = CGRectMake(left_img + (space + width)*(i%2), top_img + (space + height)*(i/2), width, height);
             [cell addSubview:imgView];
             NSString * smallUrl = img_url_array[i][@"smallUrl"];

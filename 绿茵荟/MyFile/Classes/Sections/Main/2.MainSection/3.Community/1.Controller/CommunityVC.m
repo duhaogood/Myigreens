@@ -661,7 +661,7 @@
                 [iv1 setContentScaleFactor:[[UIScreen mainScreen] scale]];
                 iv1.frame = CGRectMake(65,top, width_img, height_img);
                 iv1.layer.masksToBounds = true;
-                iv1.layer.cornerRadius = 10;
+//                iv1.layer.cornerRadius = 10;
                 [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
                 [cell addSubview:iv1];
             }else{
@@ -672,7 +672,7 @@
                 [iv1 setContentScaleFactor:[[UIScreen mainScreen] scale]];
                 iv1.frame = CGRectMake(65,top , width_img, height_img);
                 iv1.layer.masksToBounds = true;
-                iv1.layer.cornerRadius = 10;
+//                iv1.layer.cornerRadius = 10;
                 [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
                 [cell addSubview:iv1];
                 //2
@@ -682,7 +682,7 @@
                 [iv2 setContentScaleFactor:[[UIScreen mainScreen] scale]];
                 iv2.frame = CGRectMake(65 + iv1.frame.size.width+10,top , width_img, height_img);
                 iv2.layer.masksToBounds = true;
-                iv2.layer.cornerRadius = 10;
+//                iv2.layer.cornerRadius = 10;
                 [iv2 sd_setImageWithURL:[NSURL URLWithString:image_array[1][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"Icon60"]];
                 [cell addSubview:iv2];
             }
@@ -764,7 +764,7 @@
             [iv1 setContentScaleFactor:[[UIScreen mainScreen] scale]];
             iv1.frame = CGRectMake(10,10 , WIDTH - 20, 169);
             iv1.layer.masksToBounds = true;
-            iv1.layer.cornerRadius = 10;
+//            iv1.layer.cornerRadius = 10;
             [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
             [cell addSubview:iv1];
             
@@ -1015,7 +1015,7 @@
                 img.frame = CGRectMake(61, top, WIDTH-61-20, height);
                 [img sd_setImageWithURL:[NSURL URLWithString:url_array[0][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"test_bg"]];
                 img.layer.masksToBounds = true;
-                img.layer.cornerRadius = 12;
+//                img.layer.cornerRadius = 12;
                 [cell addSubview:img];
             }else if (url_array.count >= 2) {
                 float width = (WIDTH-61-20)/2;
@@ -1027,7 +1027,7 @@
                 img.frame = CGRectMake(61, top, width, height);
                 [img sd_setImageWithURL:[NSURL URLWithString:url_array[0][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"test_bg"]];
                 img.layer.masksToBounds = true;
-                img.layer.cornerRadius = 12;
+//                img.layer.cornerRadius = 12;
                 [cell addSubview:img];
                 //第二张图片
                 UIImageView * img2 = [UIImageView new];
@@ -1037,7 +1037,7 @@
                 img2.frame = CGRectMake(61+width+5, top, width, height);
                 [img2 sd_setImageWithURL:[NSURL URLWithString:url_array[1][@"smallUrl"]] placeholderImage:[UIImage imageNamed:@"9252150_170958052001_2.jpg"]];
                 img2.layer.masksToBounds = true;
-                img2.layer.cornerRadius = 12;
+//                img2.layer.cornerRadius = 12;
                 [cell addSubview:img2];
             }
             top += height;
@@ -1333,6 +1333,13 @@
 //分享事件
 -(void)share_callBack:(NSDictionary *)post_dic{
     SharedManagerVC * share = [SharedManagerVC new];
+    NSMutableDictionary * dic = [NSMutableDictionary new];
+    [dic setValue:@"2" forKey:@"type"];
+    [dic setValue:post_dic[@"postId"] forKey:@"typeId"];
+    if (MEMBERID) {
+        [dic setValue:MEMBERID forKey:@"memberId"];
+    }
+    share.sharedDic = dic;
     share.sharedDictionary = @{
                                @"title":post_dic[@"shareTitle"],
                                @"shareDescribe":post_dic[@"shareDescribe"],

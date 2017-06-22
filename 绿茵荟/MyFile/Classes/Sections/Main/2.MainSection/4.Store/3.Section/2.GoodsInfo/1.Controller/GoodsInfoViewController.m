@@ -99,7 +99,7 @@
                 [imgV sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage imageNamed:@"logo"]];
             }
             imgV.layer.masksToBounds = true;
-            imgV.layer.cornerRadius = 12;
+//            imgV.layer.cornerRadius = 12;
             [goodsView addSubview:imgV];
             self.goodsImgV = imgV;
             imgV.backgroundColor = [UIColor greenColor];
@@ -420,6 +420,15 @@
                                  @"shareDescribe":shareDescribe
                                  };
     show.sharedDictionary = sharedDic;
+    
+    NSMutableDictionary * dic = [NSMutableDictionary new];
+    [dic setValue:@"1" forKey:@"type"];
+    [dic setValue:self.goodsInfoDictionary[@"goodsId"] forKey:@"typeId"];
+    if (MEMBERID) {
+        [dic setValue:MEMBERID forKey:@"memberId"];
+    }
+    show.sharedDic = dic;
+    
     [show show];
     
 }
@@ -464,7 +473,6 @@
     if (number <= 1) {
         btn.enabled = false;
     }
-    
 }
 //增加商品数量
 -(void)addBtnCallback:(UIButton *)btn{

@@ -171,13 +171,30 @@
                 UMSocialLogInfo(@"response message is %@",resp.message);
                 //第三方原始返回的数据
                 UMSocialLogInfo(@"response originalResponse data is %@",resp.originalResponse);
-                
+                //分享成功，回调服务器
+                [self sharedSuccess];
             }else{
                 UMSocialLogInfo(@"response data is %@",data);
             }
         }
     }];
 }
+//分享成功，回调服务器
+-(void)sharedSuccess{
+    if (self.sharedDic == nil) {
+        return;
+    }
+    NSString * interface = @"/sys/shareBack.intf";
+    [MYNETWORKING getNoPopWithInterfaceName:interface andDictionary:self.sharedDic andSuccess:^(NSDictionary *back_dic) {
+        for (NSString * key in back_dic.allKeys) {
+            NSLog(@"%@:%@",key,back_dic[key]);
+        }
+    }];
+    
+    
+}
+
+
 //取消分享
 -(void)cancelShared{
     [self removeFromSuperViewController:nil];

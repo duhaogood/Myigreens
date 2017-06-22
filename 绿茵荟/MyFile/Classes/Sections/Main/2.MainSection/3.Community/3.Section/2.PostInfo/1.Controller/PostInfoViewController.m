@@ -142,7 +142,7 @@
             [imgV setContentScaleFactor:[[UIScreen mainScreen] scale]];
             imgV.frame = CGRectMake(10+col*(width+5), top+row*(width+5)+10, width, width);
             imgV.layer.masksToBounds = true;
-            imgV.layer.cornerRadius = 12;
+//            imgV.layer.cornerRadius = 12;
             imgV.tag = i;
             [imgViewArray addObject:imgV];
             [backView addSubview:imgV];
@@ -943,7 +943,13 @@
 -(void)share_callBack{
     
     SharedManagerVC * share = [SharedManagerVC new];
-    
+    NSMutableDictionary * dic = [NSMutableDictionary new];
+    [dic setValue:@"2" forKey:@"type"];
+    [dic setValue:self.post_dic[@"postId"] forKey:@"typeId"];
+    if (MEMBERID) {
+        [dic setValue:MEMBERID forKey:@"memberId"];
+    }
+    share.sharedDic = dic;
     share.sharedDictionary = @{
                                @"title":self.post_dic[@"shareTitle"],
                                @"shareDescribe":self.post_dic[@"shareDescribe"],

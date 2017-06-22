@@ -70,7 +70,7 @@
                 top = 70 + 240.0*(i/2);
                 imgV.frame = CGRectMake(15+(width+10)*(i%2), top, width, 149);
                 imgV.layer.masksToBounds = true;
-                imgV.layer.cornerRadius = 12;
+//                imgV.layer.cornerRadius = 12;
                 [cell addSubview:imgV];
                 [MYTOOL setImageIncludePrograssOfImageView:imgV withUrlString:url];
                 imgV.tag = goodsId;

@@ -31,7 +31,6 @@
         SDCycleScrollView * cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake((WIDTH-380/414.0*WIDTH)/2, (WIDTH-380/414.0*WIDTH)/2, 380/414.0*WIDTH, 218/736.0*HEIGHT) imageURLStringsGroup:url_arr];
         self.scrollView = cycleScrollView;
         cycleScrollView.layer.masksToBounds = true;
-        cycleScrollView.layer.cornerRadius = 12;
         cycleScrollView.delegate = delegate;
         [headerView addSubview:cycleScrollView];
         cycleScrollView.tag = 100;

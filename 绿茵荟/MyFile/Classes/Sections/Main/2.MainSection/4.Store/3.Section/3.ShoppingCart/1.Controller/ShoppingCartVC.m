@@ -445,6 +445,7 @@
 }
 //更新购物车数据
 -(void)updateGoodsCartDataWithGoodsDictionary:(NSDictionary *)goodsDic{
+    [MYTOOL netWorkingWithTitle:@"请稍等…"];
     NSString * interfaceName = @"/shop/cart/getGoods.intf";
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:goodsDic andSuccess:^(NSDictionary *back_dic) {
 //        NSLog(@"back:%@",back_dic);

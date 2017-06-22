@@ -106,7 +106,20 @@ static id instance;
         [SVProgressHUD showErrorWithStatus:@"网络出错" duration:2];
     }];
 }
-
+-(void)getDataWithErroeWithInterfaceName:(NSString *)interfaceName andDictionary:(NSDictionary *)send_dic andSuccess:(void (^)(NSDictionary * back_dic))back_block{
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
+    
+    NSString * urlString = [NSString stringWithFormat:@"%@%@",SERVER_URL,interfaceName];
+    [manager GET:urlString parameters:send_dic progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        [SVProgressHUD dismiss];
+        back_block(responseObject);
+        
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
+        [SVProgressHUD showErrorWithStatus:@"网络出错" duration:2];
+    }];
+}
 
 
 @end

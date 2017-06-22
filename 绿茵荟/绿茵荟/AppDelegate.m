@@ -189,6 +189,8 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_APP_BECOME_ACTIVE object:nil userInfo:nil];
+    
+    
 }
 
 
@@ -204,8 +206,6 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
         // 其他如支付等SDK的回调
         if(url != nil && [[url host] isEqualToString:@"pay"]){//微信支付
             //        NSLog(@"微信支付");
-            
-            
             return [WXApi handleOpenURL:url delegate:self];
         }
         if ([url.host isEqualToString:@"safepay"]) {

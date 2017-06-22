@@ -8,6 +8,7 @@
 
 #import "MyMessageSectionsViewController.h"
 #import "PostInfoViewController.h"
+#import "SubscribeInfoViewController.h"
 @interface MyMessageSectionsViewController ()<UITableViewDataSource,UITableViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,strong)UIView * noDateView;//没有数据时显示的view
@@ -144,6 +145,11 @@
         user_icon.layer.masksToBounds = true;
         user_icon.layer.cornerRadius = user_icon.frame.size.width/2;
         [cell addSubview:user_icon];
+        user_icon.tag = indexPath.row;
+        [user_icon setUserInteractionEnabled:YES];
+        UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickUserImage:)];
+        tapGesture.numberOfTapsRequired=1;
+        [user_icon addGestureRecognizer:tapGesture];
         NSString * headUrl = dict[@"headUrl"];
         if (headUrl && headUrl.length) {
             [user_icon sd_setImageWithURL:[NSURL URLWithString:headUrl]];
@@ -195,6 +201,11 @@
         icon.image = [UIImage imageNamed:@"icon_report"];
         icon.frame = [MYTOOL getRectWithIphone_six_X:342 andY:26 andWidth:20 andHeight:20];
         [cell addSubview:icon];
+        icon.tag = indexPath.row;
+        icon.userInteractionEnabled = true;
+        UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(clickRightIcon:)];
+        tapGesture.numberOfTapsRequired=1;
+        [icon addGestureRecognizer:tapGesture];
     }
     //回复内容
     {
@@ -229,6 +240,101 @@
         [cell addSubview:space];
     }
     return cell;
+}
+//举报
+-(void)clickRightIcon:(UITapGestureRecognizer *)tap{
+    NSDictionary * dic = self.receiveCommentArray[tap.view.tag];
+    
+    NSInteger commentMemberId = [dic[@"memberId"] longValue];
+    int myMemberId = [MEMBERID intValue];
+    if (myMemberId == commentMemberId) {//自己评论，删除
+        UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要删除此帖？" preferredStyle:(UIAlertControllerStyleActionSheet)];
+        
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定删除" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            
+            [SVProgressHUD showWithStatus:@"删除中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+            NSObject * postCommentId = dic[@"postCommentId"];
+            NSString * interfaceName = @"/community/delPostComment.intf";
+            [SVProgressHUD showWithStatus:@"正在删除" maskType:SVProgressHUDMaskTypeClear];
+            [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:@{@"postCommentId":postCommentId} andSuccess:^(NSDictionary *back_dic) {
+                //            NSLog(@"back:%@",back_dic);
+                [SVProgressHUD showSuccessWithStatus:@"删除成功" duration:1];
+                pageNo = 1;
+                [self reloadViewData];
+            }];
+            
+        }];
+        
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
+        [alert addAction:action];
+        [alert addAction:cancel];
+        [self showDetailViewController:alert sender:nil];
+        
+        
+        
+    }else{//别人评论，举报
+        
+        UIAlertController * alert = [UIAlertController alertControllerWithTitle:nil message:@"确定要举报此帖？" preferredStyle:(UIAlertControllerStyleActionSheet)];
+        
+        UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定举报" style:(UIAlertActionStyleDefault) handler:^(UIAlertAction *action) {
+            
+            [SVProgressHUD showWithStatus:@"举报中\n请稍等…" maskType:SVProgressHUDMaskTypeClear];
+            //拼接上传参数
+            NSMutableDictionary * send_dic = [NSMutableDictionary new];
+            NSObject * postCommentId = dic[@"postCommentId"];
+            [send_dic setValue:postCommentId forKey:@"postCommentId"];
+            [send_dic setValue:MEMBERID forKey:@"memberId"];
+            //开始上传
+            [MYNETWORKING getWithInterfaceName:@"/community/postCommentInform.intf" andDictionary:send_dic andSuccess:^(NSDictionary * back_dic) {
+                //            NSLog(@"back:%@",back_dic);
+                [SVProgressHUD showSuccessWithStatus:@"举报成功" duration:1];
+            }];
+            
+        }];
+        
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:(UIAlertActionStyleCancel) handler:nil];
+        [alert addAction:action];
+        [alert addAction:cancel];
+        [self showDetailViewController:alert sender:nil];
+    }
+}
+//点击用户头像跳转
+-(void)clickUserImage:(UITapGestureRecognizer *)tap{
+    NSDictionary * commentDic = self.receiveCommentArray[tap.view.tag];
+    
+    NSObject * byMemberId = commentDic[@"memberId"];
+    if (byMemberId == nil) {
+        [SVProgressHUD showErrorWithStatus:@"没有此用户信息" duration:2];
+        return;
+    }
+    NSString * memberId = [MYTOOL getProjectPropertyWithKey:@"memberId"];
+    NSDictionary * send_dic = @{
+                                @"byMemberId":byMemberId
+                                };
+    if (memberId == nil) {
+        send_dic = @{
+                     @"memberId":byMemberId,
+                     @"byMemberId":byMemberId
+                     };
+    }else{
+        send_dic = @{
+                     @"memberId":memberId,
+                     @"byMemberId":byMemberId
+                     };
+    }
+    
+    [SVProgressHUD showWithStatus:@"加载中" maskType:SVProgressHUDMaskTypeClear];
+    [MYNETWORKING getWithInterfaceName:@"/community/getOtherUser.intf" andDictionary:send_dic andSuccess:^(NSDictionary *back_dic) {
+        SubscribeInfoViewController * subscribeInfo = [SubscribeInfoViewController new];
+        NSDictionary * memberInfo = back_dic[@"member"];
+        if (memberInfo == nil || memberInfo.allKeys.count == 0) {
+            [SVProgressHUD showErrorWithStatus:@"查询失败" duration:2];
+            return;
+        }else{
+            subscribeInfo.member_dic = memberInfo;
+        }
+        [self.navigationController pushViewController:subscribeInfo animated:true];
+    }];
 }
 //回复按钮回调
 -(void)answer_callback:(UIButton *)btn{

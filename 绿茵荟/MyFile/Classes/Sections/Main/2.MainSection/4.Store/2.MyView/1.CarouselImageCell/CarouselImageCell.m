@@ -12,7 +12,6 @@
 @implementation CarouselImageCell
 //carouselImage_array;//轮播图数据goodsCategory_array//商品分类数据
 +(instancetype)cellWithCarouselImage_array:(NSArray *)carouselImage_array andGoodsCategory_array:(NSArray *)goodsCategory_array andDelegate:(id)delegate{
-//    NSLog(@"carouselImage_array:%@",carouselImage_array);
     //总高度257
     UITableViewCell * cell = [UITableViewCell new];
     //无法选中
@@ -27,7 +26,7 @@
     }
     SDCycleScrollView * cycleScrollView = [SDCycleScrollView cycleScrollViewWithFrame:CGRectMake(10, 10, WIDTH-20, 151) imageURLStringsGroup:url_arr];
     cycleScrollView.layer.masksToBounds = true;
-    cycleScrollView.layer.cornerRadius = 12;
+//    cycleScrollView.layer.cornerRadius = 12;
     cycleScrollView.delegate = delegate;
     [cell addSubview:cycleScrollView];
     cycleScrollView.tag = 100;
@@ -89,12 +88,6 @@
     
     
     
-    
-    //分割线
-    UIView * spaceView = [UIView new];
-    spaceView.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
-    [cell addSubview:spaceView];
-    spaceView.frame = CGRectMake(0, 257, WIDTH, 10);
     return (CarouselImageCell*)cell;
 }
 

@@ -75,7 +75,7 @@
         [cell addSubview:imgV];
         imgV.tag = 10000;
         imgV.layer.masksToBounds = true;
-        imgV.layer.cornerRadius = 12;
+//        imgV.layer.cornerRadius = 12;
         [imgV sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage imageNamed:@"logo"]];
     }else{
         [imgV sd_setImageWithURL:[NSURL URLWithString:url] placeholderImage:[UIImage imageNamed:@"logo"]];

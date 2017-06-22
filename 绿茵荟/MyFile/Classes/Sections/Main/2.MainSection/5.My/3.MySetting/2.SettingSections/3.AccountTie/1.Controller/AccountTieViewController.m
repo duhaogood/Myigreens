@@ -108,9 +108,26 @@
     }else{
         type = @"微博";
     }
-    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
-        [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%@绑定成功",type] duration:1];
-        [self getUserInfoAgagin];
+    NSString * key = nil;
+    if ([type isEqualToString:@"微信"]) {
+        key = @"微信";
+    }else if ([type isEqualToString:@"QQ"]) {
+        key = @"QQ";
+    }else{
+        key = @"新浪微博";
+    }
+    UISwitch * btn =  self.title_swich_dictionary[key];
+    [MYNETWORKING getDataWithErroeWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        if (![[back_dic valueForKey:@"code"] boolValue]) {
+            //绑定不成功
+            if (btn) {
+                btn.on = false;
+            }
+            [SVProgressHUD showErrorWithStatus:back_dic[@"msg"] duration:2];
+        }else{//绑定成功
+            [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%@绑定成功",type] duration:1];
+            [self getUserInfoAgagin];
+        }
     }];
 }
 //更新我的信息
@@ -143,7 +160,6 @@
                             @"app":key
                             };
     if (!isPop){//直接取消，并不是打开后未安装而触发的取消
-        isPop = false;
         [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
             if ([back_dic[@"code"] boolValue]) {
                 [SVProgressHUD showSuccessWithStatus:[NSString stringWithFormat:@"%@取消成功",title] duration:1];
@@ -153,6 +169,7 @@
             }
         }];
     }
+    isPop = false;
     
     
 }
@@ -172,6 +189,7 @@
                 msg = @"取消绑定";
             }
             [SVProgressHUD showErrorWithStatus:msg duration:2];
+            [self getUserInfoAgagin];
         } else {
             UMSocialUserInfoResponse *resp = result;
             NSDictionary * info = @{
@@ -199,6 +217,7 @@
                 msg = @"取消绑定";
             }
             [SVProgressHUD showErrorWithStatus:msg duration:2];
+            [self getUserInfoAgagin];
         } else {
             UMSocialUserInfoResponse *resp = result;
             
@@ -236,17 +255,8 @@
             if ([msg isEqualToString:@"Operation is cancel"]) {
                 msg = @"取消绑定";
             }
-            switch (error.code) {
-                case UMSocialPlatformErrorType_NotInstall:
-                    msg = @"应用未安装";
-                    break;
-                case UMSocialPlatformErrorType_Cancel:
-                    msg = @"您已取消分享";
-                    break;
-                default:
-                    break;
-            }
             [SVProgressHUD showErrorWithStatus:msg duration:2];
+            [self getUserInfoAgagin];
         } else {
             UMSocialUserInfoResponse *resp = result;
             NSDictionary * info = @{

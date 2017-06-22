@@ -303,9 +303,9 @@
     [SVProgressHUD showWithStatus:@"更新中" maskType:SVProgressHUDMaskTypeClear];
     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
         //更新成功
-        for (NSString * key in back_dic.allKeys) {
-            NSLog(@"%@:%@",key,back_dic[key]);
-        }
+//        for (NSString * key in back_dic.allKeys) {
+//            NSLog(@"%@:%@",key,back_dic[key]);
+//        }
     }];
 }
 //获取最新推送状态

@@ -392,7 +392,7 @@
             }
             imgV.tag = postId;
             imgV.layer.masksToBounds = true;
-            imgV.layer.cornerRadius = 12;
+//            imgV.layer.cornerRadius = 12;
             [cell addSubview:imgV];
             imgV.userInteractionEnabled = true;
             //添加点按击手势监听器

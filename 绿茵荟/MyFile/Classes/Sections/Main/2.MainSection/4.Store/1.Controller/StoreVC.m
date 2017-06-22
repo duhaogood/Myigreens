@@ -345,7 +345,7 @@
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0) {
-        return 267;
+        return 257;
     }else{
         NSDictionary * dictt = self.tagsList_array[indexPath.section-1];
         int showType = [dictt[@"showType"] intValue];
@@ -653,31 +653,31 @@
                 //self.tagsList_array
 //                NSLog(@"back:%@",backDict3);
                 NSArray * back_arr = backDict3[@"tagsList"];
-                NSMutableArray * arr = [NSMutableArray new];
-                for (NSDictionary * arr_dic in back_arr) {
-                    NSInteger showType = [arr_dic[@"showType"] longValue];
-                    NSArray * bannerList = arr_dic[@"bannerList"];
-                    if (showType == 3 && bannerList && bannerList.count > 0) {//导航展示类型
-                        [arr addObject:arr_dic];
-                        break;
-                    }
-                }
-                for (NSDictionary * arr_dic in back_arr) {
-                    NSInteger showType = [arr_dic[@"showType"] longValue];
-                    NSArray * bannerList = arr_dic[@"bannerList"];
-                    if (showType == 2 && bannerList && bannerList.count > 0) {//商品组
-                        [arr addObject:arr_dic];
-                        break;
-                    }
-                }
-                for (NSDictionary * arr_dic in back_arr) {
-                    NSInteger showType = [arr_dic[@"showType"] longValue];
-                    NSArray * goodsList = arr_dic[@"goodsList"];
-                    if (showType == 1 && goodsList && goodsList.count > 0) {//下面的商品标签
-                        [arr addObject:arr_dic];
-                    }
-                }
-                self.tagsList_array = [NSArray arrayWithArray:arr];
+//                NSMutableArray * arr = [NSMutableArray new];
+//                for (NSDictionary * arr_dic in back_arr) {
+//                    NSInteger showType = [arr_dic[@"showType"] longValue];
+//                    NSArray * bannerList = arr_dic[@"bannerList"];
+//                    if (showType == 3 && bannerList && bannerList.count > 0) {//导航展示类型
+//                        [arr addObject:arr_dic];
+//                        break;
+//                    }
+//                }
+//                for (NSDictionary * arr_dic in back_arr) {
+//                    NSInteger showType = [arr_dic[@"showType"] longValue];
+//                    NSArray * bannerList = arr_dic[@"bannerList"];
+//                    if (showType == 2 && bannerList && bannerList.count > 0) {//商品组
+//                        [arr addObject:arr_dic];
+//                        break;
+//                    }
+//                }
+//                for (NSDictionary * arr_dic in back_arr) {
+//                    NSInteger showType = [arr_dic[@"showType"] longValue];
+//                    NSArray * goodsList = arr_dic[@"goodsList"];
+//                    if (showType == 1 && goodsList && goodsList.count > 0) {//下面的商品标签
+//                        [arr addObject:arr_dic];
+//                    }
+//                }
+                self.tagsList_array = [NSArray arrayWithArray:back_arr];
                 //                NSLog(@"count3:%ld",self.tagsList_array.count);
                 //此时加载界面
                 [self loadMainView];
@@ -700,32 +700,32 @@
             [self.storeNetWorking getViewData:^(NSDictionary * backDict3) {//获取商品组数据
                 //self.tagsList_array
                 NSArray * back_arr = backDict3[@"tagsList"];
-                NSMutableArray * arr = [NSMutableArray new];
-                for (NSDictionary * arr_dic in back_arr) {
-                    NSInteger showType = [arr_dic[@"showType"] longValue];
-                    NSArray * bannerList = arr_dic[@"bannerList"];
-                    if (showType == 3 && bannerList && bannerList.count > 0) {//中间的新鲜热卖
-                        [arr addObject:arr_dic];
-                        break;
-                    }
-                }
-                for (NSDictionary * arr_dic in back_arr) {
-                    NSInteger showType = [arr_dic[@"showType"] longValue];
-                    NSArray * bannerList = arr_dic[@"bannerList"];
-                    if (showType == 2 && bannerList && bannerList.count > 0) {//商品组
-                        [arr addObject:arr_dic];
-//                        NSLog(@"arr_dic:%@",arr_dic);
-                        break;
-                    }
-                }
-                for (NSDictionary * arr_dic in back_arr) {
-                    NSInteger showType = [arr_dic[@"showType"] longValue];
-                    NSArray * goodsList = arr_dic[@"goodsList"];
-                    if (showType == 1 && goodsList && goodsList.count > 0) {//下面的商品组
-                        [arr addObject:arr_dic];
-                    }
-                }
-                self.tagsList_array = [NSArray arrayWithArray:arr];
+//                NSMutableArray * arr = [NSMutableArray new];
+//                for (NSDictionary * arr_dic in back_arr) {
+//                    NSInteger showType = [arr_dic[@"showType"] longValue];
+//                    NSArray * bannerList = arr_dic[@"bannerList"];
+//                    if (showType == 3 && bannerList && bannerList.count > 0) {//中间的新鲜热卖
+//                        [arr addObject:arr_dic];
+//                        break;
+//                    }
+//                }
+//                for (NSDictionary * arr_dic in back_arr) {
+//                    NSInteger showType = [arr_dic[@"showType"] longValue];
+//                    NSArray * bannerList = arr_dic[@"bannerList"];
+//                    if (showType == 2 && bannerList && bannerList.count > 0) {//商品组
+//                        [arr addObject:arr_dic];
+////                        NSLog(@"arr_dic:%@",arr_dic);
+//                        break;
+//                    }
+//                }
+//                for (NSDictionary * arr_dic in back_arr) {
+//                    NSInteger showType = [arr_dic[@"showType"] longValue];
+//                    NSArray * goodsList = arr_dic[@"goodsList"];
+//                    if (showType == 1 && goodsList && goodsList.count > 0) {//下面的商品组
+//                        [arr addObject:arr_dic];
+//                    }
+//                }
+                self.tagsList_array = [NSArray arrayWithArray:back_arr];
 //                                NSLog(@"count3:%ld",self.tagsList_array.count);
                 //此时加载界面
                 [self.tableView reloadData];

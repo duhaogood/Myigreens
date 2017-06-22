@@ -12,6 +12,11 @@
 @property(nonatomic,assign)id delegate;
 
 /**
+ type：1.商品 2.帖子 3.专题
+ typeId：比如是商品详情页，传递商品id，如果是帖子，就传帖子的id
+ */
+@property(nonatomic,strong)NSDictionary * sharedDic;
+/**
  *title -
  *img_url -
  *shared_url -
