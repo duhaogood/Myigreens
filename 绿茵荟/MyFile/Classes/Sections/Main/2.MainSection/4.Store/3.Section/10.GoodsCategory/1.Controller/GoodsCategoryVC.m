@@ -190,7 +190,7 @@
         label.tag = 100;
         label.textAlignment = NSTextAlignmentCenter;
         label.text = name;
-        label.font = [UIFont systemFontOfSize:15];
+        label.font = [UIFont systemFontOfSize:13];
         label.frame = CGRectMake(3, 15, tableView.frame.size.width-3, 15);
         [MYTOOL setFontWithLabel:label];
         [cell addSubview:label];
@@ -262,7 +262,7 @@
             CGRect rect = imgV.frame;
             float width = rect.size.width;
             label.text = goodsName;
-            label.frame = CGRectMake(rect.origin.x, top, rect.size.width, 15);
+            label.frame = CGRectMake(rect.origin.x, top, rect.size.width, 14);
             CGSize size = [MYTOOL getSizeWithLabel:label];
             //一行还显示不全，变成两行
             if (size.width > width) {
@@ -280,7 +280,7 @@
             label.text = goodsName;
             label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
             label.textAlignment = NSTextAlignmentCenter;
-            label.font = [UIFont systemFontOfSize:15];
+            label.font = [UIFont systemFontOfSize:14];
             CGRect rect = imgV.frame;
             float width = rect.size.width;
             label.frame = CGRectMake(rect.origin.x, top, rect.size.width, 15);
@@ -316,7 +316,7 @@
         label.tag = 10002;
         label.textColor = [MYTOOL RGBWithRed:229 green:64 blue:73 alpha:1];
         label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont systemFontOfSize:15];
+        label.font = [UIFont systemFontOfSize:14];
         UILabel * nameLabel = [cell viewWithTag:10001];
         [cell addSubview:label];
         label.text = [NSString stringWithFormat:@"¥%.2f",price];

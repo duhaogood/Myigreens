@@ -127,7 +127,7 @@
         label.text = goodsName;
         label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
         label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont systemFontOfSize:15];
+        label.font = [UIFont systemFontOfSize:14];
         CGRect rect = imgV.frame;
         CGSize size = [MYTOOL getSizeWithLabel:label];
         label.numberOfLines = 0;
@@ -175,7 +175,7 @@
         label.tag = 10002;
         label.textColor = [MYTOOL RGBWithRed:229 green:64 blue:73 alpha:1];
         label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont systemFontOfSize:15];
+        label.font = [UIFont systemFontOfSize:14];
         CGRect rect = imgV.frame;
         top = 225;
         label.frame = CGRectMake(rect.origin.x, top, rect.size.width, 15);

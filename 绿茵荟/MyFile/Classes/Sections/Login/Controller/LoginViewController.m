@@ -269,7 +269,7 @@
 - (void)getAuthWithUserInfoFromQQ{
     if (![MYTOOL isInstallQQ]) {
         [SVProgressHUD showErrorWithStatus:@"未安装QQ" duration:2];
-//        return;
+        return;
     }
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_QQ currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {

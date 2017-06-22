@@ -100,7 +100,7 @@
     {
         UILabel * name_label = [UILabel new];
         name_label.frame = CGRectMake(WIDTH/4, top, WIDTH/2, 24);
-        name_label.font = [UIFont systemFontOfSize:24];
+        name_label.font = [UIFont systemFontOfSize:18];
         name_label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
         [back_view addSubview:name_label];
         name_label.textAlignment = NSTextAlignmentCenter;
@@ -120,7 +120,7 @@
         }
         signature_label.textAlignment = NSTextAlignmentCenter;
         signature_label.text = signature;
-        signature_label.font = [UIFont systemFontOfSize:15];
+        signature_label.font = [UIFont systemFontOfSize:12];
         signature_label.textColor = [MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1];
         CGSize size = [MYTOOL getSizeWithString:signature andFont:signature_label.font];
         int c = size.width/(WIDTH-20) < 1 ? 1 : (size.width/(WIDTH-20) == 1 ? 1 : (int)size.width/(WIDTH-20) + 1);
@@ -163,7 +163,7 @@
             UILabel * label = [UILabel new];
             label.text = string;
             label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
-            label.font = [UIFont systemFontOfSize:15];
+            label.font = [UIFont systemFontOfSize:12];
             CGSize size = [MYTOOL getSizeWithString:string andFont:label.font];
             label.frame = CGRectMake(WIDTH/2-size.width-10, top, size.width, 16);
             [back_view addSubview:label];
@@ -180,7 +180,7 @@
             UILabel * label = [UILabel new];
             label.text = string;
             label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
-            label.font = [UIFont systemFontOfSize:15];
+            label.font = [UIFont systemFontOfSize:12];
             label.frame = CGRectMake(WIDTH/2+10, top, WIDTH/2, 16);
             [back_view addSubview:label];
             self.bySubscribeLabel = label;
@@ -541,7 +541,7 @@
         {
             UILabel * name_label = [UILabel new];
             name_label.frame = CGRectMake(WIDTH/4, top, WIDTH/2, 24);
-            name_label.font = [UIFont systemFontOfSize:24];
+            name_label.font = [UIFont systemFontOfSize:18];
             name_label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
             [back_view addSubview:name_label];
             name_label.textAlignment = NSTextAlignmentCenter;
@@ -561,7 +561,7 @@
             }
             signature_label.textAlignment = NSTextAlignmentCenter;
             signature_label.text = signature;
-            signature_label.font = [UIFont systemFontOfSize:15];
+            signature_label.font = [UIFont systemFontOfSize:12];
             signature_label.textColor = [MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1];
             CGSize size = [MYTOOL getSizeWithString:signature andFont:signature_label.font];
             int c = size.width/(WIDTH-20) < 1 ? 1 : (size.width/(WIDTH-20) == 1 ? 1 : (int)size.width/(WIDTH-20) + 1);
@@ -604,7 +604,7 @@
                 UILabel * label = [UILabel new];
                 label.text = string;
                 label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
-                label.font = [UIFont systemFontOfSize:15];
+                label.font = [UIFont systemFontOfSize:12];
                 CGSize size = [MYTOOL getSizeWithString:string andFont:label.font];
                 label.frame = CGRectMake(WIDTH/2-size.width-10, top, size.width, 16);
                 [back_view addSubview:label];
@@ -621,7 +621,7 @@
                 UILabel * label = [UILabel new];
                 label.text = string;
                 label.textColor = [MYTOOL RGBWithRed:170 green:170 blue:170 alpha:1];
-                label.font = [UIFont systemFontOfSize:15];
+                label.font = [UIFont systemFontOfSize:12];
                 label.frame = CGRectMake(WIDTH/2+10, top, WIDTH/2, 16);
                 [back_view addSubview:label];
                 self.bySubscribeLabel = label;

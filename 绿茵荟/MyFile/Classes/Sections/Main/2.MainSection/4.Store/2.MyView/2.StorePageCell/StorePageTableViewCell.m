@@ -26,7 +26,7 @@
         label.text = tagName;
         label.textColor = [MYTOOL RGBWithRed:106 green:151 blue:53 alpha:1];
         label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont systemFontOfSize:24];
+        label.font = [UIFont systemFontOfSize:18];
         CGSize size = [MYTOOL getSizeWithLabel:label];
         float width = WIDTH - 140;
         while (size.width > width) {
@@ -49,7 +49,7 @@
             UIButton * btn = [UIButton new];
             [btn setTitle:@"全部" forState:UIControlStateNormal];
             [btn setTitleColor:[MYTOOL RGBWithRed:119 green:119 blue:119 alpha:1] forState:UIControlStateNormal];
-            btn.titleLabel.font = [UIFont systemFontOfSize:15];
+            btn.titleLabel.font = [UIFont systemFontOfSize:12];
             btn.frame = CGRectMake(WIDTH-65, 20, 60, 30);
             [cell addSubview:btn];
             [btn addTarget:delegate action:@selector(clickAllBtn_callBack:) forControlEvents:UIControlEventTouchUpInside];

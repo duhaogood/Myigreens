@@ -81,7 +81,7 @@
 -(void)loadMainView{
     //发帖按钮
     UIButton * submitPostBtn = [UIButton new];
-    [submitPostBtn setImage:[UIImage imageNamed:@"btn_write"] forState:UIControlStateNormal];
+    [submitPostBtn setImage:[UIImage imageNamed:@"write"] forState:UIControlStateNormal];
     submitPostBtn.frame = CGRectMake(WIDTH-80, HEIGHT-49-150, 60, 60);
     [self.view insertSubview:submitPostBtn atIndex:9999];
     [submitPostBtn addTarget:self action:@selector(submitPostBtnBack) forControlEvents:UIControlEventTouchUpInside];
@@ -99,6 +99,7 @@
     select_btn.frame = CGRectMake(center_view.frame.size.width/6-25, 6, 50, 30);
     [select_btn setTitle:@"精选" forState:UIControlStateNormal];
     self.firstBtn = select_btn;
+    select_btn.titleLabel.font = [UIFont systemFontOfSize:18];
     [center_view addSubview:select_btn];
     current_btn = select_btn;
     [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",select_btn.frame.size.width/2-18+center_view.frame.size.width/6-25] forKey:@"精选"];
@@ -114,6 +115,7 @@
     circle_btn.frame = CGRectMake(center_view.frame.size.width/2-25, 6, 50, 30);
     [circle_btn setTitle:@"圈子" forState:UIControlStateNormal];
     [center_view addSubview:circle_btn];
+    circle_btn.titleLabel.font = [UIFont systemFontOfSize:18];
     [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",center_view.frame.size.width/2-18] forKey:@"圈子"];
     [circle_btn addTarget:self action:@selector(submitCenterBtn:) forControlEvents:UIControlEventTouchUpInside];
     //订阅
@@ -121,6 +123,7 @@
     subscribe_btn.frame = CGRectMake(center_view.frame.size.width/6*5-25, 6, 50, 30);
     [subscribe_btn setTitle:@"订阅" forState:UIControlStateNormal];
     [center_view addSubview:subscribe_btn];
+    subscribe_btn.titleLabel.font = [UIFont systemFontOfSize:18];
     [self.btn_location_dic setValue:[NSString stringWithFormat:@"%.2f",subscribe_btn.frame.origin.x+subscribe_btn.frame.size.width/2-18] forKey:@"订阅"];
     [subscribe_btn addTarget:self action:@selector(submitCenterBtn:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -130,43 +133,34 @@
     //上部按钮及文字
     {
         UIScrollView * view = [UIScrollView new];
-        view.frame = CGRectMake(0, 0, WIDTH, 70);
+        view.frame = CGRectMake(0, 0, WIDTH, 55);
         [mainView addSubview:view];
         view.contentSize =  CGSizeMake(WIDTH*circle_img_title_value_array.count/5.7, 0);
         
         circle_image_title_dictionary = [NSMutableDictionary new];
-        float width_image = 30;//图片高度及宽度
-        float width_label = 50;//label宽度
-        float height_label = 20;//label高度
-        float space = (view.contentSize.width - 40 -30)/(circle_img_title_value_array.count-1);
         for (int i = 0; i < circle_img_title_value_array.count; i ++) {
-            //图片
-            UIImageView * imgV = [UIImageView new];
-            imgV.frame = CGRectMake(20+i*space, 4, width_image, width_image);
-            [imgV sd_setImageWithURL:[NSURL URLWithString:circle_img_title_value_array[i][@"url"]] placeholderImage:[UIImage imageNamed:@"logo"]];
-            [view addSubview:imgV];
-            //绑定监听
-            [imgV setUserInteractionEnabled:YES];
-            UITapGestureRecognizer * tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(submitCircleImageView:)];
-            tapGesture.numberOfTapsRequired=1;
-            [imgV addGestureRecognizer:tapGesture];
-            
-            //文字
-            UILabel * label = [UILabel new];
-            label.text = circle_img_title_value_array[i][@"label"];
-            label.frame = CGRectMake(20+i*space, 40, width_label, height_label);
-            [view addSubview:label];
+            //按钮
+            UIButton * btn = [UIButton new];
+            [btn setTitle:circle_img_title_value_array[i][@"label"] forState:UIControlStateNormal];
+            [btn setTitleColor:[MYTOOL RGBWithRed:92 green:92 blue:92 alpha:1] forState:UIControlStateNormal];
+            btn.titleLabel.font = [UIFont systemFontOfSize:15];
+            float btn_width = view.contentSize.width/circle_img_title_value_array.count;
+            btn.frame = CGRectMake(btn_width*i, 15, btn_width, 20);
+            btn.tag = i;
+            [btn addTarget:self action:@selector(submitCircleTitleBtn:) forControlEvents:UIControlEventTouchUpInside];
+            [view addSubview:btn];
             NSDictionary * dic = @{
-                                   @"imgV":imgV,
+                                   @"btn":btn,
                                    @"icon":circle_img_title_value_array[i][@"url"],
                                    @"value":circle_img_title_value_array[i][@"value"]
                                    };
-            [circle_image_title_dictionary setValue:dic forKey:label.text];
+            [circle_image_title_dictionary setValue:dic forKey:btn.currentTitle];
         }
         // 83 131 40
+        float center_x = (view.contentSize.width/circle_img_title_value_array.count)/2;
         UIView * down_view = [UIView new];
         down_view.backgroundColor = [DHTOOL RGBWithRed:83 green:131 blue:40 alpha:1];
-        down_view.frame = CGRectMake(10, 65, 60, 4);
+        down_view.frame = CGRectMake(center_x - 15, 40, 30, 4);
         [view addSubview:down_view];
         self.view_downOfImageView_circleView = down_view;
         current_title_circle_img_title = circle_imgTitle_array[0];
@@ -176,7 +170,7 @@
     //中间分割线
     UIView * space_view_mid = [UIView new];
     space_view_mid.backgroundColor = [DHTOOL RGBWithRed:227 green:227 blue:227 alpha:1];
-    space_view_mid.frame = CGRectMake(0, 70, WIDTH, 5);
+    space_view_mid.frame = CGRectMake(0, 45, WIDTH, 10);
     [mainView addSubview:space_view_mid];
     
     //加载下部视图
@@ -191,7 +185,7 @@
     down_view.delegate = self;
     down_view.rowHeight = HEIGHT/2.5;
     down_img_circle_view = down_view;
-    down_view.frame = CGRectMake(direction ? -WIDTH : WIDTH, 74, WIDTH, HEIGHT - 70-64-49-10);
+    down_view.frame = CGRectMake(direction ? -WIDTH : WIDTH, 55, WIDTH, HEIGHT - 55-64-49);
     [current_view addSubview:down_view];
     down_view.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
         [self headerRefresh];
@@ -231,14 +225,32 @@
     [self loadDefaultData];
     
     if (direction == 2) {
-        down_view.frame = CGRectMake(0 , -HEIGHT, WIDTH, HEIGHT - 70-64-49-10);
+        down_view.frame = CGRectMake(0 , -HEIGHT, WIDTH, HEIGHT - 55-64-49);
     }
     down_view.alpha = 0;
     [UIView animateWithDuration:0.3 animations:^{
         down_view.alpha = 1;
-        down_view.frame = CGRectMake(0, 74, WIDTH, HEIGHT - 70-64-49-10);
+        down_view.frame = CGRectMake(0, 55, WIDTH, HEIGHT - 55-64-49);
     }];
     
+}
+//圈子文字按钮回调
+-(void)submitCircleTitleBtn:(UIButton *)btn{
+    NSLog(@"%@",btn.currentTitle);
+    NSString * title = btn.currentTitle;
+    if ([current_title_circle_img_title isEqualToString:title]) {
+        return;
+    }
+    NSInteger index1 = [circle_imgTitle_array indexOfObject:current_title_circle_img_title];
+    NSInteger index2 = [circle_imgTitle_array indexOfObject:title];
+    current_title_circle_img_title = title;
+    pageNo = 1;
+    //    NSLog(@"点击了--%@,图片名字:%@",title,circle_image_title_dictionary[current_title_circle_img_title][@"icon"]);
+    float center_x = btn.frame.origin.x + btn.frame.size.width/2;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.view_downOfImageView_circleView.frame = CGRectMake(center_x - 15, self.view_downOfImageView_circleView.frame.origin.y, _view_downOfImageView_circleView.frame.size.width, _view_downOfImageView_circleView.frame.size.height);
+    }];
+    [self loadCircleViewWithCurrent_title_circle_img:current_title_circle_img_title withDirection:index1>index2?0:1];
 }
 #pragma mark - 圈子图片按钮回调
 -(void)submitCircleImageView:(UITapGestureRecognizer *)tap{
@@ -920,7 +932,7 @@
             UILabel * label = [UILabel new];
             label.text = nickName;
             label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
-            label.font = [UIFont systemFontOfSize:18];
+            label.font = [UIFont systemFontOfSize:16];
             CGSize size = [MYTOOL getSizeWithString:label.text andFont:label.font];
             label.frame = CGRectMake(61, 21, size.width, 18);
             [cell addSubview:label];
@@ -974,7 +986,7 @@
             //过滤换行
             NSString * string = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]; //去除掉首尾的空白字符和换行字符
             label.text = string;
-            label.font = [UIFont systemFontOfSize:16];
+            label.font = [UIFont systemFontOfSize:14];
             label.textColor = [MYTOOL RGBWithRed:79 green:79 blue:79 alpha:1];
             CGSize size = [MYTOOL getSizeWithString:string andFont:label.font];
             float width = WIDTH-71;
