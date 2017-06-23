@@ -151,7 +151,7 @@
                     }
                     marketPriceLabel.text = text;
                     CGSize size = [MYTOOL getSizeWithLabel:marketPriceLabel];
-                    marketPriceLabel.frame = CGRectMake(i%2*WIDTH/2 + WIDTH/4-size.width-10, priceLabel.frame.origin.y, size.width, size.height);
+                    marketPriceLabel.frame = CGRectMake(i%2*WIDTH/2 + WIDTH/4-size.width-10, priceLabel.frame.origin.y, size.width, priceLabel.frame.size.height);
                     marketPriceLabel.textAlignment = NSTextAlignmentRight;
                     [cell addSubview:marketPriceLabel];
                     
