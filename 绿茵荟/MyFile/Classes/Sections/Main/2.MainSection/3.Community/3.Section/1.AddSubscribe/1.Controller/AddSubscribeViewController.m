@@ -133,6 +133,12 @@
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 2;
 }
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    if (section == 0) {
+        return 10;
+    }
+    return 0;
+}
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (section == 0) {
         return 1;
@@ -222,7 +228,7 @@
         //订阅按钮
         {
             UIButton * btn = [UIButton new];
-            btn.frame = CGRectMake(WIDTH-63-14, 25, 63, 30);
+            btn.frame = CGRectMake(WIDTH-63-14, 25+3.5, 63, 23);
             btn.tag = [self.member_array[indexPath.row][@"memberId"] longValue];
             [btn addTarget:self action:@selector(subscribeOrNot:) forControlEvents:UIControlEventTouchUpInside];
             [cell addSubview:btn];

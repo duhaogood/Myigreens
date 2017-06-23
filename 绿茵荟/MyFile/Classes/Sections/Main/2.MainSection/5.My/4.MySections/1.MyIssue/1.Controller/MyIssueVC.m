@@ -130,8 +130,8 @@
     //发布新帖子按钮
     {
         UIButton * submitPostBtn = [UIButton new];
-        [submitPostBtn setImage:[UIImage imageNamed:@"btn_write"] forState:UIControlStateNormal];
-        submitPostBtn.frame = CGRectMake(309/375.0*WIDTH, HEIGHT*476/667.0, 45/375.0*WIDTH, 45/375.0*WIDTH);
+        [submitPostBtn setImage:[UIImage imageNamed:@"write"] forState:UIControlStateNormal];
+        submitPostBtn.frame = CGRectMake(WIDTH - 68.0, HEIGHT*476/667.0, 67, 67);
         [self.view insertSubview:submitPostBtn atIndex:9999];
         [submitPostBtn addTarget:self action:@selector(submitPostBtnBack) forControlEvents:UIControlEventTouchUpInside];
     }

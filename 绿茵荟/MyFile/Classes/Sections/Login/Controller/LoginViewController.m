@@ -17,6 +17,7 @@
 @property(nonatomic,strong)UITextField * tel_tf;//手机号文本
 @property(nonatomic,strong)UITextField * code_tf;//验证码文本
 @property(nonatomic,strong)UIView * thirdView;//第三方登录view
+@property(nonatomic,strong)UIImageView * icon;//验证码背景
 @end
 
 @implementation LoginViewController
@@ -75,7 +76,7 @@
         top = 238/736.0*HEIGHT;
         //背景图 293*69
         UIImageView * tel_back_imgV = [UIImageView new];
-        tel_back_imgV.image = [UIImage imageNamed:@"login_input_sel"];
+        tel_back_imgV.image = [UIImage imageNamed:@"login_input"];
         tel_back_imgV.frame = CGRectMake(40, top, WIDTH - 80, (WIDTH - 80)/293.0*69);
         [self.view addSubview:tel_back_imgV];
         //手机号文本框
@@ -108,10 +109,10 @@
     {
         //背景图
         UIImageView * tel_back_imgV = [UIImageView new];
-        tel_back_imgV.image = [UIImage imageNamed:@"login_input_sel"];
+        tel_back_imgV.image = [UIImage imageNamed:@"login_input"];
         tel_back_imgV.frame = CGRectMake(40, 238/736.0*HEIGHT + (WIDTH - 80)/293.0*69, WIDTH - 80, (WIDTH - 80)/293.0*69);
         [self.view addSubview:tel_back_imgV];
-        
+        self.icon = tel_back_imgV;
         
         //验证码文本框
         UITextField * code_tf = [UITextField new];
@@ -122,6 +123,7 @@
         code_tf.keyboardType = UIKeyboardTypeNumberPad;
         [self.code_tf addTarget:self action:@selector(textChangeAction:) forControlEvents:UIControlEventEditingChanged];
         top = 238/736.0*HEIGHT + (WIDTH - 80)/293.0*69 + (WIDTH - 80)/293.0*69;
+        code_tf.delegate = self;
     }
     //登录按钮
     {
@@ -211,6 +213,13 @@
     
     
     
+}
+#pragma mark - UITextFieldDelegate
+-(void)textFieldDidBeginEditing:(UITextField *)textField{
+    self.icon.image = [UIImage imageNamed:@"login_input_sel"];
+}
+-(void)textFieldDidEndEditing:(UITextField *)textField{
+    self.icon.image = [UIImage imageNamed:@"login_input"];
 }
 //第三方登录
 -(void)thirtLoginWithInfo:(NSDictionary *)info{

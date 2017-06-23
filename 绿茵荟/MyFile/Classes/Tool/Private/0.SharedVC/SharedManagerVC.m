@@ -186,9 +186,9 @@
     }
     NSString * interface = @"/sys/shareBack.intf";
     [MYNETWORKING getNoPopWithInterfaceName:interface andDictionary:self.sharedDic andSuccess:^(NSDictionary *back_dic) {
-        for (NSString * key in back_dic.allKeys) {
-            NSLog(@"%@:%@",key,back_dic[key]);
-        }
+//        for (NSString * key in back_dic.allKeys) {
+//            NSLog(@"%@:%@",key,back_dic[key]);
+//        }
     }];
     
     

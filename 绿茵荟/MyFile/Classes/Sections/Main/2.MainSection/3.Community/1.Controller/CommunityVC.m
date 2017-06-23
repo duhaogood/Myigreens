@@ -82,7 +82,7 @@
     //发帖按钮
     UIButton * submitPostBtn = [UIButton new];
     [submitPostBtn setImage:[UIImage imageNamed:@"write"] forState:UIControlStateNormal];
-    submitPostBtn.frame = CGRectMake(WIDTH-80, HEIGHT-49-150, 60, 60);
+    submitPostBtn.frame = CGRectMake(WIDTH-60.5, HEIGHT-49-150, 57, 57);
     [self.view insertSubview:submitPostBtn atIndex:9999];
     [submitPostBtn addTarget:self action:@selector(submitPostBtnBack) forControlEvents:UIControlEventTouchUpInside];
     //中间view
@@ -566,6 +566,9 @@
     }else if([title isEqualToString:@"圈子"]){
         return 225;
     }else{
+        if (HEIGHT == 568) {
+            return 300;
+        }
         return 383;
     }
 }
@@ -593,15 +596,15 @@
     
     bool praiseStatus = [data_dic[@"praiseStatus"] boolValue];//状态
     //间距
-    float space_y = [MYTOOL getHeightWithIphone_six:15];
+    float space_y = [MYTOOL getHeightWithIphone_six:10];
     //圈子
     UITableViewCell * cell = [UITableViewCell new];
     if ([current_btn.currentTitle isEqualToString:@"精选"]) {
         float top = 0;
+        UIImageView * userImgView = [UIImageView new];
+        float user_width = 36;
         //头像
         {
-            float user_width = 40;
-            UIImageView * userImgView = [UIImageView new];
             userImgView.frame = CGRectMake(10, space_y, user_width, user_width);
         
             //        userImgView.backgroundColor = [UIColor greenColor];
@@ -624,9 +627,9 @@
             label.text = nickName;
             label.font = [UIFont titleFontOfSize:18];
             label.textColor = [MYTOOL RGBWithRed:30 green:28 blue:28 alpha:1];
-            label.frame = CGRectMake(60,space_y+10 , WIDTH - 75, 20);
+            label.frame = CGRectMake(user_width+20,space_y+10 , WIDTH - 15-(user_width+20), 20);
             [cell addSubview:label];
-            top = space_y * 2 + 40;
+            top = space_y + 36;
         }
         //简介
         {
@@ -658,20 +661,20 @@
                     }
                 }
             }
-            tv.frame = CGRectMake(60, top, WIDTH -60-10, size.height*row);
+            tv.frame = CGRectMake(user_width+20, top, WIDTH -(user_width+20)-10, size.height*row);
             [cell addSubview:tv];
             top += size.height*row + space_y;
         }
         //图片
         {
-            float width_img = (WIDTH - 65 - 30)/2;
+            float width_img = (WIDTH - user_width - 10 - 30)/2;
             float height_img = width_img / 150 *180;
             if (image_array.count == 1) {
                 UIImageView * iv1 = [UIImageView new];
                 iv1.contentMode = UIViewContentModeScaleAspectFill;
                 iv1.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
                 [iv1 setContentScaleFactor:[[UIScreen mainScreen] scale]];
-                iv1.frame = CGRectMake(65,top, width_img, height_img);
+                iv1.frame = CGRectMake(user_width+20,top, width_img, height_img);
                 iv1.layer.masksToBounds = true;
 //                iv1.layer.cornerRadius = 10;
                 [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
@@ -682,7 +685,7 @@
                 iv1.contentMode = UIViewContentModeScaleAspectFill;
                 iv1.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
                 [iv1 setContentScaleFactor:[[UIScreen mainScreen] scale]];
-                iv1.frame = CGRectMake(65,top , width_img, height_img);
+                iv1.frame = CGRectMake(user_width+20,top , width_img, height_img);
                 iv1.layer.masksToBounds = true;
 //                iv1.layer.cornerRadius = 10;
                 [iv1 sd_setImageWithURL:[NSURL URLWithString:image_array[0][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"bg"]];
@@ -692,7 +695,7 @@
                 iv2.contentMode = UIViewContentModeScaleAspectFill;
                 iv2.clipsToBounds=YES;//  是否剪切掉超出 UIImageView 范围的图片
                 [iv2 setContentScaleFactor:[[UIScreen mainScreen] scale]];
-                iv2.frame = CGRectMake(65 + iv1.frame.size.width+10,top , width_img, height_img);
+                iv2.frame = CGRectMake(user_width+20 + iv1.frame.size.width+10,top , width_img, height_img);
                 iv2.layer.masksToBounds = true;
 //                iv2.layer.cornerRadius = 10;
                 [iv2 sd_setImageWithURL:[NSURL URLWithString:image_array[1][@"normalUrl"]] placeholderImage:[UIImage imageNamed:@"Icon60"]];
@@ -910,6 +913,9 @@
         [cell addSubview:spaceView];
     }else{//订阅
         tableView.rowHeight = 383;
+        if (HEIGHT == 568) {
+            tableView.rowHeight = 300;
+        }
         float left = 0;
         //用户头像
         {
@@ -1635,7 +1641,7 @@
     //左按钮-nav_-add
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_-add"] style:UIBarButtonItemStyleDone target:self action:@selector(addOfNavigationBar)];
     //右按钮-nav_top
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_top"] style:UIBarButtonItemStyleDone target:self action:@selector(topOfNavigationBar)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_ranking"] style:UIBarButtonItemStyleDone target:self action:@selector(topOfNavigationBar)];
     [self.navigation_titleView setHidden:NO];
     if (!self.donotUpdate) {
         [self loadDefaultData];

@@ -169,7 +169,7 @@
             if (praiseStatus) {
                 [btn setImage:[UIImage imageNamed:@"icon_details_praise_press"] forState:UIControlStateNormal];
             }
-            btn.frame = CGRectMake(WIDTH/4-15, top, 30, 30);
+            btn.frame = CGRectMake(WIDTH/4-30, top, 30, 30);
             [btn addTarget:self action:@selector(praise_callBack:) forControlEvents:UIControlEventTouchUpInside];
             btn.tag = postId * 10 + [self.post_dic[@"praiseStatus"] intValue];
             [backView addSubview:btn];
@@ -178,7 +178,7 @@
             UILabel * num_label1 = [UILabel new];
             NSString * praiseCount = [NSString stringWithFormat:@"%ld",[self.post_dic[@"praiseCount"] longValue]];
             num_label1.text = praiseCount;
-            num_label1.frame = CGRectMake(WIDTH/6, top + 35, WIDTH/6, 18);
+            num_label1.frame = CGRectMake(WIDTH/6-15, top + 35, WIDTH/6, 18);
             num_label1.font = [UIFont systemFontOfSize:18];
             num_label1.textAlignment = NSTextAlignmentCenter;
             [backView addSubview:num_label1];
@@ -188,7 +188,7 @@
         {
             //下边小图标  icon_message
             UIImageView * icon2 = [UIImageView new];
-            icon2.image = [UIImage imageNamed:@"icon_message"];
+            icon2.image = [UIImage imageNamed:@"icon_details_message"];
             icon2.frame = CGRectMake(WIDTH/2-15, top, 30, 30);
             [backView addSubview:icon2];
             //绑定监听-点击
@@ -212,8 +212,8 @@
         {
             //下边小图标  icon_message
             UIImageView * icon3 = [UIImageView new];
-            icon3.image = [UIImage imageNamed:@"icon_share"];
-            icon3.frame = CGRectMake(WIDTH*3/4-15, top, 30, 30);
+            icon3.image = [UIImage imageNamed:@"icon_details_share"];
+            icon3.frame = CGRectMake(WIDTH*3/4, top, 30, 30);
             [backView addSubview:icon3];
             //绑定监听
             [icon3 setUserInteractionEnabled:YES];
@@ -225,7 +225,7 @@
             //数字
             UILabel * num_label3 = [UILabel new];
             num_label3.text = @"分享";
-            num_label3.frame = CGRectMake(WIDTH*3/4-WIDTH/12, top+35, WIDTH/6-2, 18);
+            num_label3.frame = CGRectMake(WIDTH*3/4-WIDTH/12+15, top+35, WIDTH/6-2, 18);
             num_label3.font = [UIFont systemFontOfSize:18];
             num_label3.textAlignment = NSTextAlignmentCenter;
             [backView addSubview:num_label3];
@@ -280,13 +280,14 @@
         UITextField * tf = [UITextField new];
         tf.frame = CGRectMake(25, 6, WIDTH-110-30, 37);
         tf.placeholder = @"想说点什么";
+        tf.font = [UIFont systemFontOfSize:15];
         [white_back_view addSubview:tf];
         self.wantToSayField = tf;
         //按钮
         UIButton * send_btn = [UIButton new];
         [send_btn setBackgroundImage:[UIImage imageNamed:@"btn_sent"] forState:UIControlStateNormal];
         [send_btn setTitle:@"发送" forState:UIControlStateNormal];
-        send_btn.titleLabel.font = [UIFont systemFontOfSize:20];
+        send_btn.titleLabel.font = [UIFont systemFontOfSize:18];
         [send_btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         send_btn.frame = CGRectMake(WIDTH-90, 6, 78, 38);
         [white_back_view addSubview:send_btn];
@@ -444,7 +445,7 @@
             NSString * title = [NSString stringWithFormat:@"@%@",byNickName];
             UILabel * label = [UILabel new];
             label.text = title;
-            label.font = [UIFont systemFontOfSize:16];
+            label.font = [UIFont systemFontOfSize:13];
             label.textColor = [MYTOOL RGBWithRed:115 green:158 blue:52 alpha:1];
             CGSize size = [MYTOOL getSizeWithString:title andFont:label.font];
             label.frame = CGRectMake(61, 60, size.width, size.height);
@@ -454,7 +455,7 @@
         UILabel * label = [UILabel new];
         NSString * comment = reviewDic[@"comment"];
         label.text = comment;
-        label.font = [UIFont systemFontOfSize:16];
+        label.font = [UIFont systemFontOfSize:13];
         label.textColor = [MYTOOL RGBWithRed:91 green:91 blue:91 alpha:1];
         float width = WIDTH-by_left-50-63;
         label.frame = CGRectMake(61 + by_left, 60, width, 16);

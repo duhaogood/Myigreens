@@ -72,7 +72,7 @@
     searchBar.tag = 123123;
     searchBar.frame = CGRectMake(90, 14, WIDTH-160, 14.5);
     [self.navigationController.navigationBar addSubview:searchBar];
-    searchBar.placeholder = @"搜索美图、专题和商品";
+    searchBar.placeholder = @"搜索商品";
     
     [self refreshViewData];
     
@@ -97,7 +97,7 @@
             label.font = [UIFont systemFontOfSize:13];
             label.textColor = [UIColor whiteColor];
             [v addSubview:label];
-            label.text = @"定位中…";
+            label.text = @"全国";
             self.cityLabel = label;
             CGSize size = [MYTOOL getSizeWithLabel:label];
             label.frame = CGRectMake(0, 22-size.height/2, size.width, size.height);
@@ -581,7 +581,7 @@
                     }
                     NSDictionary * sendDict = @{
                                                 @"goodsId":[NSString stringWithFormat:@"%ld",(long)goodsId],
-                                                @"cityId":cityId
+                                                @"cityId":@"320300"
                                                 };
                     [MYNETWORKING getWithInterfaceName:interfaceName andDictionary:sendDict andSuccess:^(NSDictionary *back_dic) {
 //                        NSLog(@"商品详情:%@",back_dic[@"goods"]);
@@ -760,7 +760,7 @@
 {
     [chooseCityController.navigationController popViewControllerAnimated:true];
     [self setCityName:city.cityName];
-    [MYTOOL setProjectPropertyWithKey:@"cityId" andValue:[NSString stringWithFormat:@"%@",city.cityID]];
+//    [MYTOOL setProjectPropertyWithKey:@"cityId" andValue:[NSString stringWithFormat:@"%@",city.cityID]];
 }
 
 - (void) cityPickerControllerDidCancel:(GYZChooseCityController *)chooseCityController

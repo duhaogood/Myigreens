@@ -113,7 +113,7 @@
         }
         UIButton * btn = [UIButton new];
         btn.frame = CGRectMake(20 + (width_btn + 20)*(i%4), top, width_btn, width_btn/68.0*28);
-        
+        btn.titleLabel.font = [UIFont systemFontOfSize:15];
         //btn.titleLabel.textColor = [MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1];
         [btn setTitleColor:[MYTOOL RGBWithRed:181 green:181 blue:181 alpha:1] forState:UIControlStateNormal];
         [btn setBackgroundImage:[UIImage imageNamed:@"btn_label_nor"] forState:UIControlStateNormal];
@@ -122,12 +122,12 @@
         [btn addTarget:self action:@selector(selectPostsTypeBack:) forControlEvents:UIControlEventTouchUpInside];
         btn.tag = 100;
         [postsType_button_arr addObject:btn];
-        if (i == 0) {
-            current_postsType_button = btn;
-            [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-            [btn setBackgroundImage:[UIImage imageNamed:@"btn_item_sel"] forState:UIControlStateNormal];
-            btn.tag = 200;
-        }
+//        if (i == 0) {
+//            current_postsType_button = btn;
+//            [btn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//            [btn setBackgroundImage:[UIImage imageNamed:@"btn_item_sel"] forState:UIControlStateNormal];
+//            btn.tag = 200;
+//        }
         
     }
 }
@@ -137,7 +137,7 @@
     self.img_arr = [NSMutableArray new];
     float top = 253/736.0*HEIGHT+ 22;
     float width_img = (WIDTH - 40)/3;
-    for (int i = 0; i < 3; i ++) {
+    for (int i = 0; i < 1; i ++) {
         UIImageView * imgV = [UIImageView new];
         imgV.frame = CGRectMake(10+(width_img+10)*i, top, width_img, width_img);
         imgV.image = [UIImage imageNamed:@"Rounded-Rectangle-34-copy-2"];
@@ -241,6 +241,10 @@
 }
 #pragma mark - 发布按钮回调 - rightbarbutton
 -(void)submitBack{
+    if (current_postsType_button == nil) {
+        [SVProgressHUD showErrorWithStatus:@"请选择分类" duration:2];
+        return;
+    }
     if ([self getCountOfImgV_arr] == 0) {
         [SVProgressHUD showErrorWithStatus:@"没有图片哦" duration:1];
         return;
@@ -498,9 +502,9 @@
         //加一个
         [self addImgViewToImg_arr];
     }else{//有空的
-        if (self.img_arr.count < 3) {
-            [self addImgViewToImg_arr];
-        }
+//        if (self.img_arr.count < 3) {
+//            [self addImgViewToImg_arr];
+//        }
     }
     //刷新所有图片框位置
     for(int i = 0; i < self.img_arr.count ; i ++){

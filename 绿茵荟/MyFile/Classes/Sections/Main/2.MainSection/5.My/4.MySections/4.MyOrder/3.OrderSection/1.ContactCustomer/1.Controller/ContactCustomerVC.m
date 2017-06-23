@@ -128,7 +128,7 @@
                                @"orderId":[NSString stringWithFormat:@"%ld",self.orderId]
                                };
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
-//        NSLog(@"back:%@",back_dic);
+        NSLog(@"back:%@",back_dic);
         NSArray * msgList = back_dic[@"myCustomerServiceList"];
         if (pageNo > 1) {
             if (msgList.count > 0) {

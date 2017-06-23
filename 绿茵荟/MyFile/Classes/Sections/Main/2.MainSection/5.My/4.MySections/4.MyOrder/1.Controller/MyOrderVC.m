@@ -627,6 +627,8 @@
         ShowExpress * show = [ShowExpress new];
         show.expressName = expressName;
         show.logisicCode = expressNo;
+        NSString * expressCode = orderDic[@"expressCode"];
+        show.expressCode = expressCode;
         show.title = @"物流信息";
         [self.navigationController pushViewController:show animated:true];
     }];

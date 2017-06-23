@@ -50,7 +50,45 @@ static id instance;
     
     
 }
+// 字典转json字符串方法
 
+-(NSString *)getJsonWithDictionary:(NSDictionary *)dict
+
+{
+    
+    NSError *error;
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:&error];
+    
+    NSString *jsonString;
+    
+    if (!jsonData) {
+        
+        NSLog(@"%@",error);
+        
+    }else{
+        
+        jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+        
+    }
+    
+    NSMutableString *mutStr = [NSMutableString stringWithString:jsonString];
+    
+    NSRange range = {0,jsonString.length};
+    
+    //去掉字符串中的空格
+    
+    [mutStr replaceOccurrencesOfString:@" " withString:@"" options:NSLiteralSearch range:range];
+    
+    NSRange range2 = {0,mutStr.length};
+    
+    //去掉字符串中的换行符
+    
+    [mutStr replaceOccurrencesOfString:@"\n" withString:@"" options:NSLiteralSearch range:range2];
+    
+    return mutStr;
+    
+}
 
 -(void)getWithInterfaceName:(NSString *)interfaceName andDictionary:(NSDictionary *)send_dic andSuccess:(void (^)(NSDictionary * back_dic))back_block{
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
@@ -65,8 +103,22 @@ static id instance;
         }else{
             back_block(responseObject);
         }
-        
     } failure:^(NSURLSessionTask *operation, NSError *error) {
+//        NSMutableDictionary * call = [NSMutableDictionary new];
+//        if (interfaceName) {
+//            [call setValue:interfaceName forKey:@"interface"];
+//        }
+//        if (send_dic) {
+//            [call setValue:[self getJsonWithDictionary:send_dic] forKey:@"send"];
+//        }
+//        if (error) {
+//            [call setValue:[NSString stringWithFormat:@"%@",error] forKey:@"error"];
+//        }
+//        if (MEMBERID) {
+//            [call setValue:MEMBERID forKey:@"memberId"];
+//        }
+//        [self netCallBack:call];
+        
         [SVProgressHUD showErrorWithStatus:@"网络出错" duration:2];
     }];
 }
@@ -120,6 +172,17 @@ static id instance;
         [SVProgressHUD showErrorWithStatus:@"网络出错" duration:2];
     }];
 }
-
+//网络错误回调
+-(void)netCallBack:(NSDictionary *)send{
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"text/html", nil];
+    
+    NSString * urlString = @"http://222.190.120.106:8099/health_center/callback.app";
+    [manager GET:urlString parameters:send progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
+        
+    }];
+}
 
 @end

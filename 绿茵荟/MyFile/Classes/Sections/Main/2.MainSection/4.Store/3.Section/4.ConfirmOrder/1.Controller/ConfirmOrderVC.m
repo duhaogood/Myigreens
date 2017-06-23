@@ -32,7 +32,7 @@
 @property(nonatomic,strong)UILabel * totalPriceLabel2;//合计总价label
 @property(nonatomic,strong)UILabel * priceStateLabel;//总价提示label
 @property(nonatomic,assign)SelectPayTypeVC * selectPayVC;//选择支付方式
-
+@property(nonatomic,strong)UILabel * preferentialLabel;//优惠金额
 @property(nonatomic,strong)UIView * middle_goods_view;//中间view
 @property(nonatomic,strong)UIView * price_view;///价格view
 @property(nonatomic,strong)UIView * btn_view;//底部按钮view
@@ -511,15 +511,24 @@
         orderView.frame = CGRectMake(0, goodsView.frame.origin.y + goodsView.frame.size.height + 106, WIDTH, 50);
         orderView.backgroundColor = [UIColor whiteColor];
         [scrollView addSubview:orderView];
+        //优惠金额
+        {
+            UILabel * label = [UILabel new];
+            label.font = [UIFont systemFontOfSize:16];
+            label.textColor = MYCOLOR_46_42_42;
+            [orderView addSubview:label];
+            self.preferentialLabel = label;
+            label.hidden = true;
+        }
         //总钱数
         UILabel * allPriceLabel = [UILabel new];
         self.totalPriceLabel2 = allPriceLabel;
         {
             float totalPrice = [self.order[@"totalPrice"] floatValue];
             allPriceLabel.text = [NSString stringWithFormat:@"¥%.2f",totalPrice];
-            allPriceLabel.font = [UIFont systemFontOfSize:18];
+            allPriceLabel.font = [UIFont systemFontOfSize:15];
             CGSize size = [MYTOOL getSizeWithString:allPriceLabel.text andFont:allPriceLabel.font];
-            allPriceLabel.frame = CGRectMake(WIDTH-14-115-30-size.width, 16, size.width, 18);
+            allPriceLabel.frame = CGRectMake(WIDTH-14-115-30-size.width, 18.5, size.width, 18);
             allPriceLabel.textColor = [MYTOOL RGBWithRed:229 green:64 blue:73 alpha:1];
             [orderView addSubview:allPriceLabel];
         }
@@ -863,9 +872,28 @@
     {
         //价格
         CGSize size = [MYTOOL getSizeWithString:self.totalPriceLabel2.text andFont:self.totalPriceLabel2.font];
-        self.totalPriceLabel2.frame = CGRectMake(WIDTH-14-115-30-size.width, 16, size.width, 18);
+        self.totalPriceLabel2.frame = CGRectMake(WIDTH-14-115-10-size.width, 18.5, size.width, 18);
         //总价提示
-        self.priceStateLabel.frame = CGRectMake(self.totalPriceLabel2.frame.origin.x-45, 18.5, 50, 15);
+        self.priceStateLabel.frame = CGRectMake(self.totalPriceLabel2.frame.origin.x-35, 18.5, 50, 15);
+        //如果使用优惠券
+        {
+            float discountPrice = [self.order[@"discountPrice"] floatValue];
+            if (discountPrice > 0) {
+                self.preferentialLabel.hidden = false;
+                NSString * text = [NSString stringWithFormat:@"优惠:%.2f",discountPrice];
+                if (discountPrice*10 == (int)(discountPrice*10)) {
+                    text = [NSString stringWithFormat:@"优惠:%.1f",discountPrice];
+                }
+                if (discountPrice == (int)discountPrice) {
+                    text = [NSString stringWithFormat:@"优惠:%d",(int)discountPrice];
+                }
+                self.preferentialLabel.text = text;
+                CGSize size = [MYTOOL getSizeWithLabel:self.preferentialLabel];
+                self.preferentialLabel.frame = CGRectMake(self.priceStateLabel.frame.origin.x - size.width - 10, 18.5, size.width, size.height);
+            }else{
+                self.preferentialLabel.hidden = true;
+            }
+        }
     }
     if ([self.order[@"integral"] boolValue] && self.pointLabel) {
         //积分

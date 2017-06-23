@@ -240,10 +240,10 @@
         
     }
     //商品名称
-    float top = 14;
+    float top = 18;
     {
         UILabel * label = [UILabel new];
-        label.frame = CGRectMake(130, top, WIDTH-140-35, 18);
+        label.frame = CGRectMake(130, 18, WIDTH-140-35, 18);
         label.text = goodsDic[@"goodsName"];
         label.textColor = [MYTOOL RGBWithRed:46 green:42 blue:42 alpha:1];
         label.font = [UIFont systemFontOfSize:18];

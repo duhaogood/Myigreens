@@ -26,6 +26,11 @@
 		0454BD9C1EF974F100B9E8A0 /* GYZCityGroupCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD971EF974F100B9E8A0 /* GYZCityGroupCell.m */; };
 		0454BD9D1EF974F100B9E8A0 /* GYZCityHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BD991EF974F100B9E8A0 /* GYZCityHeaderView.m */; };
 		0454BDA11EF975C100B9E8A0 /* MyLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0454BDA01EF975C100B9E8A0 /* MyLocationManager.m */; };
+		0454BDA51EFCBAE200B9E8A0 /* PgySDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BDA31EFCBAE200B9E8A0 /* PgySDK.framework */; };
+		0454BDA61EFCBAE200B9E8A0 /* PgyUpdate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BDA41EFCBAE200B9E8A0 /* PgyUpdate.framework */; };
+		0454BDA81EFCBB0500B9E8A0 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BDA71EFCBB0500B9E8A0 /* OpenGLES.framework */; };
+		0454BDAA1EFCBB1100B9E8A0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BDA91EFCBB1100B9E8A0 /* AudioToolbox.framework */; };
+		0454BDAC1EFCBB1A00B9E8A0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BDAB1EFCBB1A00B9E8A0 /* AVFoundation.framework */; };
 		04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAF71EE4F5D900990D28 /* LoginViewController.m */; };
 		04F4EC7F1EE4F5D900990D28 /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAFC1EE4F5D900990D28 /* MainVC.m */; };
 		04F4EC801EE4F5D900990D28 /* SpecialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EB031EE4F5D900990D28 /* SpecialVC.m */; };
@@ -321,6 +326,11 @@
 		0454BD991EF974F100B9E8A0 /* GYZCityHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GYZCityHeaderView.m; sourceTree = "<group>"; };
 		0454BD9F1EF975C100B9E8A0 /* MyLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyLocationManager.h; sourceTree = "<group>"; };
 		0454BDA01EF975C100B9E8A0 /* MyLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyLocationManager.m; sourceTree = "<group>"; };
+		0454BDA31EFCBAE200B9E8A0 /* PgySDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PgySDK.framework; sourceTree = "<group>"; };
+		0454BDA41EFCBAE200B9E8A0 /* PgyUpdate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PgyUpdate.framework; sourceTree = "<group>"; };
+		0454BDA71EFCBB0500B9E8A0 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		0454BDA91EFCBB1100B9E8A0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		0454BDAB1EFCBB1A00B9E8A0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		04F4EAE71EE4F5D900990D28 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		04F4EAE91EE4F5D900990D28 /* Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comments.h; sourceTree = "<group>"; };
 		04F4EAEB1EE4F5D900990D28 /* PrefixHeader_notification.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader_notification.pch; sourceTree = "<group>"; };
@@ -973,6 +983,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0454BDAC1EFCBB1A00B9E8A0 /* AVFoundation.framework in Frameworks */,
+				0454BDAA1EFCBB1100B9E8A0 /* AudioToolbox.framework in Frameworks */,
+				0454BDA81EFCBB0500B9E8A0 /* OpenGLES.framework in Frameworks */,
 				0454BD8B1EF8B26D00B9E8A0 /* Accelerate.framework in Frameworks */,
 				044669821EE83C1F0082D8BC /* libresolv.tbd in Frameworks */,
 				044669801EE83C0F0082D8BC /* UserNotifications.framework in Frameworks */,
@@ -993,6 +1006,7 @@
 				78C23C131ED2FB9B000CD40E /* libSocialYouDao.a in Frameworks */,
 				78C23BFA1ED2FB9A000CD40E /* libLWApiSDK.a in Frameworks */,
 				78C23C081ED2FB9B000CD40E /* libSocialTwitter.a in Frameworks */,
+				0454BDA51EFCBAE200B9E8A0 /* PgySDK.framework in Frameworks */,
 				78C23BF51ED2FB9A000CD40E /* libSocialFlickr.a in Frameworks */,
 				78C23C0C1ED2FB9B000CD40E /* libSocialVKontakte.a in Frameworks */,
 				78C23C101ED2FB9B000CD40E /* libSocialWhatsApp.a in Frameworks */,
@@ -1038,6 +1052,7 @@
 				78C23C0D1ED2FB9B000CD40E /* libVKSdk.a in Frameworks */,
 				78C23C031ED2FB9B000CD40E /* libSocialSina.a in Frameworks */,
 				78C23C071ED2FB9B000CD40E /* Fabric.framework in Frameworks */,
+				0454BDA61EFCBAE200B9E8A0 /* PgyUpdate.framework in Frameworks */,
 				78C23C011ED2FB9B000CD40E /* libSocialQQ.a in Frameworks */,
 				78C23C181ED2FB9B000CD40E /* libUMSocialLog.a in Frameworks */,
 				78C23C001ED2FB9B000CD40E /* libSocialPocket.a in Frameworks */,
@@ -1178,6 +1193,15 @@
 			);
 			name = 3.LocationManager;
 			path = Private/3.LocationManager;
+			sourceTree = "<group>";
+		};
+		0454BDA21EFCBAE200B9E8A0 /* Pgy */ = {
+			isa = PBXGroup;
+			children = (
+				0454BDA31EFCBAE200B9E8A0 /* PgySDK.framework */,
+				0454BDA41EFCBAE200B9E8A0 /* PgyUpdate.framework */,
+			);
+			path = Pgy;
 			sourceTree = "<group>";
 		};
 		04F4EAE61EE4F5D900990D28 /* Classes */ = {
@@ -2874,6 +2898,7 @@
 			isa = PBXGroup;
 			children = (
 				78C239A11ED2FB9A000CD40E /* 0.Comments.h */,
+				0454BDA21EFCBAE200B9E8A0 /* Pgy */,
 				044669791EE83BC10082D8BC /* JPush */,
 				78C239A21ED2FB9A000CD40E /* AFNetworking_3.0 */,
 				78C239B01ED2FB9A000CD40E /* FMDB */,
@@ -3685,6 +3710,9 @@
 		78C23C1B1ED2FDFC000CD40E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0454BDAB1EFCBB1A00B9E8A0 /* AVFoundation.framework */,
+				0454BDA91EFCBB1100B9E8A0 /* AudioToolbox.framework */,
+				0454BDA71EFCBB0500B9E8A0 /* OpenGLES.framework */,
 				0454BD8A1EF8B26D00B9E8A0 /* Accelerate.framework */,
 				044669811EE83C1F0082D8BC /* libresolv.tbd */,
 				0446697F1EE83C0F0082D8BC /* UserNotifications.framework */,
@@ -4187,6 +4215,7 @@
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/SocialLibraries/Twitter",
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/UMSocialSDK",
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/UMSocialUI",
+					"$(PROJECT_DIR)/MyFile/Vender/Pgy",
 				);
 				GCC_PREFIX_HEADER = "/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Classes/PrefixHeaders/PrefixHeader.pch";
 				HEADER_SEARCH_PATHS = (
@@ -4258,6 +4287,7 @@
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/SocialLibraries/Twitter",
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/UMSocialSDK",
 					"$(PROJECT_DIR)/MyFile/Vender/UMShared/UMSocialUI",
+					"$(PROJECT_DIR)/MyFile/Vender/Pgy",
 				);
 				GCC_PREFIX_HEADER = "/Users/mac/Desktop/项目列表/野马/Myigreens/绿茵荟/MyFile/Classes/PrefixHeaders/PrefixHeader.pch";
 				HEADER_SEARCH_PATHS = (

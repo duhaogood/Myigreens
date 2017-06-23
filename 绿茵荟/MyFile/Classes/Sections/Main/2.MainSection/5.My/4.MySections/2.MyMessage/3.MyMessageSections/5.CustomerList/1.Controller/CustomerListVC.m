@@ -92,6 +92,10 @@
         user_icon.layer.cornerRadius = user_icon.frame.size.width/2;
         [cell addSubview:user_icon];
         user_icon.image = [UIImage imageNamed:@"logo"];
+        NSString * face = dict[@"face"];
+        if (face) {
+            [MYTOOL setImageIncludePrograssOfImageView:user_icon withUrlString:face];
+        }
         //是否已读
         {
             bool readType = [dict[@"unRead"] intValue] > 0;

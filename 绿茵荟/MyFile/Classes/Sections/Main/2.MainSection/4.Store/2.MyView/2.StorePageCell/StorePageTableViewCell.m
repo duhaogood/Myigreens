@@ -64,6 +64,7 @@
             NSString * goodsName = goodsDic[@"goodsName"];
             NSString * url = goodsDic[@"url"];
             float price = [goodsDic[@"price"] floatValue];
+            float marketPrice = [goodsDic[@"marketPrice"] floatValue];
             float width = (WIDTH - 30-10)/2.0;
             //商品图片
             UIImageView * imgV = [UIImageView new];
@@ -111,8 +112,10 @@
                 }
             }
             //商品价格
+            UILabel * priceLabel;
             {
                 UILabel * label = [UILabel new];
+                priceLabel = label;
                 label.text = [NSString stringWithFormat:@"¥%.2f",price];
                 label.textColor = [MYTOOL RGBWithRed:229 green:64 blue:73 alpha:1];
                 label.textAlignment = NSTextAlignmentCenter;
@@ -120,6 +123,46 @@
                 CGRect rect = name_label.frame;
                 label.frame = CGRectMake(rect.origin.x, rect.origin.y+rect.size.height+10, rect.size.width, 15);
                 [cell addSubview:label];
+            }
+            //市场价格-marketPrice
+            {
+                //市场价高于卖家才显示
+                if (marketPrice > price) {
+                    //卖价放右边一半
+                    NSString * text = [NSString stringWithFormat:@"%.2f",price];
+                    if (price * 10 == (int)(price * 10)) {
+                        text = [NSString stringWithFormat:@"%.1f",price];
+                    }
+                    if (price == (int)price) {
+                        text = [NSString stringWithFormat:@"%d",(int)price];
+                    }
+                    priceLabel.text = text;
+                    priceLabel.textAlignment = NSTextAlignmentLeft;
+                    priceLabel.frame = CGRectMake(WIDTH/4+i%2*WIDTH/2, priceLabel.frame.origin.y, WIDTH/4, priceLabel.frame.size.height);
+                    //市场价放左边一半
+                    UILabel * marketPriceLabel = [UILabel new];
+                    marketPriceLabel.font = priceLabel.font;
+                    text = [NSString stringWithFormat:@"¥%.2f",marketPrice];
+                    if (marketPrice * 10 == (int)(marketPrice * 10)) {
+                        text = [NSString stringWithFormat:@"¥%.1f",marketPrice];
+                    }
+                    if (marketPrice == (int)marketPrice) {
+                        text = [NSString stringWithFormat:@"¥%d",(int)marketPrice];
+                    }
+                    marketPriceLabel.text = text;
+                    CGSize size = [MYTOOL getSizeWithLabel:marketPriceLabel];
+                    marketPriceLabel.frame = CGRectMake(i%2*WIDTH/2 + WIDTH/4-size.width-10, priceLabel.frame.origin.y, size.width, size.height);
+                    marketPriceLabel.textAlignment = NSTextAlignmentRight;
+                    [cell addSubview:marketPriceLabel];
+                    
+                    //价格横线
+                    {
+                        UIView * space = [UIView new];
+                        space.frame = CGRectMake(marketPriceLabel.frame.origin.x - 3, marketPriceLabel.frame.origin.y + marketPriceLabel.frame.size.height/2-0.5, marketPriceLabel.frame.size.width+6, 1);
+                        space.backgroundColor = MYCOLOR_229_64_73;
+                        [cell addSubview:space];
+                    }
+                }
             }
         }
         //分割线

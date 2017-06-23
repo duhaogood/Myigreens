@@ -29,7 +29,7 @@
         searchBar.delegate = self;
         searchBar.frame = CGRectMake(14, 14, WIDTH*0.8, 14.5);
         [self.navigationController.navigationBar addSubview:searchBar];
-        searchBar.placeholder = @"搜索美图、专题和商品";
+        searchBar.placeholder = @"搜索商品";
         self.searchBar = searchBar;
         searchBar.text = self.keyWord;
         searchBar.layer.masksToBounds = true;

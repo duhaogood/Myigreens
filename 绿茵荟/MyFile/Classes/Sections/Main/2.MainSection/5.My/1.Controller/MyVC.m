@@ -173,7 +173,7 @@
     //解决tableView露白
     self.automaticallyAdjustsScrollViewInsets = false,
     self.myView.tableHeaderView = view;
-    self.myView.rowHeight = (HEIGHT-49 - up_height-20)/7.0;
+    self.myView.rowHeight = [MYTOOL getHeightWithIphone_six:60];
     self.mySectionsNames = @[
                              @[@"MyIssueVC",@"我的发布",@"icon_1"],
                              @[@"MyMessageVC",@"我的消息",@"icon_2"],

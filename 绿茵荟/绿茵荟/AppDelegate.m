@@ -17,6 +17,8 @@
 #import "MyOrderVC.h"
 #import "GoodsInfoViewController.h"
 #import "PostInfoViewController.h"
+#import <PgySDK/PgyManager.h>
+#import <PgyUpdate/PgyUpdateManager.h>
 // iOS10注册APNs所需头 件
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max 
 #import <UserNotifications/UserNotifications.h>
@@ -94,7 +96,11 @@ static BOOL isProduction = true;
     app.applicationIconBadgeNumber = 0;
     
     
-    
+    //蒲公英
+    //启动基本SDK
+    [[PgyManager sharedPgyManager] startManagerWithAppId:@"5f7de76ffc45dc469fa27a5d81a6ce54"];
+    //启动更新检查SDK
+    [[PgyUpdateManager sharedPgyManager] startManagerWithAppId:@"5f7de76ffc45dc469fa27a5d81a6ce54"];
     
     
     return YES;

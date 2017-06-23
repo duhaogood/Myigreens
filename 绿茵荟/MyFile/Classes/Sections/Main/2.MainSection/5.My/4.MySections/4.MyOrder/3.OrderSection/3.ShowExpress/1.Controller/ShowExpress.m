@@ -281,31 +281,15 @@
 //重新加载物流信息
 -(void)getExpressInfo{
     [MYTOOL netWorkingWithTitle:@"获取中"];
-    NSString * shipperCode = @"";//快递公司编号
     NSString * interface = @"/shop/order/expressInfo.intf";
-    //加载plist
-    NSString * path = [[NSBundle mainBundle] pathForResource:@"expressCode" ofType:@"plist"];
-    NSArray * array = [NSArray arrayWithContentsOfFile:path];
-    for (NSDictionary * name_code in array) {
-        NSString * name = name_code[@"name"];
-        if ([name isEqualToString:self.expressName]) {
-            NSString * code = name_code[@"code"];
-            shipperCode = code;
-            break;
-        }
-        if ([self.expressName rangeOfString:name].location != NSNotFound) {
-            NSString * code = name_code[@"code"];
-            shipperCode = code;
-            break;
-        }
+    NSMutableDictionary * send = [NSMutableDictionary new];
+    if (self.expressCode) {
+        [send setValue:self.expressCode forKey:@"shipperCode"];
     }
-    NSString * logisticCode = self.logisicCode;//快递号
-    NSDictionary * sendDic = @{
-                               @"shipperCode":shipperCode,
-                               @"logisticCode":logisticCode
-                               };
-    
-    [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+    if (self.logisicCode) {
+        [send setValue:self.logisicCode forKey:@"logisticCode"];
+    }
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
         NSDictionary * expressInfo = back_dic[@"expressList"];
         self.expressStatic = expressInfo[@"expressStatic"];
         self.logisicCode = expressInfo[@"logisicCode"];
@@ -317,6 +301,9 @@
             [array addObject:arr[arr.count-i-1]];
         }
         self.expressArray = array;
+        if (array == nil || array.count == 0) {
+            [SVProgressHUD showErrorWithStatus:@"没有数据" duration:2];
+        }
         [self.tableView reloadData];
     }];
 }

@@ -13,7 +13,9 @@
 
 + (UIFont *)systemFontOfSize:(CGFloat)fontSize{
     //NotoSansHans-Regular
-    
+    if (HEIGHT == 568) {
+        fontSize -= 2;
+    }
     
     UIFont * font = [UIFont fontWithName:@"FZLANTY_XIJW--GB1-0" size:fontSize];
     
@@ -21,6 +23,9 @@
 }
 //加醋的字体
 + (UIFont *)titleFontOfSize:(CGFloat)fontSize{
+    if (HEIGHT == 568) {
+        fontSize -= 2;
+    }
     UIFont * font = [UIFont fontWithName:@"FZLANTY_ZHUNJW--GB1-0" size:fontSize];
     
     return font;
