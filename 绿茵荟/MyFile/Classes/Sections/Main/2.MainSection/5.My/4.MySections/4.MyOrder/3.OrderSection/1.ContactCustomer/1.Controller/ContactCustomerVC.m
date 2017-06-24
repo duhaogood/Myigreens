@@ -192,17 +192,20 @@
     //1:咨询   2:回复
     int status = [msgDic[@"status"] intValue];
     //头像
-    float r = 60;
+    float r = 40;
     {
         UIImageView * icon = [UIImageView new];
         [cell addSubview:icon];
         if (status == 1) {
-            icon.image = [UIImage imageNamed:@"logo"];
-            icon.frame = CGRectMake(WIDTH-r-10, 20, r, r);
+            icon.frame = CGRectMake(WIDTH-r-10, 25, r, r);
+            NSString * face = msgDic[@"face"];
+            [MYTOOL setImageIncludePrograssOfImageView:icon withUrlString:face];
         }else{
+            icon.frame = CGRectMake(10, 25, r, r);
             icon.image = [UIImage imageNamed:@"logo"];
-            icon.frame = CGRectMake(10, 20, r, r);
         }
+        icon.layer.masksToBounds = true;
+        icon.layer.cornerRadius = r/2.0;
     }
     //消息
     {

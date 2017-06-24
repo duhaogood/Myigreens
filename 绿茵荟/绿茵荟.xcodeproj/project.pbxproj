@@ -31,6 +31,7 @@
 		0454BDA81EFCBB0500B9E8A0 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BDA71EFCBB0500B9E8A0 /* OpenGLES.framework */; };
 		0454BDAA1EFCBB1100B9E8A0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BDA91EFCBB1100B9E8A0 /* AudioToolbox.framework */; };
 		0454BDAC1EFCBB1A00B9E8A0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0454BDAB1EFCBB1A00B9E8A0 /* AVFoundation.framework */; };
+		046822CE1EFE208000ADA4D7 /* CheckUpdateVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 046822CD1EFE208000ADA4D7 /* CheckUpdateVC.m */; };
 		04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAF71EE4F5D900990D28 /* LoginViewController.m */; };
 		04F4EC7F1EE4F5D900990D28 /* MainVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EAFC1EE4F5D900990D28 /* MainVC.m */; };
 		04F4EC801EE4F5D900990D28 /* SpecialVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 04F4EB031EE4F5D900990D28 /* SpecialVC.m */; };
@@ -331,6 +332,8 @@
 		0454BDA71EFCBB0500B9E8A0 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		0454BDA91EFCBB1100B9E8A0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		0454BDAB1EFCBB1A00B9E8A0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		046822CC1EFE208000ADA4D7 /* CheckUpdateVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckUpdateVC.h; sourceTree = "<group>"; };
+		046822CD1EFE208000ADA4D7 /* CheckUpdateVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CheckUpdateVC.m; sourceTree = "<group>"; };
 		04F4EAE71EE4F5D900990D28 /* 0.Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 0.Comments.h; sourceTree = "<group>"; };
 		04F4EAE91EE4F5D900990D28 /* Comments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comments.h; sourceTree = "<group>"; };
 		04F4EAEB1EE4F5D900990D28 /* PrefixHeader_notification.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader_notification.pch; sourceTree = "<group>"; };
@@ -1202,6 +1205,15 @@
 				0454BDA41EFCBAE200B9E8A0 /* PgyUpdate.framework */,
 			);
 			path = Pgy;
+			sourceTree = "<group>";
+		};
+		046822CB1EFE206800ADA4D7 /* ChectUpdate */ = {
+			isa = PBXGroup;
+			children = (
+				046822CC1EFE208000ADA4D7 /* CheckUpdateVC.h */,
+				046822CD1EFE208000ADA4D7 /* CheckUpdateVC.m */,
+			);
+			path = ChectUpdate;
 			sourceTree = "<group>";
 		};
 		04F4EAE61EE4F5D900990D28 /* Classes */ = {
@@ -2653,6 +2665,7 @@
 		04F4EC5E1EE4F5D900990D28 /* Start */ = {
 			isa = PBXGroup;
 			children = (
+				046822CB1EFE206800ADA4D7 /* ChectUpdate */,
 				04F4EC5F1EE4F5D900990D28 /* FirstStart */,
 			);
 			path = Start;
@@ -3903,6 +3916,7 @@
 				04F4EC971EE4F5D900990D28 /* StorePageTableViewCell.m in Sources */,
 				04F4EC7E1EE4F5D900990D28 /* LoginViewController.m in Sources */,
 				78C23BB51ED2FB9A000CD40E /* MJRefreshGifHeader.m in Sources */,
+				046822CE1EFE208000ADA4D7 /* CheckUpdateVC.m in Sources */,
 				78C23BCE1ED2FB9A000CD40E /* TAAbstractDotView.m in Sources */,
 				78C23BA41ED2FB9A000CD40E /* AFURLSessionManager.m in Sources */,
 				04F4ECB41EE4F5D900990D28 /* FeedbackViewController.m in Sources */,

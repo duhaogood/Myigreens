@@ -17,7 +17,8 @@
 //取消支付
 #define NOTIFICATION_PAY_CANCEL @"notification_pay_cancel"
 
-
+//程序进入前台-EnterForeground
+#define NOTIFICATION_APP_ENTER_FOREGROUND @"NOTIFICATION_APP_ENTER_FOREGROUND"
 
 //自动滚动
 #define AUTOMATIC_SCROLL @"automaticScroll"

@@ -8,6 +8,7 @@
 
 #import "LoginViewController.h"
 #import <UMSocialCore/UMSocialCore.h>
+#import "JPUSHService.h"
 @interface LoginViewController ()<UITextFieldDelegate>
 @property(nonatomic,strong)UIButton * loginBtn;
 @property(nonatomic,strong)UIButton * registerBtn;
@@ -241,9 +242,9 @@
             
             //跳转
             [(AppDelegate *)[UIApplication sharedApplication].delegate window].rootViewController = [MainVC new];
-            
-            
             [SVProgressHUD showSuccessWithStatus:msg duration:1];
+            //上传pushid
+            [self isUploadPushIdOrNor];
         }
     }];
     
@@ -381,9 +382,9 @@
            
            //跳转
            [(AppDelegate *)[UIApplication sharedApplication].delegate window].rootViewController = [MainVC new];
-           
-           
            [SVProgressHUD showSuccessWithStatus:msg duration:1];
+           //上传pushid
+           [self isUploadPushIdOrNor];
        }else{
            [SVProgressHUD showErrorWithStatus:msg duration:2];
        }
@@ -432,6 +433,23 @@
         [self.nextBtn setImage:[UIImage imageNamed:@"icon_right_disabled"] forState:UIControlStateNormal];
     }
     
+}
+//是否上传
+-(void)isUploadPushIdOrNor{
+    if ([JPUSHService registrationID] && [MYTOOL isLogin]) {
+        [self uploadPushId:[JPUSHService registrationID]];
+    }
+}
+//上传pushid
+-(void)uploadPushId:(NSString *)pushId{
+    NSString * interface = @"/member/updatePushId.intf";
+    NSDictionary * send = @{
+                            @"memberId":MEMBERID,
+                            @"pushId":pushId
+                            };
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        
+    }];
 }
 #pragma mark - 返回上个界面
 -(void)backBtn_callback{

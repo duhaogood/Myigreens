@@ -36,7 +36,7 @@
     indexOfImage = 1;
     self.view.backgroundColor = [UIColor whiteColor];
     self.storeNetWorking = [StoreNetWorking new];
-    
+    self.automaticallyAdjustsScrollViewInsets = false;
     
     //购物车按钮
     {

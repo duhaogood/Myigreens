@@ -812,8 +812,9 @@
 //此view出现时隐藏tabBar
 - (void)viewWillAppear: (BOOL)animated{
     [MYTOOL hiddenTabBar];
-    
+    [self updateViewAllState];
     [MYCENTER_NOTIFICATION addObserver:self selector:@selector(paySuccess) name:NOTIFICATION_PAY_SUCCESS object:nil];
+    [MYCENTER_NOTIFICATION addObserver:self selector:@selector(updateViewCurrentState) name:NOTIFICATION_APP_ENTER_FOREGROUND object:nil];
 }
 //更新界面
 -(void)updateViewCurrentState{
@@ -834,6 +835,7 @@
 - (void)viewWillDisappear: (BOOL)animated{
     [MYTOOL showTabBar];
     [MYCENTER_NOTIFICATION removeObserver:self name:NOTIFICATION_PAY_SUCCESS object:nil];
+    [MYCENTER_NOTIFICATION removeObserver:self name:NOTIFICATION_APP_ENTER_FOREGROUND object:nil];
 }
 -(void)paySuccess{
     [self.selectPayVC removeFromSuperViewController:nil];

@@ -23,6 +23,7 @@
 {
     bool isUpdateOrder;//已经刷新订单
     NSTimer * timer;
+    int currentOrderStatus;//订单支付状态
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -846,6 +847,7 @@
             UIImage * blackImage = [UIImage imageNamed:@"btn_gray"];
             //按钮字体大小
             UIFont * btnFont = [UIFont systemFontOfSize:15];
+            currentOrderStatus = orderStatus;
             //待付款
             if (orderStatus == 1) {
                 //立即付款按钮
@@ -1040,7 +1042,7 @@
     NSString * interface = @"/shop/order/cancelOrder.intf";
     NSDictionary * sendDic = @{
                                @"memberId":MEMBERID,
-                               @"orderId":[NSString stringWithFormat:@"%ld",orderId]
+                               @"orderId":[NSString stringWithFormat:@"%ld",(long)orderId]
                                };
     [MYTOOL netWorkingWithTitle:@"订单取消中…"];
     [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
@@ -1138,13 +1140,54 @@
     [self.navigationController popViewControllerAnimated:YES];
     [self.delegate updateViewAllState];
 }
+#pragma mark - 后台进入时重新获取订单状态
+-(void)getOrderStatus{
+    [timer invalidate];
+    [MYTOOL netWorkingWithTitle:@"刷新订单…"];
+    NSString * interface = @"/shop/order/getOrderInfo.intf";
+    NSDictionary * sendDic = @{
+                               @"orderId":self.orderDictionary[@"orderId"]
+                               };
+    [MYNETWORKING getWithInterfaceName:interface andDictionary:sendDic andSuccess:^(NSDictionary *back_dic) {
+        NSDictionary * orderDic = back_dic[@"order"];
+        if (orderDic) {
+            //订单状态
+            int sta = [orderDic[@"orderStatus"] intValue];
+            if (sta == currentOrderStatus) {
+                //如果未支付
+                if (sta == 1) {
+                    int timeLeft = [orderDic[@"timeLeft"] intValue];
+                    if (timeLeft <= 0) {
+                        [self popUpViewController];
+                    }else{
+                        self.orderDictionary = orderDic;
+                        self.timeLeft = timeLeft;
+                        //开启定时器-11:11
+                        timer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(timerWork) userInfo:nil repeats:true];
+                    }
+                }
+            }else{
+                [SVProgressHUD showSuccessWithStatus:@"订单状态有变" duration:2];
+                [self popUpViewController];
+            }
+        }else{
+            [SVProgressHUD showErrorWithStatus:@"订单有误" duration:2];
+        }
+    }];
+    
+    
+    
+    
+}
 #pragma mark - 界面隐藏或显示
 -(void)viewWillAppear:(BOOL)animated{
     [MYTOOL hiddenTabBar];
     [MYCENTER_NOTIFICATION addObserver:self selector:@selector(paySuccess) name:NOTIFICATION_PAY_SUCCESS object:nil];
+    [MYCENTER_NOTIFICATION addObserver:self selector:@selector(getOrderStatus) name:NOTIFICATION_APP_ENTER_FOREGROUND object:nil];
 }
 -(void)viewWillDisappear:(BOOL)animated{
     [MYTOOL showTabBar];
     [MYCENTER_NOTIFICATION removeObserver:self name:NOTIFICATION_PAY_SUCCESS object:nil];
+    [MYCENTER_NOTIFICATION removeObserver:self name:NOTIFICATION_APP_ENTER_FOREGROUND object:nil];
 }
 @end

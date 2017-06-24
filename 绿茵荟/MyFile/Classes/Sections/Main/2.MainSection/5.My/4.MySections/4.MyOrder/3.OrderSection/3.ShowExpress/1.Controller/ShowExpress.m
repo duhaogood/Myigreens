@@ -161,20 +161,8 @@
                     //状态
                     {
                         UILabel * label = [UILabel new];
-                        //订单状态-expressStatic: 0-无轨迹 2-在途中，3-签收,4-问题件
                         NSString * expressStatic = self.expressStatic;
-                        int state = [expressStatic intValue];
-                        NSString * text = @"";
-                        if (state == 0) {
-                            text = @"无轨迹";
-                        }else if(state == 2){
-                            text = @"在途中";
-                        }else if(state == 3){
-                            text = @"签收";
-                        }else if(state == 4){
-                            text = @"问题件";
-                        }
-                        label.text = text;
+                        label.text = expressStatic;
                         label.font = font;
                         label.textColor = MYCOLOR_181_181_181;
                         CGSize size = [MYTOOL getSizeWithLabel:label];
@@ -290,6 +278,7 @@
         [send setValue:self.logisicCode forKey:@"logisticCode"];
     }
     [MYNETWORKING getWithInterfaceName:interface andDictionary:send andSuccess:^(NSDictionary *back_dic) {
+        
         NSDictionary * expressInfo = back_dic[@"expressList"];
         self.expressStatic = expressInfo[@"expressStatic"];
         self.logisicCode = expressInfo[@"logisicCode"];

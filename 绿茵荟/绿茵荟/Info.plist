@@ -138,8 +138,8 @@
 	<string>查看相册</string>
 	<key>UIAppFonts</key>
 	<array>
-        <string>方正兰亭圆简体_细.TTF</string>
-        <string>方正兰亭圆简体_准.TTF</string>
+		<string>方正兰亭圆简体_细.TTF</string>
+		<string>方正兰亭圆简体_准.TTF</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

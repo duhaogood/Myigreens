@@ -33,6 +33,7 @@
         tableView.delegate = self;
         [self.view addSubview:tableView];
         self.tableView = tableView;
+        tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         tableView.rowHeight = [MYTOOL getHeightWithIphone_six:98] + 20;
         self.automaticallyAdjustsScrollViewInsets = false;
         tableView.mj_header = [MJRefreshNormalHeader headerWithRefreshingBlock:^{
@@ -128,6 +129,17 @@
         label.textColor = MYCOLOR_181_181_181;
         CGSize size = [MYTOOL getSizeWithLabel:label];
         label.frame = CGRectMake(20 + (WIDTH - 20)*0.33, tableView.rowHeight/2, size.width, size.height);
+        [cell addSubview:label];
+    }
+    //订单最低金额可用
+    {
+        NSString * minGoodsAmount = bonusDic[@"minGoodsAmount"];
+        UILabel * label = [UILabel new];
+        label.text = [NSString stringWithFormat:@"金额满足%@可以使用",minGoodsAmount];
+        label.font = [UIFont systemFontOfSize:14];
+        label.textColor = MYCOLOR_181_181_181;
+        CGSize size = [MYTOOL getSizeWithLabel:label];
+        label.frame = CGRectMake(20 + (WIDTH - 20)*0.33, tableView.rowHeight/4*3-size.height/2, size.width, size.height);
         [cell addSubview:label];
     }
     //优惠金额

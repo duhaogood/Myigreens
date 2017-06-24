@@ -197,4 +197,6 @@
 -(BOOL)isInstallWX;
 //是否安装微博
 -(BOOL)isInstallWB;
+//检查商店版本
+-(void)checkStoreVersion;
 @end

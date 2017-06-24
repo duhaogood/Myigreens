@@ -19,6 +19,7 @@
 #import "PostInfoViewController.h"
 #import <PgySDK/PgyManager.h>
 #import <PgyUpdate/PgyUpdateManager.h>
+#import "CheckUpdateVC.h"
 // iOS10注册APNs所需头 件
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max 
 #import <UserNotifications/UserNotifications.h>
@@ -38,19 +39,12 @@ static BOOL isProduction = true;
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    MainVC * main = [MainVC new];
-    StartViewController * start = [StartViewController new];
+    CheckUpdateVC * update = [CheckUpdateVC new];
     self.window = [[UIWindow alloc]initWithFrame:[UIScreen mainScreen].bounds];
-    if ([self isFirstStarThisApp]) {
-        self.window.rootViewController = start;
-    }else{
-        self.window.rootViewController = main;
-    }
-    
+    self.window.rootViewController = update;
     [self.window makeKeyAndVisible];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     //    [NSThread sleepForTimeInterval:1];
-    [main preferredStatusBarStyle];
     //    NSLog(@"memberId:%@",[MYTOOL getProjectPropertyWithKey:@"memberId"]);
     
     if (!SERVER_URL) {
@@ -167,16 +161,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     [JPUSHService registerDeviceToken:deviceToken];
     
 }
-/**
- 是不是第一次进入app
- 
- @return 是否是第一次进入app
- */
--(BOOL)isFirstStarThisApp{
-    NSString * value = [[NSUserDefaults standardUserDefaults] valueForKey:@"isFirstStarThisApp"];
-    
-    return ![value boolValue];
-}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     
@@ -189,7 +174,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
 
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
-    
+    [MYCENTER_NOTIFICATION postNotificationName:NOTIFICATION_APP_ENTER_FOREGROUND object:nil];
 }
 
 
