@@ -812,7 +812,6 @@
 //此view出现时隐藏tabBar
 - (void)viewWillAppear: (BOOL)animated{
     [MYTOOL hiddenTabBar];
-    [self updateViewAllState];
     [MYCENTER_NOTIFICATION addObserver:self selector:@selector(paySuccess) name:NOTIFICATION_PAY_SUCCESS object:nil];
     [MYCENTER_NOTIFICATION addObserver:self selector:@selector(updateViewCurrentState) name:NOTIFICATION_APP_ENTER_FOREGROUND object:nil];
 }
@@ -825,7 +824,7 @@
             break;
         }
     }
-    [self orderStatusBtnCallback:statusBtnArray[0]];
+    [self orderStatusBtnCallback:statusBtnArray[index]];
 }
 //重新加载全部订单
 -(void)updateViewAllState{

@@ -674,6 +674,7 @@
             [SVProgressHUD showSuccessWithStatus:@"订单创建成功" duration:1];
             float totalPrice = [back_dic[@"order"][@"totalPrice"] floatValue];
             if (totalPrice == 0) {
+                [self.navigationController popToRootViewControllerAnimated:true];
                 MainVC * main = (MainVC *)(AppDelegate *)([UIApplication sharedApplication].delegate).window.rootViewController;
                 main.selectedIndex = 3;
                 

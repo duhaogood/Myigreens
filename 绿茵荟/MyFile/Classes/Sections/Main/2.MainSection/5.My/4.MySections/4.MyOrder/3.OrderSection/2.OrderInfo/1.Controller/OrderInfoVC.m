@@ -24,9 +24,11 @@
     bool isUpdateOrder;//已经刷新订单
     NSTimer * timer;
     int currentOrderStatus;//订单支付状态
+    BOOL isChangeStaurs;//状态发生改变
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
+    isChangeStaurs = false;
     self.view.backgroundColor = [MYTOOL RGBWithRed:242 green:242 blue:242 alpha:1];
     //左侧按钮
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithImage:[UIImage imageNamed:@"nav_back"] style:UIBarButtonItemStyleDone target:self action:@selector(popUpViewController)];
@@ -1127,7 +1129,9 @@
 #pragma mark - 重写返回按钮事件
 //返回上一个页面
 -(void)popUpViewController{
-    
+    if (isChangeStaurs) {
+        [self.delegate updateViewCurrentState];
+    }
     [timer invalidate];
     timer = nil;
     [self.navigationController popViewControllerAnimated:YES];
@@ -1167,6 +1171,7 @@
                     }
                 }
             }else{
+                isChangeStaurs = true;
                 [SVProgressHUD showSuccessWithStatus:@"订单状态有变" duration:2];
                 [self popUpViewController];
             }
