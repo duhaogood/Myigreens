@@ -124,6 +124,8 @@
 }
 //分享微博
 -(void)sharedToWeiBo{
+    [SVProgressHUD showErrorWithStatus:@"微博暂不支持" duration:2];
+    return;
     [self sharedWithType:0];
 }
 //分享qq

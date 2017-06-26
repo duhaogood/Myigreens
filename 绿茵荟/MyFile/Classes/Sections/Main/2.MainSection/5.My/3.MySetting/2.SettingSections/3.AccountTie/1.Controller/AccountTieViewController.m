@@ -66,6 +66,11 @@
     for (NSString * key in self.title_swich_dictionary.allKeys) {
         UISwitch * s_btn = self.title_swich_dictionary[key];
         if ([s_btn isEqual:btn]) {
+            if ([key isEqualToString:@"新浪微博"]) {
+                [SVProgressHUD showErrorWithStatus:@"微博暂不支持" duration:2];
+                btn.on = false;
+                return;
+            }
             if (btn.on) {
                 [self startTieWithTitle:key];
             }else{

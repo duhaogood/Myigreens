@@ -46,8 +46,8 @@
     }
     //加载主界面
     [self loadMainView];
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"服务器" style:UIBarButtonItemStyleDone target:self action:@selector(changeServerUrl)];
-    self.navigationItem.rightBarButtonItem.tintColor = [UIColor whiteColor];
+//    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"服务器" style:UIBarButtonItemStyleDone target:self action:@selector(changeServerUrl)];
+//    self.navigationItem.rightBarButtonItem.tintColor = [UIColor whiteColor];
 }
 //加载主界面
 -(void)loadMainView{

@@ -252,6 +252,8 @@
 #pragma mark - 按钮回调
 //微博授权
 - (void)getAuthWithUserInfoFromSina{
+    [SVProgressHUD showErrorWithStatus:@"微博赞不支持" duration:2];
+    return;
     if (![MYTOOL isInstallWB]) {
         [SVProgressHUD showErrorWithStatus:@"未安装微博" duration:2];
         return;
