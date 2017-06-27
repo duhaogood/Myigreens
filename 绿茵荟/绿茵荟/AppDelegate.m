@@ -95,7 +95,8 @@ static BOOL isProduction = true;
     [[PgyManager sharedPgyManager] startManagerWithAppId:@"5f7de76ffc45dc469fa27a5d81a6ce54"];
     //启动更新检查SDK
     [[PgyUpdateManager sharedPgyManager] startManagerWithAppId:@"5f7de76ffc45dc469fa27a5d81a6ce54"];
-    
+    //关闭用户反馈
+    [[PgyManager sharedPgyManager] setEnableFeedback:NO];
     
     return YES;
 }
