@@ -97,8 +97,9 @@
         SharedManagerVC * share = [SharedManagerVC new];
         share.sharedDictionary = @{
                                    @"title":@"绿茵荟",
-                                   @"img_url":@"https://image.baidu.com/search/detail?ct=503316480&z=0&ipn=false&word=头像%20动漫&step_word=&hs=2&pn=4&spn=0&di=192681110380&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&istype=2&ie=utf-8&oe=utf-8&in=&cl=2&lm=-1&st=-1&cs=1974473856%2C378835681&os=1772612900%2C1831627498&simid=3493092777%2C396414059&adpicid=0&lpn=0&ln=3950&fr=&fmq=1389861203899_R&fm=&ic=0&s=undefined&se=&sme=&tab=0&width=&height=&face=undefined&ist=&jit=&cg=head&bdtype=0&oriquery=头像&objurl=http%3A%2F%2Fimg5.duitang.com%2Fuploads%2Fitem%2F201603%2F10%2F20160310125939_SArNP.jpeg&fromurl=ippr_z2C%24qAzdH3FAzdH3Fooo_z%26e3B17tpwg2_z%26e3Bv54AzdH3Fks52AzdH3F%3Ft1%3Dmdmn8cln8&gsm=0&rpstart=0&rpnum=0",
-                                   @"shared_url":@"http://itunes.apple.com/app/id1238065310",
+                                   @"img_url":[UIImage imageNamed:@"logo"],
+                                   @"shared_url":@"http://myigreens.yemast.com:8081/app/download",
+                                   @"shareDescribe":@"绿茵荟APP"
                                    };
         
         

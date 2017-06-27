@@ -20,6 +20,7 @@
  *title -
  *img_url -
  *shared_url -
+ *shareDescribe-
  */
 @property(nonatomic,strong)NSDictionary * sharedDictionary;//分享参数
 - (void)show;

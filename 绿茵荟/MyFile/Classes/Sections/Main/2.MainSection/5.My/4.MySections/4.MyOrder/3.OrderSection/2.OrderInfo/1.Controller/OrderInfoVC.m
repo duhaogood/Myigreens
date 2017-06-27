@@ -1111,6 +1111,10 @@
 //电话客服按钮事件
 -(void)telServiceCallback:(UIButton *)btn{
     NSString * hotLine = self.orderDictionary[@"hotLine"];
+    if (!hotLine || hotLine.length == 0) {
+        [SVProgressHUD showErrorWithStatus:@"号码为空" duration:2];
+        return;
+    }
     NSMutableString * str=[[NSMutableString alloc] initWithFormat:@"tel:%@",hotLine];
     UIWebView * callWebview = [[UIWebView alloc] init];
     [callWebview loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:str]]];

@@ -285,12 +285,8 @@
         self.shipperCode = expressInfo[@"shipperCode"];
         self.nameOfExpress = expressInfo[@"expressName"];
         NSArray * arr = expressInfo[@"tracesList"];
-        NSMutableArray * array = [NSMutableArray new];
-        for (int i = 0; i < arr.count; i ++) {
-            [array addObject:arr[arr.count-i-1]];
-        }
-        self.expressArray = array;
-        if (array == nil || array.count == 0) {
+        self.expressArray = arr;
+        if (arr == nil || arr.count == 0) {
             [SVProgressHUD showErrorWithStatus:@"没有数据" duration:2];
         }
         [self.tableView reloadData];
