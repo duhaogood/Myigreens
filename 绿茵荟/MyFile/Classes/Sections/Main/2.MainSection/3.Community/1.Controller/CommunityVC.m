@@ -541,19 +541,11 @@
             UILabel * label = [UILabel new];
             label.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
             label.text = content;
-            CGSize size = [MYTOOL getSizeWithLabel:label];
-            UILabel * label2 = [UILabel new];
-            label2.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
-            label2.text = @"哈哈好";
-            CGSize size2 = [MYTOOL getSizeWithLabel:label2];
-            int row = size.width / (WIDTH -60-10);
-            if (size.width > (WIDTH -60-10)*row) {
-                row ++;
-            }
-            if (row > 2) {
-                row = 2;
-            }
-            height += space_y + size2.height * row;
+            label.numberOfLines = 0;
+            label.lineBreakMode = NSLineBreakByWordWrapping;
+            CGSize size = [label sizeThatFits:CGSizeMake(label.frame.size.width, MAXFLOAT)];
+            
+            height += space_y + size.height;
         }
         //图片 150-180
         {
@@ -638,32 +630,13 @@
             tv.font = [UIFont systemFontOfSize:[MYTOOL getHeightWithIphone_six:15]];
             tv.userInteractionEnabled = NO;
             tv.textColor = [MYTOOL RGBWithRed:79 green:79 blue:79 alpha:1];
-            CGSize size = [MYTOOL getSizeWithLabel:tv];
-            int row = size.width / (WIDTH -60-10);
-            if (size.width > (WIDTH -60-10)*row) {
-                row ++;
-            }
-            if (row > 1) {
-                tv.numberOfLines = 0;
-            }
-            if (row > 2) {
-                row = 2;
-                //过滤换行
-                NSString * string = [content stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]; //去除掉首尾的空白字符和换行字符
-                NSString * text = @"";
-                for(int i = 0; i < string.length ; i ++){
-                    text = [string substringToIndex:i];
-                    tv.text = text;
-                    size = [MYTOOL getSizeWithLabel:tv];
-                    if (size.width >= (WIDTH -60-10) * 1.8) {
-//                        NSLog(@"text:%@",text);
-                        break;
-                    }
-                }
-            }
-            tv.frame = CGRectMake(user_width+20, top, WIDTH -(user_width+20)-10, size.height*row);
+            tv.numberOfLines = 0;
+            tv.lineBreakMode = NSLineBreakByWordWrapping;
+            CGSize size = [tv sizeThatFits:CGSizeMake(tv.frame.size.width, MAXFLOAT)];
+            
+            tv.frame = CGRectMake(user_width+20, top, WIDTH -(user_width+20)-10, size.height);
             [cell addSubview:tv];
-            top += size.height*row + space_y;
+            top += size.height + space_y;
         }
         //图片
         {
