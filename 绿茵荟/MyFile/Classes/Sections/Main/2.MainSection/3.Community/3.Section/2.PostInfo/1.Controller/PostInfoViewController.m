@@ -10,7 +10,7 @@
 #import "SharedManagerVC.h"
 #import "CommunityVC.h"
 #import "SubscribeInfoViewController.h"
-@interface PostInfoViewController ()<UITableViewDataSource,UITableViewDelegate>
+@interface PostInfoViewController ()<UITableViewDataSource,UITableViewDelegate,UIScrollViewDelegate>
 @property(nonatomic,strong)UITableView * tableView;
 @property(nonatomic,assign)UILabel * num_label;//预览图片显示第几张
 @property(nonatomic,strong)NSMutableArray * review_array;//评论数组
@@ -27,10 +27,12 @@
     int review_pageNo;//评论数据分页数
     NSMutableArray * imgViewArray;//图片数组
     bool praiseStatus;//是否赞过
+    float offset;//
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     review_pageNo = 1;
+    offset = 0;
     //加载主界面
     [self loadMainView];
 }
@@ -153,6 +155,10 @@
             UITapGestureRecognizer * tapGesture2 = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showZoomImageView1:)];
             tapGesture2.numberOfTapsRequired=1;
             [imgV addGestureRecognizer:tapGesture2];
+            
+            
+            
+            
         }
         top += height_all;
     }
@@ -733,7 +739,19 @@
     if (![(UIImageView *)tap.view image]) {
         return;
     }
-    UIView *bgView = [[UIView alloc] init];
+//    UIView *bgView = [[UIView alloc] init];
+    [self deleteOtherImageView];
+    //
+    UIScrollView *bgView = [[UIScrollView alloc] init];
+    bgView.backgroundColor = [UIColor clearColor];
+    bgView.contentSize = CGSizeMake(WIDTH, HEIGHT);
+    bgView.delegate = self;
+    bgView.minimumZoomScale = 1.0;
+    bgView.maximumZoomScale = 3.0;
+    [bgView setZoomScale:1.0];
+    UITapGestureRecognizer *doubleTap =[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+    [doubleTap setNumberOfTapsRequired:2];
+    //
     bgView.tag = tap.view.tag;
     show_view = bgView;
     bgView.frame = [UIScreen mainScreen].bounds;
@@ -759,7 +777,6 @@
     [imageView sd_setImageWithURL:[NSURL URLWithString:url_string] placeholderImage:[UIImage imageNamed:@"logo"]];
     show_img_view = imageView;
     imageView.tag = tap.view.tag;
-    
     [bgView addSubview:imageView];
     [UIView animateWithDuration:0.5 animations:^{
         CGRect frame = imageView.frame;
@@ -768,6 +785,11 @@
         frame.origin.x = 0;
         frame.origin.y = (bgView.frame.size.height - frame.size.height) * 0.5;
         imageView.frame = frame;
+    } completion:^(BOOL finished) {
+        //
+        [imageView addGestureRecognizer:doubleTap];
+        [self deleteOtherImageView];
+        //
     }];
     
 //    NSLog(@"tag:%ld",tap.view.tag);
@@ -784,6 +806,66 @@
     self.num_label.text = [NSString stringWithFormat:@"%ld / %ld",tap.view.tag+1,[self.post_dic[@"url"] count]];
     
 }
+#pragma mark -
+-(void)handleDoubleTap:(UIGestureRecognizer *)gesture{
+    
+    float newScale = [(UIScrollView*)gesture.view.superview zoomScale] * 1.5;
+    CGRect zoomRect = [self zoomRectForScale:newScale  inView:(UIScrollView*)gesture.view.superview withCenter:[gesture locationInView:gesture.view]];
+    [(UIScrollView*)gesture.view.superview zoomToRect:zoomRect animated:YES];
+}
+#pragma mark - Utility methods
+
+- (CGRect)zoomRectForScale:(float)scale inView:(UIScrollView*)scrollView withCenter:(CGPoint)center {
+    
+    CGRect zoomRect;
+    
+    zoomRect.size.height = [scrollView frame].size.height / scale;
+    zoomRect.size.width  = [scrollView frame].size.width  / scale;
+    
+    zoomRect.origin.x    = center.x - (zoomRect.size.width  / 2.0);
+    zoomRect.origin.y    = center.y - (zoomRect.size.height / 2.0);
+    
+    return zoomRect;
+}
+#pragma mark - ScrollView delegate
+-(UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
+    
+    for (UIView *v in scrollView.subviews){
+        return v;
+    }
+    return nil;
+}
+
+-(void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    CGFloat x = scrollView.contentOffset.x;
+    if (x==offset){
+        
+    }
+    else {
+        offset = x;
+        for (UIScrollView *s in scrollView.subviews){
+            if ([s isKindOfClass:[UIScrollView class]]){
+                [s setZoomScale:1.0];
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //再次点击取消全屏预览
 -(void)tapBgView:(UITapGestureRecognizer *)tapBgRecognizer{
     show_view = nil;
@@ -796,6 +878,7 @@
     NSInteger tag = tapBgRecognizer.view.tag;
 //    NSLog(@"上一张:%ld",tag);
     if (tag > 0) {//可以显示上一张[imgV sd_setImageWithURL:[NSURL URLWithString:self.post_dic[@"url"][tag-1][@"normalUrl"]]];
+        [self deleteOtherImageView];
         UIImageView * imgV = [UIImageView new];
         [show_view insertSubview:imgV atIndex:0];
         UIImageView * img_view = imgViewArray[tag-1];
@@ -812,6 +895,8 @@
             imgV.frame = CGRectMake(0, frame1.origin.y, frame1.size.width, frame1.size.height);
             show_img_view = imgV;
             self.num_label.text = [NSString stringWithFormat:@"%ld / %ld",show_view.tag+1,[self.post_dic[@"url"] count]];
+        } completion:^(BOOL finished) {
+            [self deleteOtherImageView];
         }];
     }
 }
@@ -822,6 +907,7 @@
     //总图片个数
     NSInteger count = [self.post_dic[@"url"] count];
     if (tag < count - 1) {//可以显示下一张
+        [self deleteOtherImageView];
         UIImageView * imgV = [UIImageView new];
         [show_view insertSubview:imgV atIndex:0];
         UIImageView * img_view = imgViewArray[tag+1];
@@ -838,7 +924,17 @@
             imgV.frame = CGRectMake(0, frame1.origin.y, frame1.size.width, frame1.size.height);
             show_img_view = imgV;
             self.num_label.text = [NSString stringWithFormat:@"%ld / %ld",show_view.tag+1,[self.post_dic[@"url"] count]];
+        } completion:^(BOOL finished) {
+            [self deleteOtherImageView];
         }];
+    }
+}
+//删掉其他多余的imageview
+-(void)deleteOtherImageView{
+    for (id v in show_view.subviews) {
+        if (![v isEqual:show_img_view] & [v isKindOfClass:[UIImageView class]]) {
+            [v removeFromSuperview];
+        }
     }
 }
 //发送评论
