@@ -61,7 +61,7 @@
         [loginBtn setTitle:@"登录" forState:UIControlStateNormal];
         [loginBtn addTarget:self action:@selector(loginBtn_callback:) forControlEvents:UIControlEventTouchUpInside];
         [loginBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [self.view addSubview:loginBtn];
+//        [self.view addSubview:loginBtn];
         //注册
         UIButton * registerBtn = [UIButton new];
         self.registerBtn = registerBtn;
@@ -70,7 +70,7 @@
         [registerBtn setTitle:@"注册" forState:UIControlStateNormal];
         [registerBtn addTarget:self action:@selector(registerBtn_callback:) forControlEvents:UIControlEventTouchUpInside];
         [registerBtn setTitleColor:[MYTOOL RGBWithRed:34 green:31 blue:32 alpha:1] forState:UIControlStateNormal];
-        [self.view addSubview:registerBtn];
+//        [self.view addSubview:registerBtn];
     }
     //手机号
     {
@@ -188,7 +188,9 @@
                 [btn setImage:[UIImage imageNamed:@"login_icon_wechat"] forState:UIControlStateNormal];
                 [btn addTarget:self action:@selector(getAuthWithUserInfoFromWechat) forControlEvents:UIControlEventTouchUpInside];
                 btn.frame = CGRectMake(space * 2 , top, width, width);
-                [view addSubview:btn];
+                if ([MYTOOL isInstallWX]) {
+                    [view addSubview:btn];
+                }
             }
             //QQ-qqlogin
             {
@@ -204,7 +206,7 @@
                 [btn setImage:[UIImage imageNamed:@"login_icon_weibo"] forState:UIControlStateNormal];
                 [btn addTarget:self action:@selector(getAuthWithUserInfoFromSina) forControlEvents:UIControlEventTouchUpInside];
                 btn.frame = CGRectMake(space * 4 + width*2, top, width, width);
-                [view addSubview:btn];
+//                [view addSubview:btn];
             }
         }
         
@@ -252,7 +254,7 @@
 #pragma mark - 按钮回调
 //微博授权
 - (void)getAuthWithUserInfoFromSina{
-    [SVProgressHUD showErrorWithStatus:@"微博赞不支持" duration:2];
+    [SVProgressHUD showErrorWithStatus:@"微博暂不支持" duration:2];
     return;
     if (![MYTOOL isInstallWB]) {
         [SVProgressHUD showErrorWithStatus:@"未安装微博" duration:2];
@@ -279,10 +281,10 @@
 }
 //qq授权
 - (void)getAuthWithUserInfoFromQQ{
-    if (![MYTOOL isInstallQQ]) {
-        [SVProgressHUD showErrorWithStatus:@"未安装QQ" duration:2];
-        return;
-    }
+//    if (![MYTOOL isInstallQQ]) {
+//        [SVProgressHUD showErrorWithStatus:@"未安装QQ" duration:2];
+//        return;
+//    }
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_QQ currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
             NSString * msg = error.userInfo[@"message"];
@@ -304,10 +306,10 @@
 }
 //微信授权
 - (void)getAuthWithUserInfoFromWechat{
-    if (![MYTOOL isInstallWX]) {
-        [SVProgressHUD showErrorWithStatus:@"未安装微信" duration:2];
-        return;
-    }
+//    if (![MYTOOL isInstallWX]) {
+//        [SVProgressHUD showErrorWithStatus:@"未安装微信" duration:2];
+//        return;
+//    }
     [[UMSocialManager defaultManager] getUserInfoWithPlatform:UMSocialPlatformType_WechatSession currentViewController:nil completion:^(id result, NSError *error) {
         if (error) {
             NSString * msg = error.userInfo[@"message"];

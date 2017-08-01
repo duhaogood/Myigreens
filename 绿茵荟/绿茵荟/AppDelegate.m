@@ -17,8 +17,6 @@
 #import "MyOrderVC.h"
 #import "GoodsInfoViewController.h"
 #import "PostInfoViewController.h"
-#import <PgySDK/PgyManager.h>
-#import <PgyUpdate/PgyUpdateManager.h>
 #import "CheckUpdateVC.h"
 // iOS10注册APNs所需头 件
 #ifdef NSFoundationVersionNumber_iOS_9_x_Max 
@@ -44,14 +42,6 @@ static BOOL isProduction = true;
     self.window.rootViewController = update;
     [self.window makeKeyAndVisible];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    //    [NSThread sleepForTimeInterval:1];
-    //    NSLog(@"memberId:%@",[MYTOOL getProjectPropertyWithKey:@"memberId"]);
-    
-//    if (!SERVER_URL) {
-//        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://myigreens.yemast.com:8081/api"];//正式
-////        [MYTOOL setProjectPropertyWithKey:@"server_url" andValue:@"http://yemast.com:8180/api"];//测试
-//    }
-    //wxc3b31ac5cd6d9d5d
     //微信注册
     [WXApi registerApp:@"wxc3b31ac5cd6d9d5d" enableMTA:YES];//注册微信
     //    NSLog(@"启动");
@@ -90,13 +80,6 @@ static BOOL isProduction = true;
     app.applicationIconBadgeNumber = 0;
     
     
-    //蒲公英
-    //启动基本SDK
-    [[PgyManager sharedPgyManager] startManagerWithAppId:@"5f7de76ffc45dc469fa27a5d81a6ce54"];
-    //启动更新检查SDK
-    [[PgyUpdateManager sharedPgyManager] startManagerWithAppId:@"5f7de76ffc45dc469fa27a5d81a6ce54"];
-    //关闭用户反馈
-    [[PgyManager sharedPgyManager] setEnableFeedback:NO];
     
     return YES;
 }

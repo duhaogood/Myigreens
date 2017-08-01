@@ -19,7 +19,6 @@
 //#define SERVER_URL [MYTOOL getProjectPropertyWithKey:@"server_url"]
 
 //#define SERVER_URL @"http://wangwx.wicp.net/api"
-
-
+//#define SERVER_URL @"http://yema.wicp.net/api"
 
 #endif /* PrefixHeader_url_pch */
