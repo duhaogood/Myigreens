@@ -101,12 +101,7 @@
                                    @"shared_url":@"http://myigreens.yemast.com:8081/app/download",
                                    @"shareDescribe":@"绿茵荟APP"
                                    };
-        
-        
         [share show];
-        
-        
-        
     }else{
         bool isLogin = [MYTOOL isLogin];
         if (!isLogin) {

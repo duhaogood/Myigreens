@@ -59,9 +59,9 @@
         }
         NSArray * btn_array = @[
                                 @[@"icon_wechat",@"微信"],
-                                @[@"icon_weibo",@"新浪微博"],
                                 @[@"icon_qq",@"QQ"],
                                 @[@"icon_moments",@"朋友圈"],
+//                                @[@"icon_weibo",@"新浪微博"],
                                 ];
         //分享按钮
         {
@@ -71,7 +71,7 @@
             UIFont * font = [UIFont systemFontOfSize:15];
             UIColor * color = [MYTOOL RGBWithRed:92 green:92 blue:92 alpha:1];
             NSMutableArray * arr = [NSMutableArray new];
-            for (int i = 0; i < 4; i ++) {
+            for (int i = 0; i < btn_array.count; i ++) {
                 //按钮
                 UIButton * btn = [UIButton new];
                 {
@@ -92,9 +92,9 @@
                 }
             }
             [arr[0] addTarget:self action:@selector(sharedToWeiChat) forControlEvents:UIControlEventTouchUpInside];
-            [arr[1] addTarget:self action:@selector(sharedToWeiBo) forControlEvents:UIControlEventTouchUpInside];
-            [arr[2] addTarget:self action:@selector(sharedToQQ) forControlEvents:UIControlEventTouchUpInside];
-            [arr[3] addTarget:self action:@selector(sharedToFriend) forControlEvents:UIControlEventTouchUpInside];
+            [arr[1] addTarget:self action:@selector(sharedToQQ) forControlEvents:UIControlEventTouchUpInside];
+            [arr[2] addTarget:self action:@selector(sharedToFriend) forControlEvents:UIControlEventTouchUpInside];
+//            [arr[3] addTarget:self action:@selector(sharedToWeiBo) forControlEvents:UIControlEventTouchUpInside];
         }
         //取消按钮
         {

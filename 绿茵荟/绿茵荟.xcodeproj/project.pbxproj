@@ -4263,7 +4263,7 @@
 					"-all_load",
 					"-Objc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yemast.myigreens;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yemast.myigreen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -4335,7 +4335,7 @@
 					"-all_load",
 					"-Objc",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.yemast.myigreens;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yemast.myigreen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

@@ -25,8 +25,8 @@
 
 #define USHARE_DEMO_APPKEY @"591c60d2f5ade451b100046b"
 
-static NSString *appKey = @"19286ff90c8abb86842087a2";
-static NSString *channel = @"62b8468f1f54251e179cf0fa";
+static NSString *appKey = @"7ee61e6850c7588f15849f29";
+static NSString *channel = @"6b1aaeb71e0f587b8142b68a";
 static BOOL isProduction = true;
 
 @interface AppDelegate ()<JPUSHRegisterDelegate>
